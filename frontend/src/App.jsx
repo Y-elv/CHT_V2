@@ -8,10 +8,14 @@ function App() {
 
 
   return (
-    <Routes>
-      <Route path="/"element ={<Homepage/>} />
-      <Route path="/chats"element ={<Chatpages/>} />
-    </Routes>
+    <div
+     
+    >
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/chats" element={<Chatpages />} />
+      </Routes>
+    </div>
   );
 }
 

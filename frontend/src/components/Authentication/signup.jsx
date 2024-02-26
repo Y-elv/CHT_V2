@@ -126,7 +126,7 @@ const { data } = await axios.post(
    });
   localStorage.setItem("userInfo", JSON.stringify(data));
   setLoading(false);
-  history.push("/chats");
+  history("/chats");
    }
    catch(error){
 
