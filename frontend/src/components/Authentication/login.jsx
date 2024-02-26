@@ -17,7 +17,7 @@ const Login = () => {
   const [loading, setLoading] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const history = useNavigate(); 
+  const history = useNavigate();
   const toast = useToast();
   const handleClick = () => SetShow(!show);
 
@@ -33,46 +33,45 @@ const Login = () => {
         position: "bottom",
       });
       setLoading(false);
-      return
+      return;
     }
-       try {
-         const config = {
-           headers: {
-             "Content-type": "application/json",
-           },
-         };
-         const { data } = await axios.post(
-           " http://localhost:8200/api/v2/user/login",
-           {
-             
-             email,
-             password,
-             
-           },
-           config
-         );
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        " http://localhost:8200/api/v2/user/login",
+        {
+          email,
+          password,
+        },
+        config
+      );
+      console.log("Data received from login endpoint:", data);
 
-         toast({
-           title: "Login successfully!",
-           status: "success",
-           duration: 5000,
-           isClosable: true,
-           position: "bottom",
-         });
-         localStorage.setItem("userInfo", JSON.stringify(data));
-         setLoading(false);
-         history("/chats");
-       } catch (error) {
-         toast({
-           title: "Error Occured!",
-           description: error.response.data.message,
-           status: "error",
-           duration: 5000,
-           isClosable: true,
-           position: "bottom",
-         });
-         setLoading(false);
-       }
+      toast({
+        title: "Login successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      setLoading(false);
+      history("/chats");
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+    }
   };
   return (
     <VStack spacing="5px">

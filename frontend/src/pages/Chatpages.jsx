@@ -18,6 +18,7 @@ import ChatBox from '../components/ChatBox';
 const Chatpages = () => {
  const {user} = ChatState();
 
+console.log(user)
 
 
   return (
