@@ -1,0 +1,20 @@
+/* Hide scrollbar for webkit browsers */
+::-webkit-scrollbar {
+    width: 0px;
+    /* Set a small width to make it invisible but clickable */
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+    /* Set a transparent background color */
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(136,136,136,0.281);
+    /* Set a transparent background color for the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background:#555;
+    /* Set a transparent background color for the thumb on hover */
+}
