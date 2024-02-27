@@ -13,7 +13,7 @@ import {
 import { Spinner } from "@chakra-ui/spinner";
 import { Text } from "@chakra-ui/layout";
 import React, { useState } from "react";
-import ProfileModal from "./profileModal";
+import ProfileModal from "./ProfileModal";
 import {
   Menu,
   MenuButton,
@@ -111,7 +111,7 @@ const SideDrawer = () => {
         config
       );
 
-      if(!chats.find((c)=>c._id===data._id))setChats([data, ...chats])
+      if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
       setLoading(false);
       onClose();
@@ -202,7 +202,7 @@ const SideDrawer = () => {
                 />
               ))
             )}
-            {loadingChat && <Spinner ml="auto" display="flex"/>}
+            {loadingChat && <Spinner ml="auto" display="flex" />}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

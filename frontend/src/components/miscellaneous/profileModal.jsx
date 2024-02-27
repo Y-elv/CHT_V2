@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 
 
-const profileModal = ({user,children}) => {
+const ProfileModal = ({user,children}) => {
      const { isOpen, onOpen, onClose } = useDisclosure();
   
      return (
@@ -77,4 +77,4 @@ const profileModal = ({user,children}) => {
   
 };
 
-export default profileModal
+export default ProfileModal

@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import axios from "axios"
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   Box,
   Container,
@@ -10,16 +10,14 @@ import {
   TabPanels,
   TabPanel,
 } from "@chakra-ui/react";
-import { ChatState } from '../components/Context/chatProvider';
-import SideDrawer from '../components/miscellaneous/SideDrawer';
-import MyChats from '../components/MyChats';
-import ChatBox from '../components/ChatBox';
+import { ChatState } from "../components/Context/chatProvider";
+import SideDrawer from "../components/miscellaneous/SideDrawer";
+import MyChats from "../components/MyChats";
+import ChatBox from "../components/ChatBox";
 
 const Chatpages = () => {
- const {user} = ChatState();
-
-
-
+  const { user } = ChatState();
+  const [fetchAgain, setFetchAgain] = useState(false);
 
   return (
     <div style={{ width: "100%" }}>
@@ -31,11 +29,13 @@ const Chatpages = () => {
         h="91.5vh"
         p="10px"
       >
-        {user && <MyChats />}
-        {user && <ChatBox />}
+        {user && <MyChats fetchAgain={fetchAgain} />}
+        {user && (
+          <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+        )}
       </Box>
     </div>
   );
-}
+};
 
-export default Chatpages
+export default Chatpages;
