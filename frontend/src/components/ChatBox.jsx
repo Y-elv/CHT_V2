@@ -1,11 +1,9 @@
-import React from 'react'
+import React from "react";
+import { ChatState } from "./Context/chatProvider";
 
 const ChatBox = () => {
-  return (
-    <div>
-      chat box
-    </div>
-  )
-}
+  const { selectedChat } = ChatState();
+  return <div>chat box</div>;
+};
 
-export default ChatBox
+export default ChatBox;

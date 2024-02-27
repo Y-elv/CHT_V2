@@ -6,6 +6,7 @@ import { Text } from "@chakra-ui/layout";
 import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
 import { getSender } from "../config/chatLogics";
+import GroupChatModal from "./miscellaneous/GroupChatModal";
 const MyChats = () => {
   const [loggedUser, setLoggedUser] = useState();
   const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();
