@@ -1,6 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ChatState } from "./Context/chatProvider";
-import { Box, IconButton, Text } from "@chakra-ui/react";
+import axios from "axios";
+import '../components/css/styles.css'
+import {
+  Box,
+  FormControl,
+  IconButton,
+  Input,
+  Spinner,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
+import SCrollableChat from "./SCrollableChat";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { getSender, getSenderFull } from "../config/chatLogics";
 import ProfileModal from "./miscellaneous/ProfileModal";
@@ -8,6 +19,102 @@ import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { user, selectedChat, setSelectedChat } = ChatState();
+  const [messages, setMessages] = useState();
+  const [loading, setLoading] = useState();
+  const [newMessage, setNewMessages] = useState();
+
+  const toast = useToast();
+
+  const fetchMessages = async () => {
+    if(!selectedChat)return;
+
+    try {
+
+      const config = {
+        headers: {
+          
+          authorization: `${user.token}`,
+        },
+      };
+      console.log("User Token:", user.token);
+
+      
+      setLoading(true)
+
+      const { data } = await axios.get(
+        `http://localhost:8200/api/v2/message/getmessage/${selectedChat._id}`,
+        {
+          headers: {
+            authorization: `${user.token}`,
+          },
+        }
+      );
+
+
+      console.log("messages",data);
+      setMessages(data)
+      setLoading(false)
+
+      
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: "Failed to Load the Messages",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+
+  };
+
+  useEffect(()=>{
+    fetchMessages()
+
+  },[selectedChat])
+
+  const sendMessage = async (event) => {
+    if (event.key === "Enter" && newMessage) {
+      try {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `${user.token}`,
+          },
+        };
+        setNewMessages("");
+        const { data } = await axios.post(
+          " http://localhost:8200/api/v2/message/message",
+          {
+            content: newMessage,
+            chatId: selectedChat._id,
+          },
+          config
+        );
+
+        console.log("from single chat", data);
+
+        setMessages([...messages, data]);
+      } catch (error) {
+        toast({
+          title: "Error Occured!",
+          description: "Failed to send the Message",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
+    }
+  };
+
+  const typingHandler = (e) => {
+    setNewMessages(e.target.value);
+
+    // tyiping logic
+  };
+
   return (
     <>
       {selectedChat ? (
@@ -38,6 +145,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <UpdateGroupChatModal
                   fetchAgain={fetchAgain}
                   setFetchAgain={setFetchAgain}
+                  fetchMessages={fetchMessages}
                 />
               </>
             )}
@@ -53,7 +161,28 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             borderRadius="lg"
             overflowY="hidden"
           >
-            {/* message */}
+            {loading ? (
+              <Spinner
+                size="xl"
+                w={20}
+                h={20}
+                alignSelf="center"
+                margin="auto"
+              />
+            ) : (
+              <div className="messages">
+                <SCrollableChat messages={messages}/>
+              </div>
+            )}
+            <FormControl onKeyDown={sendMessage} isRequired mt={3}>
+              <Input
+                variant="filled"
+                bg="#E8E8E8"
+                placeholder="Enter a message ..."
+                onChange={typingHandler}
+                value={newMessage}
+              />
+            </FormControl>
           </Box>
         </>
       ) : (
