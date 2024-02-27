@@ -9,8 +9,9 @@ import {
   DrawerHeader,
   DrawerBody,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
-import { Spinner } from "@chakra-ui/spinner";
+
 import { Text } from "@chakra-ui/layout";
 import React, { useState } from "react";
 import ProfileModal from "./ProfileModal";
