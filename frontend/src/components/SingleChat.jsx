@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ChatState } from "./Context/chatProvider";
 import axios from "axios";
-import '../components/css/styles.css'
+import "../components/css/styles.css";
 import {
   Box,
   FormControl,
@@ -17,6 +17,8 @@ import { getSender, getSenderFull } from "../config/chatLogics";
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 
+const ENDPOINT = "http://localhost:8200";
+
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { user, selectedChat, setSelectedChat } = ChatState();
   const [messages, setMessages] = useState();
@@ -26,20 +28,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const toast = useToast();
 
   const fetchMessages = async () => {
-    if(!selectedChat)return;
+    if (!selectedChat) return;
 
     try {
-
       const config = {
         headers: {
-          
           authorization: `${user.token}`,
         },
       };
       console.log("User Token:", user.token);
 
-      
-      setLoading(true)
+      setLoading(true);
 
       const { data } = await axios.get(
         `http://localhost:8200/api/v2/message/getmessage/${selectedChat._id}`,
@@ -50,12 +49,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         }
       );
 
-
-      console.log("messages",data);
-      setMessages(data)
-      setLoading(false)
-
-      
+      console.log("messages", data);
+      setMessages(data);
+      setLoading(false);
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -66,13 +62,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         position: "bottom",
       });
     }
-
   };
 
-  useEffect(()=>{
-    fetchMessages()
-
-  },[selectedChat])
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedChat]);
 
   const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage) {
@@ -171,7 +165,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               />
             ) : (
               <div className="messages">
-                <SCrollableChat messages={messages}/>
+                <SCrollableChat messages={messages} />
               </div>
             )}
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
