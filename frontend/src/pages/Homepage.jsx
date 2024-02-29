@@ -22,7 +22,7 @@ const Homepage = () => {
   return (
     <Container maxW="xl" centerContent>
       <Box>
-        <Text>welcome to my chat app</Text>
+        <Text>welcome to my chat app have fun </Text>
       </Box>
       <Box>
         <Tabs variant="soft-rounded" colorScheme="green">
