@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import UserNavbar from "../layout/userNavbar/userNavbar";
 import axios from "axios";
 import {
   Box,
@@ -21,6 +22,7 @@ const Chatpages = () => {
 
   return (
     <div style={{ width: "100%" }}>
+      {user && <UserNavbar />}
       {user && <SideDrawer />}
       <Box
         display="flex"
@@ -28,6 +30,7 @@ const Chatpages = () => {
         w="100%"
         h="91.5vh"
         p="10px"
+        bg="#B8C2D7"
       >
         {user && <MyChats fetchAgain={fetchAgain} />}
         {user && (

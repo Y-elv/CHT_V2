@@ -19,6 +19,11 @@ const ChatProvider = ({ children }) => {
     }
   }, [history]);
 
+    const logoutHandler = () => {
+      localStorage.removeItem("userInfo");
+      navigate("/login");
+    };
+
   const contextValue = {
     user,
     setUser,
@@ -26,6 +31,7 @@ const ChatProvider = ({ children }) => {
     setSelectedChat,
     chats,
     setChats,
+    logoutHandler,
   };
 
   return (

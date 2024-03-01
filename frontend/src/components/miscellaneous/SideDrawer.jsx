@@ -45,10 +45,7 @@ const SideDrawer = () => {
 
   const { user, setSelectedChat, chats, setChats } = ChatState();
 
-  const logoutHandler = () => {
-    localStorage.removeItem("userInfo");
-    navigate("/");
-  };
+
 
   const toast = useToast();
   const handleSearch = async () => {
@@ -134,7 +131,7 @@ const SideDrawer = () => {
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        bg="white"
+        bg="#B8C2D7"
         w="100%"
         p="5px 10px 5px 10px"
         borderWidth="5px"
@@ -147,35 +144,6 @@ const SideDrawer = () => {
             </Text>
           </Button>
         </Tooltip>
-        <Text fontFamily="work sans" fontSize="2xl">
-          Talk-A-Tive
-        </Text>
-        <div>
-          <Menu>
-            <MenuButton as={Button}>
-              <BellIcon fontSize="2xl" m={1} />
-            </MenuButton>
-            {/* Add your Menu options here if needed */}
-          </Menu>
-          <Menu>
-            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-              <Avatar
-                size="sm"
-                cursor="pointer"
-                name={user.name}
-                src={user.pic}
-              />
-            </MenuButton>
-            <MenuList>
-              <ProfileModal user={user}>
-                <MenuItem>My Profile</MenuItem>
-              </ProfileModal>
-
-              <MenuDivider />
-              <MenuItem onClick={logoutHandler}>Logout</MenuItem>
-            </MenuList>
-          </Menu>
-        </div>
       </Box>
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />

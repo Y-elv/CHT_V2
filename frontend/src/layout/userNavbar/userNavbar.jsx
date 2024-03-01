@@ -7,7 +7,7 @@ import { Dropdown, Space, Menu } from "antd";
 import  {ChatState}  from "../../components/Context/chatProvider";
 const UserNavbar = () => {
   // const { user, logoutUser } = useContext(AuthContext);
-  const { user } = ChatState();
+  const { user, logoutHandler } = ChatState();
 
 
   const items = [
@@ -18,12 +18,14 @@ const UserNavbar = () => {
     {
       key: "2",
       label: (
-        <Link onClick={() => logoutUser()} to="/login">
+        <Link onClick={() => logoutHandler()} to="/login">
           logout
         </Link>
       ),
     },
   ];
+
+  
 
   return (
     <nav
@@ -86,7 +88,7 @@ const UserNavbar = () => {
                   >
                     <Space>
                       <img
-                        src={profileAvatar}
+                        src={user.pic}
                         alt="Profile Avatar"
                         className="rounded-circle"
                         style={{ width: "60px", height: "60px" }}

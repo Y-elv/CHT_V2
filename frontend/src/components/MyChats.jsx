@@ -5,6 +5,7 @@ import axios from "axios";
 import { Text } from "@chakra-ui/layout";
 import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
+
 import { getSender } from "../config/chatLogics";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 const MyChats = ({ fetchAgain }) => {
@@ -48,7 +49,7 @@ const MyChats = ({ fetchAgain }) => {
       flexDir="column"
       alignItems="center"
       p={3}
-      bg="white"
+      bg="#B8C2D7"
       w={{ base: "100%", md: "31%" }}
       borderRadius="lg"
       borderWidth="1px"
