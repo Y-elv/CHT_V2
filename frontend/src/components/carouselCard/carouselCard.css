@@ -1,0 +1,24 @@
+.carousel {
+    width: 80%;
+    margin: 0 auto;
+  }
+  
+  .box {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .box img{
+    
+    width: 60vw;
+    height: 50vh;
+     /* Make sure images don't exceed their container */
+  }
+@media screen and (max-width:715px){
+  .box img{
+    
+    width: 80vw;
+    height: 20vh;
+     /* Make sure images don't exceed their container */
+  }
+}

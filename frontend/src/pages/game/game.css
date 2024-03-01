@@ -1,0 +1,37 @@
+*{
+    margin: 0;
+    padding: 0;
+
+}
+.game-container{
+    width: 100vw;
+    height: 100vh;
+    background-color:#B8C2D7 ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+   
+
+}
+.word{
+    width: 100vw;
+    height: 20vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    }
+    .game-img img{
+     width: 50vw;
+     height: 60vh;
+    }
+    .game-icon{
+        height: 10vh;
+        width: 5vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+   

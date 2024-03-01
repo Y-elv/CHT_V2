@@ -1,0 +1,28 @@
+*{
+    padding: 0;
+    margin: 0;
+
+}
+.news-middles{
+    width: 98.7vw;
+    height: 130vh;
+    background-color: #CEDAFA;
+    display: flex;
+    flex-direction: column;
+}
+.news-titles{
+    width: 95vw;
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:#F3931E;
+    font-size: 28px;
+
+}
+.news-comps{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}

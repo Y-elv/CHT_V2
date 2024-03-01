@@ -1,0 +1,165 @@
+*{
+    padding: 0;
+    margin: 0;
+
+}
+.texts-card{
+    
+    width: 17vw;
+    height:42vh;
+    background-color: white;
+    border-radius: 5px;
+   
+}
+
+.whole-card-cons img {
+    width: 10vw;
+    display: block;
+    max-width: 100%;
+    position: relative;
+    top: 15%; 
+    left:17%
+}
+
+.whole-card-cons {
+    position: relative;
+    display: inline-block;
+    width: 17vw;
+    height: 50vh;
+    gap: 2rem;
+    
+
+}
+.text-inside{
+    
+    width: 17vw;
+    height: 40vh;
+    font-size: small;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    padding: 5px;
+    color: black;
+
+
+}
+.text-inside h5{
+    font-size: smaller;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    
+
+}
+
+@media screen and (max-width: 689px) {
+    .texts-card{
+    
+        width: 37vw;
+        height:42vh;
+        background-color: white;
+        border-radius: 5px;
+       
+    }
+    .whole-card-cons img {
+        width: 40vw;
+        display: block;
+        max-width: 100%;
+        position: relative;
+        top: 15%; 
+        left:53%
+    }
+    .text-inside{
+    
+        width: 37vw;
+        height: 40vh;
+        font-size: small;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        padding: 5px;
+        color: black;
+    
+    
+    }
+}
+
+@media screen and (max-width: 415px) {
+    .texts-card{
+    
+        width: 67vw;
+        height:42vh;
+        background-color: white;
+        border-radius: 5px;
+       
+    }
+    .whole-card-cons img {
+       
+        display: block;
+        max-width: 100%;
+        position: relative;
+        top: 15%; 
+        left:143%
+    }
+    .text-inside{
+    
+        width: 57vw;
+        height: 40vh;
+        font-size: small;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        padding: 5px;
+        color: black;
+    
+    
+    }
+}
+
+
+
+@media screen and (max-width: 395px) {
+    .texts-card{
+    
+        width: 67vw;
+        height:42vh;
+        background-color: white;
+        border-radius: 5px;
+       
+    }
+    .whole-card-cons img {
+        width: 70vw;
+        display: block;
+        max-width: 100%;
+        position: relative;
+        top: 15%; 
+        left:130%;
+        
+    }
+    .text-inside{
+    
+        width: 67vw;
+        height: 40vh;
+        font-size: small;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        padding: 5px;
+        color: black;
+    
+    
+    }
+   }
+
+
+
+
+
