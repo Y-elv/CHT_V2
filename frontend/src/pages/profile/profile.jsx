@@ -128,7 +128,7 @@ const Profile = () => {
                   <p>Consultation</p>
                 </Link>
                 <Link
-                  to="/chat"
+                  to="/chats"
                   className="iconn"
                   style={{ textDecoration: "none" }}
                 >

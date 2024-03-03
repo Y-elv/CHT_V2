@@ -5,12 +5,15 @@ import {
   InputGroup,
   InputRightElement,
   VStack,
+  Box
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import wallpaper from "../../assets/wallpaper.png";
+
 
 const Login = () => {
   const [show, SetShow] = useState(false);
@@ -74,54 +77,56 @@ const Login = () => {
     }
   };
   return (
-    <VStack spacing="5px">
-      <FormControl id="email" isRequired>
-        <FormLabel>Email</FormLabel>
-        <Input
-          placeholder="enter email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </FormControl>
-      <FormControl id="password" isRequired>
-        <FormLabel>Password</FormLabel>
-        <InputGroup>
+   
+      <VStack spacing="5px">
+        <FormControl id="email" isRequired>
+          <FormLabel>Email</FormLabel>
           <Input
-            type={show ? "text" : "password"}
-            placeholder="enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            placeholder="enter email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-          <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
-              {show ? "Hide" : "show"}
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-      </FormControl>
+        </FormControl>
+        <FormControl id="password" isRequired>
+          <FormLabel>Password</FormLabel>
+          <InputGroup>
+            <Input
+              type={show ? "text" : "password"}
+              placeholder="enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <InputRightElement width="4.5rem">
+              <Button h="1.75rem" size="sm" onClick={handleClick}>
+                {show ? "Hide" : "show"}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+        </FormControl>
 
-      <Button
-        onClick={submitHandler}
-        width="100%"
-        colorScheme="blue"
-        style={{ marginTop: 15 }}
-        isLoading={loading}
-      >
-        login
-      </Button>
+        <Button
+          onClick={submitHandler}
+          width="100%"
+          colorScheme="blue"
+          style={{ marginTop: 15 }}
+          isLoading={loading}
+        >
+          login
+        </Button>
 
-      <Button
-        onClick={() => {
-          setEmail("guest@example.com");
-          setPassword("123456");
-        }}
-        width="100%"
-        variant="solid"
-        colorScheme="red"
-      >
-        Get Guest User Credentials
-      </Button>
-    </VStack>
+        <Button
+          onClick={() => {
+            setEmail("guest@example.com");
+            setPassword("123456");
+          }}
+          width="100%"
+          variant="solid"
+          colorScheme="red"
+        >
+          Get Guest User Credentials
+        </Button>
+      </VStack>
+ 
   );
 };
 

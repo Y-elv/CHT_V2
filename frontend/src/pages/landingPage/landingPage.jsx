@@ -10,8 +10,16 @@ import card5 from "../../assets/card5.png";
 import card6 from "../../assets/card6.png";
 import PhotoCard from "../../components/photoCard/photoCard";
 import Slideshow from "../../components/carouselCard/carouselcard";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+  // useEffect(() => {
+  //   const user = JSON.parse(localStorage.getItem("userInfo"));
+
+  //   if (user) navigate("/profile");
+  // }, [navigate]);
+
   return (
     <>
       <div className="landing-sections">

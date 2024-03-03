@@ -33,7 +33,7 @@ const ProfileNavbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/chat" className="nav-link mx-3">
+              <Link to="/chats" className="nav-link mx-3">
                 Chat
               </Link>
             </li>
