@@ -11,14 +11,15 @@ import card6 from "../../assets/card6.png";
 import PhotoCard from "../../components/photoCard/photoCard";
 import Slideshow from "../../components/carouselCard/carouselcard";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   const user = JSON.parse(localStorage.getItem("userInfo"));
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
 
-  //   if (user) navigate("/profile");
-  // }, [navigate]);
+    if (user) navigate("/profile");
+  }, []);
 
   return (
     <>

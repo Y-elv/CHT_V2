@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import Homepage from "./pages/Homepage";
+
 import "./App.css";
 import Chatpages from "./pages/Chatpages";
 import ServicePage from "./pages/service/service";

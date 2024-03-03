@@ -14,8 +14,9 @@ import ProfileNavbar from "../../components/profileNavbar/profileNavbar";
 import { Dropdown, Space, Menu } from "antd";
 
 
+
 const Profile = () => {
-  const { user } = ChatState();
+  const { user, logoutHandler } = ChatState();
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -179,7 +180,7 @@ const Profile = () => {
                 </Link>
                 {user && (
                   <Link
-                    onClick={() => logoutUser()}
+                    onClick={() => logoutHandler()}
                     to="/login"
                     className="iconn"
                     style={{ textDecoration: "none" }}

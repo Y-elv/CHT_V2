@@ -13,11 +13,11 @@ const ChatProvider = ({ children }) => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
     if (!userInfo) {
-      navigate("/chats");
+      navigate("/home");
     } else {
       setUser(userInfo);
     }
-  }, [history]);
+  }, []);
 
     const logoutHandler = () => {
       localStorage.removeItem("userInfo");
