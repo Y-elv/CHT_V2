@@ -6,17 +6,18 @@ import {
   InputRightElement,
   VStack,
   Box,
+  Link,
   Image,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-import "./login.css";
+import { useNavigate } from "react-router-dom";
+import "./ForgotPassword.css";
 import logo from "../../assets/LOGO FULL.png";
 
-const Login = () => {
+const ForgotPassword = () => {
   const [show, SetShow] = useState(false);
   const [loading, setLoading] = useState();
   const [email, setEmail] = useState();
@@ -78,7 +79,7 @@ const Login = () => {
     }
   };
   return (
-    <div className="login-container">
+    <div className="forgot-container">
       <VStack
         spacing="5px"
         bg="#b6c0d694"
@@ -86,11 +87,9 @@ const Login = () => {
         height="90vh"
         alignItems="center"
         justifyContent="center"
-        
       >
         <Box
           spacing="5px"
-          
           display="flex"
           flexDirection="column"
           alignItems="center"
@@ -99,20 +98,21 @@ const Login = () => {
           height="70vh"
           gap="3"
         >
-          <Image src={logo} alt="Logo" w="150px" h="auto" mb="-3" />
-          <div className="signin-text">SignIn</div>
-          <FormControl id="email" isRequired>
+          <Image src={logo} alt="Logo" w="150px" h="auto" mb="4" />
+          <div className="forgot-text">Forget Password</div>
+          <FormControl id="newPassword" isRequired>
             <Input
-              placeholder="Email"
+              type={show ? "text" : "password"}
+              placeholder="new Passowrd"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </FormControl>
-          <FormControl id="password" isRequired>
+          <FormControl id="confrimPassword" isRequired>
             <InputGroup>
               <Input
                 type={show ? "text" : "password"}
-                placeholder="Password"
+                placeholder="confrim Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -124,10 +124,6 @@ const Login = () => {
             </InputGroup>
           </FormControl>
 
-          <Link align="end" to="/forgot-password">
-            Forgot Password?
-          </Link>
-
           <Button
             onClick={submitHandler}
             width="100%"
@@ -135,15 +131,12 @@ const Login = () => {
             style={{ marginTop: 15 }}
             isLoading={loading}
           >
-            login
+            submit
           </Button>
-          <Link to="/register" mt="4">
-            New here! Register
-          </Link>
         </Box>
       </VStack>
     </div>
   );
 };
 
-export default Login;
+export default ForgotPassword;

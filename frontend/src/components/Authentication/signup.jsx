@@ -5,13 +5,17 @@ import {
   InputGroup,
   InputRightElement,
   VStack,
+  Image,
+  Box
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate,Link } from "react-router-dom";
+import wallpaper from "../../assets/wallpaper.png";
+import "./signup.css";
+import logo from "../../assets/LOGO FULL.png";
 
 
 
@@ -79,7 +83,7 @@ const Signup = () => {
 
   const submitHandler =async () => {
     setLoading(true)
-    if(!name || !email || !password || !confirm){
+    if(!name || !email || !password){
       toast({
        title: "Please fill all fields !",
        status: "warning",
@@ -90,16 +94,17 @@ const Signup = () => {
      setLoading(false)
      return;
    }
-   if(password !== confirm){
-      toast({
-       title: "Password do not match!",
-       status: "warning",
-       duration: 5000,
-       isClosable: true,
-       position: "bottom",
-      });
-      return;
-   }
+  const weakPasswordRegex = /^(?=.*[a-z]).{6,}$/; // Example: At least 6 characters and at least one lowercase letter
+  if (!weakPasswordRegex.test(password)) {
+    toast({
+      title: "Weak Password",
+      status: "warning",
+      duration: 5000,
+      isClosable: true,
+      position: "bottom",
+    });
+    return;
+  }
    try{
 const config={
   headers:{
@@ -126,7 +131,7 @@ const { data } = await axios.post(
    });
   localStorage.setItem("userInfo", JSON.stringify(data));
   setLoading(false);
-  history("/chats");
+  history("/profile");
    }
    catch(error){
 
@@ -144,73 +149,80 @@ const { data } = await axios.post(
     
   };
   return (
-    <VStack spacing="5px">
-      <FormControl id="first-name" isRequired>
-        <FormLabel>Name</FormLabel>
-        <Input
-          placeholder="enter name"
-          onChange={(e) => setName(e.target.value)}
-        />
-      </FormControl>
-
-      <FormControl id="email" isRequired>
-        <FormLabel>Email</FormLabel>
-        <Input
-          placeholder="enter email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </FormControl>
-      <FormControl id="password" isRequired>
-        <FormLabel>Password</FormLabel>
-        <InputGroup>
-          <Input
-            type={show ? "text" : "password"}
-            placeholder="enter password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
-              {show ? "Hide" : "show"}
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-      </FormControl>
-
-      <FormControl id="confirm" isRequired>
-        <FormLabel>confirm Password</FormLabel>
-        <InputGroup>
-          <Input
-            type={show ? "text" : "password"}
-            placeholder="confirrm password"
-            onChange={(e) => setConfirm(e.target.value)}
-          />
-          <InputRightElement width="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
-              {show ? "Hide" : "show"}
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-      </FormControl>
-
-      <FormControl>
-        <FormLabel>Upload your picture</FormLabel>
-        <Input
-          type="file"
-          p={1.5}
-          accept="image/*"
-          onChange={(e) => postDetails(e.target.files[0])}
-        />
-      </FormControl>
-      <Button
-        onClick={submitHandler}
-        width="100%"
-        colorScheme="blue"
-        style={{ marginTop: 15 }}
-        isLoading ={loading}
+    <div className="signup-container">
+      <VStack
+        spacing="5px"
+        bg="#b6c0d694"
+        width="50vw"
+        height="90vh"
+        alignItems="center"
+        justifyContent="center"
       >
-        signUp
-      </Button>
-    </VStack>
+        <Box
+          spacing="5px"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          width="25vw"
+          height="70vh"
+          gap="3"
+        >
+          <Image src={logo} alt="Logo" w="150px" h="auto" mb="-3" />
+          <div className="signup-text">SignUp</div>
+          <FormControl id="first-name" isRequired>
+            <Input
+              placeholder="Name"
+              onChange={(e) => setName(e.target.value)}
+            />
+          </FormControl>
+
+          <FormControl id="email" isRequired>
+            <Input
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </FormControl>
+          <FormControl id="password" isRequired>
+            <InputGroup>
+              <Input
+                type={show ? "text" : "password"}
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <InputRightElement width="4.5rem">
+                <Button h="1.75rem" size="sm" onClick={handleClick}>
+                  {show ? "Hide" : "show"}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+          </FormControl>
+
+          {/* <FormControl>
+          <FormLabel>Upload your picture</FormLabel>
+          <Input
+            type="file"
+            p={1.5}
+            accept="image/*"
+            onChange={(e) => postDetails(e.target.files[0])}
+          />
+        </FormControl> */}
+
+          <Button
+            onClick={submitHandler}
+            width="100%"
+            colorScheme="blue"
+            style={{ marginTop: 15 }}
+            isLoading={loading}
+          >
+            signUp
+          </Button>
+          <Link to="/login" mt="4">
+            Already have an Account? SignIn
+          </Link>
+        </Box>
+      </VStack>
+    </div>
   );
 };
 
