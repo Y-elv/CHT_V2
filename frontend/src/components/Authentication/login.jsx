@@ -86,11 +86,9 @@ const Login = () => {
         height="90vh"
         alignItems="center"
         justifyContent="center"
-        
       >
         <Box
           spacing="5px"
-          
           display="flex"
           flexDirection="column"
           alignItems="center"
@@ -124,7 +122,7 @@ const Login = () => {
             </InputGroup>
           </FormControl>
 
-          <Link align="end" to="/forgot-password">
+          <Link align="end" to="/forgot-password" style={{ color: "white" }}>
             Forgot Password?
           </Link>
 
@@ -137,7 +135,7 @@ const Login = () => {
           >
             login
           </Button>
-          <Link to="/register" mt="4">
+          <Link to="/register" mt="4" style={{ color: "white" }}>
             New here! Register
           </Link>
         </Box>

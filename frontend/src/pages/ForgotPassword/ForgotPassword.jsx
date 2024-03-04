@@ -108,11 +108,11 @@ const ForgotPassword = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </FormControl>
-          <FormControl id="confrimPassword" isRequired>
+          <FormControl id="confirmPassword" isRequired>
             <InputGroup>
               <Input
                 type={show ? "text" : "password"}
-                placeholder="confrim Password"
+                placeholder="confirm Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
