@@ -90,10 +90,13 @@ const Profile = () => {
             <div className="user-box-container">
               <div className="user-box">
                 <div className="profile-image-container">
-                  <img
-                    src={selectedImage || profileAvatar}
-                    onClick={handleImageClick}
-                  />
+                  {user && (
+                    <>
+                      {console.log("User profile picture:", user?.pic)}
+                      <img src={user?.pic} onClick={handleImageClick} />
+                    </>
+                  )}
+
                   {isPopupOpen && (
                     <div className="popup">
                       <input
