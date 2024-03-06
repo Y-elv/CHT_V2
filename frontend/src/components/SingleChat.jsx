@@ -14,8 +14,8 @@ import {
 import SCrollableChat from "./SCrollableChat";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { getSender, getSenderFull } from "../config/chatLogics";
-import ProfileModal from "./miscellaneous/ProfileModal.jsx";
-import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal.jsx";
+import ProfileModal from "../components/miscellaneous/ProfileModal";
+import UpdateGroupChatModal from "../components/miscellaneous/UpdateGroupChatModal";
 import io from "socket.io-client";
 
 
