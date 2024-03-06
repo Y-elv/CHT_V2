@@ -14,7 +14,7 @@ import {
 
 import { Text } from "@chakra-ui/layout";
 import React, { useState } from "react";
-import ProfileModal from "./ProfileModal";
+
 import {
   Menu,
   MenuButton,
