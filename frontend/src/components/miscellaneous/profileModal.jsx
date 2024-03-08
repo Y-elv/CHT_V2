@@ -77,4 +77,4 @@ const ProfileModal = ({user,children}) => {
   
 };
 
-export default ProfileModal
+export default ProfileModal;
