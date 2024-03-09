@@ -126,9 +126,9 @@ const Signup = () => {
         isClosable: true,
         position: "bottom",
       });
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      
       setLoading(false);
-      history("/profile");
+      history("/login");
     } catch (error) {
       if (
         error.response &&
