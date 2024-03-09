@@ -109,7 +109,7 @@ const Signup = () => {
         },
       };
       const { data } = await axios.post(
-        " http://localhost:8200/api/v2/user/register",
+        " https://chtv2-bn.onrender.com/api/v2/user/register",
         {
           name,
           email,

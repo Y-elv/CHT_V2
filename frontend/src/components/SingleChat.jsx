@@ -19,7 +19,7 @@ import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal.jsx";
 import io from "socket.io-client";
 
 
-const ENDPOINT = "http://localhost:8200";
+const ENDPOINT = "https://chtv2-bn.onrender.com";
 
 var socket, selectedChatCompare;
 
@@ -52,7 +52,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setLoading(true);
 
       const { data } = await axios.get(
-        `http://localhost:8200/api/v2/message/getmessage/${selectedChat._id}`,
+        `https://chtv2-bn.onrender.com/api/v2/message/getmessage/${selectedChat._id}`,
         {
           headers: {
             authorization: `${user.token}`,
@@ -108,7 +108,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         };
         setNewMessages("");
         const { data } = await axios.post(
-          " http://localhost:8200/api/v2/message/message",
+          " https://chtv2-bn.onrender.com/api/v2/message/message",
           {
             content: newMessage,
             chatId: selectedChat._id,

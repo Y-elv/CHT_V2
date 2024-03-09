@@ -22,7 +22,7 @@ const MyChats = ({ fetchAgain }) => {
       };
 
       const { data } = await axios.get(
-        "http://localhost:8200/api/v2/chat/fetch",
+        "https://chtv2-bn.onrender.com/api/v2/chat/fetch",
         config
       );
       console.log("data for chats", data);
