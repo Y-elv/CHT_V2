@@ -43,7 +43,7 @@ const GroupChatModal = ({ children }) => {
         },
       };
       const { data } = await axios.get(
-        `http://localhost:8200/api/v2/user/getUsers?search=${search}`,
+        `https://chtv2-bn.onrender.com/api/v2/user/getUsers?search=${search}`,
 
         config
       );
@@ -83,7 +83,7 @@ const GroupChatModal = ({ children }) => {
         },
       };
       const { data } = await axios.post(
-        ` http://localhost:8200/api/v2/chat/creategroup`,
+        ` https://chtv2-bn.onrender.com/api/v2/chat/creategroup`,
         {
           name: groupChatName,
           users: JSON.stringify(selectedUsers.map((u) => u._id)),

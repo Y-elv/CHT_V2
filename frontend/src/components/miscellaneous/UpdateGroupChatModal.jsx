@@ -47,7 +47,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
         },
       };
       const { data } = await axios.get(
-        `http://localhost:8200/api/v2/user/getUsers?search=${search}`,
+        `https://chtv2-bn.onrender.com/api/v2/user/getUsers?search=${search}`,
 
         config
       );
@@ -77,7 +77,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
       };
 
       const { data } = await axios.put(
-        " http://localhost:8200/api/v2/chat/grouprename",
+        " https://chtv2-bn.onrender.com/api/v2/chat/grouprename",
         {
           chatId: selectedChat._id,
           chatName: groupChatName,
@@ -135,7 +135,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
         },
       };
       const { data } = await axios.put(
-        ` http://localhost:8200/api/v2/chat/groupadd`,
+        ` https://chtv2-bn.onrender.com/api/v2/chat/groupadd`,
 
         {
           chatId: selectedChat._id,
@@ -180,7 +180,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
         },
       };
       const { data } = await axios.put(
-        ` http://localhost:8200/api/v2/chat/groupremove`,
+        ` https://chtv2-bn.onrender.com/api/v2/chat/groupremove`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
