@@ -52,7 +52,7 @@ const CalendarInput = ({professionalName, district,serviceName}) => {
   };
   
   try {
-    const user = JSON.parse(localStorage.getItem('User'));
+    const user = JSON.parse(localStorage.getItem("userInfo"));
     const token = user.token;
     console.log('token:', token);
     const response = await fetch('https://kind-fox-sweatsuit.cyclic.app/api/v1/chatapp/booking/book', {
