@@ -41,6 +41,13 @@ const Consultation = () => {
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedService, setSelectedService] = useState("");
 
+    const doctorEmails = {
+      "Dr Agarwals": "agarwals@example.com",
+      "Dr Marvin": "marvin@example.com",
+      "Dr Elvis": "mugishaelvis456@gmail.com",
+      "Dr Luke": "luke@example.com",
+    };
+
   const handleDoctorChange = (e) => {
     setSelectedDoctor(e.target.value);
   };
@@ -55,7 +62,10 @@ const Consultation = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const selectedDoctorEmail = doctorEmails[selectedDoctor];
+
     console.log("Selected Doctor:", selectedDoctor);
+    console.log("Doctor's Email:", selectedDoctorEmail);
     console.log("Selected District:", selectedDistrict);
     console.log("Selected Service:", selectedService);
     setIsCalendarOpen(true);
@@ -64,12 +74,12 @@ const Consultation = () => {
 
   return (
     <>
-    <div className="consultation-page">
-      <div className="cons-container">
-        <UserNavbar />
-        <div className="cons-middle">
-          <h2>MEET THE TEAM</h2>
-         
+      <div className="consultation-page">
+        <div className="cons-container">
+          <UserNavbar />
+          <div className="cons-middle">
+            <h2>MEET THE TEAM</h2>
+
             <Container fluid className="prof-card">
               <Row className="prof-card-up d-flex flex-wrap justify-content-center">
                 <Col xs={6} md={3}>
@@ -132,177 +142,249 @@ const Consultation = () => {
                 </p>
               </div>
             </div>
-          
+          </div>
+          <Footer className="footer" />
         </div>
-        <Footer className="footer" />
-      </div>
-       
-       {/* modal */}
-      <div className="modal">
-      
-        <Modal
-          isOpen={isModalOpen}
-          onRequestClose={closeModal}
-          style={{
-            overlay: {
-              backgroundColor: "grey",
-            
-            },
-            content: {
-              color: "black",
-              backgroundColor: "#B8C2D7",
-              height: "85vh",
-              width: "60vw",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              margin: "0 auto",
-              position: "relative",
-              
 
-            },
-            
-          }}
-         
-        >
-          <div className="layer1"style={{ position: "absolute", top: 0, left: 0 }}><img src={layer1}/></div>
-          <div className="layer2" style={{ position: "absolute", top: 20, left: 15 }}><img src={layer3} alt="Nested Image" /> </div>
-          <div className="layer3" style={{ position: "absolute",  bottom: 0, right: 0 , zIndex: 2 }}><img src={layer4} alt="Nested Image" /> </div>
-          <div className="layer4" style={{ position: "absolute",  top: "59%", right: 0, transform: "translateY(-50%)" , zIndex: 1 }}><img src={layer6} alt="Nested Image" /> </div>
-          <div className="layer5" style={{ position: "absolute",  top: 20, right: 0}}><img src={layer2} alt="Nested Image" /> </div>
-          <div className="layer8" style={{ position: "absolute",  top:-20, right: 0}}><img src={layer5} alt="Nested Image" /> </div>
+        {/* modal */}
+        <div className="modal">
+          <Modal
+            isOpen={isModalOpen}
+            onRequestClose={closeModal}
+            style={{
+              overlay: {
+                backgroundColor: "grey",
+              },
+              content: {
+                color: "black",
+                backgroundColor: "#B8C2D7",
+                height: "85vh",
+                width: "60vw",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "0 auto",
+                position: "relative",
+              },
+            }}
+          >
+            <div
+              className="layer1"
+              style={{ position: "absolute", top: 0, left: 0 }}
+            >
+              <img src={layer1} />
+            </div>
+            <div
+              className="layer2"
+              style={{ position: "absolute", top: 20, left: 15 }}
+            >
+              <img src={layer3} alt="Nested Image" />{" "}
+            </div>
+            <div
+              className="layer3"
+              style={{ position: "absolute", bottom: 0, right: 0, zIndex: 2 }}
+            >
+              <img src={layer4} alt="Nested Image" />{" "}
+            </div>
+            <div
+              className="layer4"
+              style={{
+                position: "absolute",
+                top: "59%",
+                right: 0,
+                transform: "translateY(-50%)",
+                zIndex: 1,
+              }}
+            >
+              <img src={layer6} alt="Nested Image" />{" "}
+            </div>
+            <div
+              className="layer5"
+              style={{ position: "absolute", top: 20, right: 0 }}
+            >
+              <img src={layer2} alt="Nested Image" />{" "}
+            </div>
+            <div
+              className="layer8"
+              style={{ position: "absolute", top: -20, right: 0 }}
+            >
+              <img src={layer5} alt="Nested Image" />{" "}
+            </div>
 
-          <div className="modal-content">
-           
-            <h3 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>TALK TO US</h3>
-            <p style={{ fontSize: '16px', color: '#333', marginBottom: '20px' }}>
-              One click away to meeting our best doctors and wellness experts
-            </p>
-            <p  style={{ fontSize: '18px', fontWeight: 'bold', color: '#555' }}>Experts :</p>
+            <div className="modal-content">
+              <h3
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  marginBottom: "10px",
+                }}
+              >
+                TALK TO US
+              </h3>
+              <p
+                style={{
+                  fontSize: "16px",
+                  color: "#333",
+                  marginBottom: "20px",
+                }}
+              >
+                One click away to meeting our best doctors and wellness experts
+              </p>
+              <p
+                style={{ fontSize: "18px", fontWeight: "bold", color: "#555" }}
+              >
+                Experts :
+              </p>
 
-            <form onSubmit={handleSubmit}>
-              <div className="select-form">
-                <div>
-                  <label htmlFor="doctorSelect"style={{ fontSize: '14px', color: '#666'}}>Select a Doctor:</label>
-                  <br />
-                  <select
-                    className="select"
-                    id="doctorSelect"
-                    name="doctorSelect"
-                    value={selectedDoctor}
-                    onChange={handleDoctorChange}
-                    style={{
-                      borderRadius: '5px',      // Adjust the border-radius as needed
-                      width: '150px',           // Adjust the width as needed
-                      height: '30px',
-                      color:'#666666',           // Adjust the height as needed
-                      backgroundColor: '#E8E4FF' // Adjust the background color as needed
-                    }}
-                  >
-                    <option value="Dr Agarwals">Dr Agarwals</option>
-                    <option value="Dr Marvin">Dr Marvin</option>
-                    <option value="Dr Alex<">Dr Alex</option>
-                    <option value="Dr Luke">Dr Luke </option>
-                  </select>
+              <form onSubmit={handleSubmit}>
+                <div className="select-form">
+                  <div>
+                    <label
+                      htmlFor="doctorSelect"
+                      style={{ fontSize: "14px", color: "#666" }}
+                    >
+                      Select a Doctor:
+                    </label>
+                    <br />
+                    <select
+                      className="select"
+                      id="doctorSelect"
+                      name="doctorSelect"
+                      value={selectedDoctor}
+                      onChange={handleDoctorChange}
+                      style={{
+                        borderRadius: "5px", // Adjust the border-radius as needed
+                        width: "150px", // Adjust the width as needed
+                        height: "30px",
+                        color: "#666666", // Adjust the height as needed
+                        backgroundColor: "#E8E4FF", // Adjust the background color as needed
+                      }}
+                    >
+                      <option value="Dr Agarwals">Dr Agarwals</option>
+                      <option value="Dr Marvin">Dr Marvin</option>
+                      <option value="Dr Elvis">Dr Elvis</option>
+                      <option value="Dr Luke">Dr Luke </option>
+                    </select>
+                    <input
+                      type="hidden"
+                      id="doctorEmail"
+                      name="doctorEmail"
+                      value={doctorEmails[selectedDoctor] || ""}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="districtSelect"
+                      style={{ fontSize: "14px", color: "#666" }}
+                    >
+                      Select a District:
+                    </label>
+                    <br />
+                    <select
+                      className="select"
+                      id="districtSelect"
+                      name="districtSelect"
+                      value={selectedDistrict}
+                      onChange={handleDistrictChange}
+                      style={{
+                        borderRadius: "5px", // Adjust the border-radius as needed
+                        width: "150px", // Adjust the width as needed
+                        height: "30px",
+                        color: "#666666", // Adjust the height as needed
+                        backgroundColor: "#E8E4FF", // Adjust the background color as needed
+                      }}
+                    >
+                      <option value="Kicukiro">Kicukiro</option>
+                      <option value="Gasabo">Gasabo</option>
+                      <option value="Nyarugenge">Nyarugenge</option>
+                      <option value="Karongi">Karongi</option>
+                      <option value="Kirehe">Kirehe</option>
+                      <option value="Bugesera">Bugesera</option>
+                      <option value="Burera">Burera</option>
+                      <option value="Nyanza">Nyanza</option>
+                      <option value="Rubavu">Rubavu</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="serviceSelect"
+                      style={{ fontSize: "14px", color: "#666" }}
+                    >
+                      Select a Service:
+                    </label>
+                    <br />
+                    <select
+                      className="select"
+                      id="serviceSelect"
+                      name="serviceSelect"
+                      value={selectedService}
+                      onChange={handleServiceChange}
+                      style={{
+                        borderRadius: "5px", // Adjust the border-radius as needed
+                        width: "150px", // Adjust the width as needed
+                        height: "30px",
+                        color: "#666666", // Adjust the height as needed
+                        backgroundColor: "#E8E4FF", // Adjust the background color as needed
+                      }}
+                    >
+                      <option value="Counseling and Therapy">Abortion</option>
+                      <option value="Sexual advices">Sexual advices</option>
+                      <option value="Mental Health">Mental Health</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label htmlFor="districtSelect"style={{ fontSize: '14px', color: '#666'}}>Select a District:</label>
-                  <br />
-                  <select
-                    className="select"
-                    id="districtSelect"
-                    name="districtSelect"
-                    value={selectedDistrict}
-                    onChange={handleDistrictChange}
-                    style={{
-                      borderRadius: '5px',      // Adjust the border-radius as needed
-                      width: '150px',           // Adjust the width as needed
-                      height: '30px',
-                      color:'#666666',           // Adjust the height as needed
-                      backgroundColor: '#E8E4FF' // Adjust the background color as needed
-                    }}
-                  >
-                    <option value="Kicukiro">Kicukiro</option>
-                    <option value="Gasabo">Gasabo</option>
-                    <option value="Nyarugenge">Nyarugenge</option>
-                    <option value="Karongi">Karongi</option>
-                    <option value="Kirehe">Kirehe</option>
-                    <option value="Bugesera">Bugesera</option>
-                    <option value="Burera">Burera</option>
-                    <option value="Nyanza">Nyanza</option>
-                    <option value="Rubavu">Rubavu</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="serviceSelect" style={{ fontSize: '14px', color: '#666'}}>Select a Service:</label>
-                  <br />
-                  <select
-                    className="select"
-                    id="serviceSelect"
-                    name="serviceSelect"
-                    value={selectedService}
-                    onChange={handleServiceChange}
-                    style={{
-                      borderRadius: '5px',      // Adjust the border-radius as needed
-                      width: '150px',           // Adjust the width as needed
-                      height: '30px',
-                      color:'#666666',           // Adjust the height as needed
-                      backgroundColor: '#E8E4FF' // Adjust the background color as needed
-                    }}
-                  >
-                    <option value="Counseling and Therapy">
-                      Abortion 
-                    </option>
-                    <option value="Sexual advices">Sexual advices</option>
-                    <option value="Mental Health">Mental Health</option>
-                  </select>
-                </div>
-              </div>
-              <br />
-              <button type="submit" value="Submit" className="btn-continue ">
-                continue
-              </button>
-            </form>
-
-          </div>
-        </Modal>
-      </div>
-      <div className="pop-calendar">
-        <Modal
-          isOpen={isCalendarOpen}
-          onRequestClose={closeCalendar}
-          style={{
-            overlay: {
-              backgroundColor: "grey",
-            },
-            content: {
-              color: "black",
-              backgroundColor: "#B8C2D7",
-              height: "80vh",
-              width: "65vw",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              margin: "0 auto",
-              fontSize: "14px",
-              position: "relative",
-              
-
-            },
-          }}
-        >
-          <div className="layer6" style={{ position: "absolute",  top: -9, left: 350}}><img src={layer5} alt="Nested Image" /> </div>
-          <div className="layer7" style={{ position: "absolute",  top: 20, right: 0}}><img src={layer2} alt="Nested Image" /> </div>
-          <div className="calendar">
-            <Calendar
-              professionalName={selectedDoctor}
-              district={selectedDistrict}
-              serviceName={selectedService}
-            />
-          </div>
-        </Modal>
-      </div>
+                <br />
+                <button type="submit" value="Submit" className="btn-continue ">
+                  continue
+                </button>
+              </form>
+            </div>
+          </Modal>
+        </div>
+        <div className="pop-calendar">
+          <Modal
+            isOpen={isCalendarOpen}
+            onRequestClose={closeCalendar}
+            style={{
+              overlay: {
+                backgroundColor: "grey",
+              },
+              content: {
+                color: "black",
+                backgroundColor: "#B8C2D7",
+                height: "80vh",
+                width: "65vw",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                margin: "0 auto",
+                fontSize: "14px",
+                position: "relative",
+              },
+            }}
+          >
+            <div
+              className="layer6"
+              style={{ position: "absolute", top: -9, left: 350 }}
+            >
+              <img src={layer5} alt="Nested Image" />{" "}
+            </div>
+            <div
+              className="layer7"
+              style={{ position: "absolute", top: 20, right: 0 }}
+            >
+              <img src={layer2} alt="Nested Image" />{" "}
+            </div>
+            <div className="calendar">
+              <Calendar
+                professionalName={selectedDoctor}
+                district={selectedDistrict}
+                serviceName={selectedService}
+              />
+            </div>
+          </Modal>
+        </div>
       </div>
     </>
   );

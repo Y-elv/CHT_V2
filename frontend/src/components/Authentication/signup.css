@@ -24,3 +24,26 @@
 
 
 }
+
+@media screen and (max-width:1000px) {
+    .signup-container {
+        align-items: center; 
+    }
+    .register-class{
+        width: 100vw !important;
+        
+    }
+}
+
+@media screen and (max-width:856px) {
+    .signup-container{
+        align-items: center; 
+    }
+    .register-class{
+        width: 100vw !important;
+        
+    }
+    .box-register{
+        width: 80vw !important;
+    }
+}

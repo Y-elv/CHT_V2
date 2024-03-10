@@ -108,13 +108,27 @@ height: 100vh;
      
 }
 
-.profile-image-container {
+.profile-image-container  {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 1rem;
+   
+
+    
+
+  }
+
+  .profile-image-container img {
+    
+    gap: 1rem;
+   
+    width: 8vw;
+    height: 17vh;
+    border-radius:50%;
+
     
 
   }
@@ -151,6 +165,31 @@ height: 100vh;
     justify-content: center;
   }
 
+   @media screen and (max-width:1118px){
+    .profile-right{
+       
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      
+    }
+  
+      .profile-image-container img {
+    
+    gap: 1rem;
+    
+    width: 25vw;
+    height: 17vh;
+    border-radius:50%;
+
+    
+
+  }
+    
+    
+  }
+
   @media screen and (max-width:768px){
     .profile-right{
        
@@ -171,6 +210,18 @@ height: 100vh;
         
      
     }
+
+      .profile-image-container img {
+    
+    gap: 1rem;
+    
+    width: 30vw;
+    height: 17vh;
+    border-radius:50%;
+
+    
+
+  }
     
     
   }

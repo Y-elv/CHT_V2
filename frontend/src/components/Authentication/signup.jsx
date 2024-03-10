@@ -165,6 +165,7 @@ const Signup = () => {
         height="90vh"
         alignItems="center"
         justifyContent="center"
+        className="register-class"
       >
         <Box
           spacing="5px"
@@ -175,6 +176,7 @@ const Signup = () => {
           width="25vw"
           height="70vh"
           gap="3"
+          className="box-register"
         >
           <Image src={logo} alt="Logo" w="150px" h="auto" mb="-3" />
           <div className="signup-text">SignUp</div>

@@ -86,6 +86,7 @@ const Login = () => {
         height="90vh"
         alignItems="center"
         justifyContent="center"
+        className="login-class"
       >
         <Box
           spacing="5px"
@@ -96,6 +97,7 @@ const Login = () => {
           width="25vw"
           height="70vh"
           gap="3"
+          className="box-login"
         >
           <Image src={logo} alt="Logo" w="150px" h="auto" mb="-3" />
           <div className="signin-text">SignIn</div>

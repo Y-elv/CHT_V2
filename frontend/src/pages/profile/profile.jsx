@@ -7,17 +7,15 @@ import notification from "../../assets/notification.png";
 import menu from "../../assets/menu.png";
 import gameIcon from "../../assets/gameIcon.png";
 import logoutcurve from "../../assets/logoutcurve.png";
-import profileAvatar from "../../assets/Profavatar.svg";
+
 import { ChatState } from "../../components/Context/chatProvider";
 import { useContext, useState, useEffect } from "react";
 import ProfileNavbar from "../../components/profileNavbar/profileNavbar";
 import { Dropdown, Space, Menu } from "antd";
 
-
-
 const Profile = () => {
   const { user, logoutHandler } = ChatState();
-
+  console.log("User in Profile:", user);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -50,34 +48,17 @@ const Profile = () => {
 
   const items = [
     {
-      key: '1',
-      label: (
-        <Link to="/services">
-          Counseling and Therapy
-        </Link>
-      ),
-    
-     
+      key: "1",
+      label: <Link to="/services">Counseling and Therapy</Link>,
     },
     {
-      key: '2',
-      label: (
-        <Link to="/services">
-         Mental Health
-        </Link>
-      ),
-     
+      key: "2",
+      label: <Link to="/services">Mental Health</Link>,
     },
     {
-      key: '3',
-      label: (
-        <Link to="/services">
-         Sexual Advices 
-        </Link>
-      ),
-    
+      key: "3",
+      label: <Link to="/services">Sexual Advices</Link>,
     },
-  
   ];
 
   return (
@@ -90,26 +71,31 @@ const Profile = () => {
             <div className="user-box-container">
               <div className="user-box">
                 <div className="profile-image-container">
-                  {user && (
-                    <>
-                      {console.log("User profile picture:", user?.pic)}
-                      <img src={user?.pic} onClick={handleImageClick} />
-                    </>
-                  )}
+                  <div>
+                    {user && (
+                      <>
+                        {console.log("User profile picture:", user?.pic)}
+                        <img src={user.pic} onClick={handleImageClick} />
+                      </>
+                    )}
 
-                  {isPopupOpen && (
-                    <div className="popup">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                      />
-                      <button onClick={handlePopupClose}>Close</button>
-                    </div>
-                  )}
-                  {user && (
-                    <div className="username-sec">Welcome {user?.name}</div>
-                  )}
+                    {isPopupOpen && (
+                      <div className="popup">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                        />
+                        <button onClick={handlePopupClose}>Close</button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    {user && (
+                      <div className="username-sec">Welcome {user?.name}</div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -200,24 +186,31 @@ const Profile = () => {
             <div className="user-box-container">
               <div className="user-box">
                 <div className="profile-image-container">
-                  <img
-                    src={selectedImage || profileAvatar}
-                    className="profile-img"
-                    onClick={handleImageClick}
-                  />
-                  {isPopupOpen && (
-                    <div className="popup">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                      />
-                      <button onClick={handlePopupClose}>Close</button>
-                    </div>
-                  )}
-                  {user && (
-                    <div className="username-sec">Welcome {user?.name}</div>
-                  )}
+                  <div>
+                    {user && (
+                      <>
+                        {console.log("User profile picture:", user?.pic)}
+                        <img src={user.pic} onClick={handleImageClick} />
+                      </>
+                    )}
+
+                    {isPopupOpen && (
+                      <div className="popup">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                        />
+                        <button onClick={handlePopupClose}>Close</button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    {user && (
+                      <div className="username-sec">Welcome {user?.name}</div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

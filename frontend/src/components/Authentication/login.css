@@ -8,11 +8,11 @@
     background-position: center;
     background-repeat: no-repeat;
     height: 100vh;
-    /* Set the height of the background to cover the entire viewport */
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     justify-content: center;
+    
 }
 .signin-text {
     font-size: 20px;
@@ -22,4 +22,27 @@ color: white;
     
   
     
+}
+
+@media screen and (max-width:1000px) {
+    .login-container {
+        align-items: center; 
+    }
+    .login-class{
+        width: 100vw !important;
+        
+    }
+}
+
+@media screen and (max-width:856px) {
+    .login-container {
+        align-items: center; 
+    }
+    .login-class{
+        width: 100vw !important;
+        
+    }
+    .box-login{
+        width: 80vw !important;
+    }
 }

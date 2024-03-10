@@ -2,7 +2,7 @@ import "./userNavbar.css";
 import logo from "../../assets/LOGO FULL.png";
 import { Link } from "react-router-dom";
 import OffCanvasButton from "../../components/offCanvas";
-import profileAvatar from "../../assets/Profavatar.svg";
+
 import { Dropdown, Space, Menu } from "antd";
 import  {ChatState}  from "../../components/Context/chatProvider";
 const UserNavbar = () => {

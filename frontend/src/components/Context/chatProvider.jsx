@@ -9,18 +9,31 @@ const ChatProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+ useEffect(() => {
+    console.log("ChatProvider useEffect triggered");
+   const fetchData = async () => {
+     try {
+       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+       console.log("User Info from localStorage:", userInfo);
 
-    if (!userInfo) {
-      navigate("/home");
-    } else {
-      setUser(userInfo);
-    }
-  }, []);
+       if (!userInfo) {
+         navigate("/home");
+       } else {
+         setUser(userInfo);
+       }
+     } catch (error) {
+       console.error("Error parsing user information", error);
+       
+     }
+   };
+
+   fetchData(); 
+ }, []);
+
 
     const logoutHandler = () => {
       localStorage.removeItem("userInfo");
+      setUser(null);
       navigate("/login");
     };
 

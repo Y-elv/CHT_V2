@@ -1,7 +1,7 @@
 import "./menu.css"
 import logo from "../../assets/LOGO FULL.png"
 import { Link } from "react-router-dom";
-import profileAvatar from "../../assets/Profavatar.svg"
+
 const Menu = () => {
     return ( 
         <>

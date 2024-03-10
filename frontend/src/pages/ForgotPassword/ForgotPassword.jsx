@@ -87,6 +87,7 @@ const ForgotPassword = () => {
         height="90vh"
         alignItems="center"
         justifyContent="center"
+        className="forgot-class"
       >
         <Box
           spacing="5px"
@@ -97,6 +98,7 @@ const ForgotPassword = () => {
           width="25vw"
           height="70vh"
           gap="3"
+          className="box-forgot"
         >
           <Image src={logo} alt="Logo" w="150px" h="auto" mb="4" />
           <div className="forgot-text">Forget Password</div>

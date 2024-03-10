@@ -175,8 +175,8 @@ const CalendarInput = ({professionalName, district,serviceName}) => {
       },
     }}
     >
-    <p> Hoolay !!
-Your meet up request has been received. Check your email for confirmation</p>
+    <p style="font-size: small;"> Hoolay !!
+Your meet up request has been received And Your daoctor has Been notified. Check your email for confirmation</p>
     </Modal>
     </>
   );
