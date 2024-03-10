@@ -75,7 +75,10 @@ const Profile = () => {
                     {user && (
                       <>
                         {console.log("User profile picture:", user?.pic)}
-                        <img src={user.pic} onClick={handleImageClick} />
+                        <img
+                          src={selectedImage || user.pic}
+                          onClick={handleImageClick}
+                        />
                       </>
                     )}
 
@@ -190,7 +193,10 @@ const Profile = () => {
                     {user && (
                       <>
                         {console.log("User profile picture:", user?.pic)}
-                        <img src={user.pic} onClick={handleImageClick} />
+                        <img
+                          src={selectedImage || user.pic}
+                          onClick={handleImageClick}
+                        />
                       </>
                     )}
 
