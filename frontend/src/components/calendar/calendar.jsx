@@ -62,7 +62,7 @@ const CalendarInput = ({
       const token = user.token;
       console.log("token:", token);
       const response = await axios.post(
-        "https://kind-fox-sweatsuit.cyclic.app/api/v1/chatapp/booking/book",
+        "https://chtv2-bn.onrender.com/api/v2/user/booking",
         requestBody,
         {
           headers: {
