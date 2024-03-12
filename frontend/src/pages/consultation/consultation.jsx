@@ -381,6 +381,7 @@ const Consultation = () => {
                 professionalName={selectedDoctor}
                 district={selectedDistrict}
                 serviceName={selectedService}
+                doctorEmail={doctorEmails[selectedDoctor]}
               />
             </div>
           </Modal>

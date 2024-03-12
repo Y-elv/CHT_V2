@@ -29,54 +29,7 @@ const Signup = () => {
   const history = useNavigate();
 
   const handleClick = () => SetShow(!show);
-  //  const postDetails = (pics) => {
-  //    setLoading(true);
 
-  //    if (pics === undefined) {
-  //      toast({
-  //        title: "Please select Image!",
-  //        status: "warning",
-  //        duration: 5000,
-  //        isClosable: true,
-  //        position: "bottom",
-  //      });
-  //      return;
-  //    }
-
-  //    if (pics.type === "image/jpeg" || pics.type === "image/png") {
-  //      const data = new FormData();
-  //      data.append("file", pics);
-  //      data.append("upload_preset", "chat-app");
-  //      data.append("cloud_name", "dmzieqsir");
-
-  //      fetch("https://api.cloudinary.com/v1_1/dmzieqsir/image/upload", {
-  //        method: "post",
-  //        body: data,
-  //      })
-  //        .then((res) => res.json())
-  //        .then((data) => {
-  //          setPic(data.url.toString());
-  //          setLoading(false);
-  //        })
-  //        .catch((err) => {
-  //          console.log(err);
-  //          setLoading(false);
-
-  //          console.log("Image URL:", data.url);
-  //        });
-  //    }
-  //    else{
-  //       toast({
-  //         title: "Please select Image!",
-  //         status: "warning",
-  //         duration: 5000,
-  //         isClosable: true,
-  //         position: "bottom",
-  //       });
-  //       setLoading(false)
-  //       return;
-  //    }
-  //  };
 
   const submitHandler = async () => {
     setLoading(true);
@@ -211,15 +164,7 @@ const Signup = () => {
             </InputGroup>
           </FormControl>
 
-          {/* <FormControl>
-          <FormLabel>Upload your picture</FormLabel>
-          <Input
-            type="file"
-            p={1.5}
-            accept="image/*"
-            onChange={(e) => postDetails(e.target.files[0])}
-          />
-        </FormControl> */}
+       
 
           <Button
             onClick={submitHandler}
