@@ -7,11 +7,11 @@ import notification from "../../assets/notification.png";
 import menu from "../../assets/menu.png";
 import gameIcon from "../../assets/gameIcon.png";
 import logoutcurve from "../../assets/logoutcurve.png";
-
 import { ChatState } from "../../components/Context/chatProvider";
 import { useContext, useState, useEffect } from "react";
 import ProfileNavbar from "../../components/profileNavbar/profileNavbar";
 import { Dropdown, Space, Menu } from "antd";
+import { useToast } from "@chakra-ui/react";
 
 const Profile = () => {
   const { user, logoutHandler } = ChatState();
@@ -19,6 +19,9 @@ const Profile = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const [pic, setPic] = useState();
 
   const handleImageClick = () => {
     setIsPopupOpen(true);
@@ -28,59 +31,104 @@ const Profile = () => {
     setIsPopupOpen(false);
   };
 
-   const postDetails = (pics) => {
-     setLoading(true);
+  const postDetails = async (pics) => {
+    setLoading(true);
 
-     if (pics === undefined) {
-       toast({
-         title: "Please select Image!",
-         status: "warning",
-         duration: 5000,
-         isClosable: true,
-         position: "bottom",
-       });
-       return;
-     }
+    if (!pics) {
+      toast({
+        title: "Please select an image!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
 
-     if (pics.type === "image/jpeg" || pics.type === "image/png") {
-       const data = new FormData();
-       data.append("file", pics);
-       data.append("upload_preset", "chat-app");
-       data.append("cloud_name", "dmzieqsir");
+    if (pics.type !== "image/jpeg" && pics.type !== "image/png") {
+      toast({
+        title: "Please select a valid image (JPEG or PNG)!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
 
-       fetch("https://api.cloudinary.com/v1_1/dmzieqsir/image/upload", {
-         method: "post",
-         body: data,
-       })
-         .then((res) => res.json())
-         .then((data) => {
-           setPic(data.url.toString());
-           setLoading(false);
-         })
-         .catch((err) => {
-           console.log(err);
-           setLoading(false);
+    const data = new FormData();
+    data.append("file", pics);
+    data.append("upload_preset", "chat-app");
+    data.append("cloud_name", "dmzieqsir");
 
-           console.log("Image URL:", data.url);
-         });
-     }
-     else{
-        toast({
-          title: "Please select Image!",
-          status: "warning",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom",
-        });
-        setLoading(false)
-        return;
-     }
-   };
+    try {
+      const user = JSON.parse(localStorage.getItem("userInfo"));
+      const token = user.token;
+      const cloudinaryResponse = await fetch(
+        "https://api.cloudinary.com/v1_1/dmzieqsir/image/upload",
+        {
+          method: "post",
+          body: data,
+        }
+      );
+
+      const cloudinaryData = await cloudinaryResponse.json();
+      console.log("Image URL:", cloudinaryData.url);
+
+      const updateApiUrl =
+        "https://chtv2-bn.onrender.com/api/v2/user/updateProfile";
+
+      const updateApiResponse = await fetch(updateApiUrl, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify({ pic: cloudinaryData.url }),
+      });
+
+      const updateApiData = await updateApiResponse.json();
+
+      console.log("Update API Response:", updateApiData);
+
+      localStorage.setItem(
+        "userInfo",
+        JSON.stringify({
+          ...user,
+          pic: cloudinaryData.url,
+        })
+      );
+
+       await setPic(cloudinaryData.url.toString());
+
+      toast({
+        title: "Image uploaded successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        title: "An error occurred while uploading the image.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+    }
+  };
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
-    setSelectedImage(URL.createObjectURL(file));
-    setIsPopupOpen(false);
+    console.log("here is the file", file);
+    setSelectedImage(file);
   };
 
   useEffect(() => {
@@ -125,7 +173,7 @@ const Profile = () => {
                       <>
                         {console.log("User profile picture:", user?.pic)}
                         <img
-                          src={selectedImage || user.pic}
+                          src={selectedImage ? selectedImage : user.pic}
                           onClick={handleImageClick}
                         />
                       </>
@@ -133,11 +181,11 @@ const Profile = () => {
 
                     {isPopupOpen && (
                       <div className="popup">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                        />
+                        <input type="file" onChange={handleImageUpload} />
+                        <button onClick={() => postDetails(selectedImage)}>
+                          Upload
+                        </button>
+                        <span style={{ margin: "0 4px" }}></span>
                         <button onClick={handlePopupClose}>Close</button>
                       </div>
                     )}
@@ -243,7 +291,7 @@ const Profile = () => {
                       <>
                         {console.log("User profile picture:", user?.pic)}
                         <img
-                          src={selectedImage || user.pic}
+                          src={selectedImage ? selectedImage : user.pic}
                           onClick={handleImageClick}
                         />
                       </>
@@ -251,11 +299,11 @@ const Profile = () => {
 
                     {isPopupOpen && (
                       <div className="popup">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                        />
+                        <input type="file" onChange={handleImageUpload} />
+                        <button onClick={() => postDetails(selectedImage)}>
+                          Upload
+                        </button>
+                        <span style={{ margin: "0 4px" }}></span>
                         <button onClick={handlePopupClose}>Close</button>
                       </div>
                     )}

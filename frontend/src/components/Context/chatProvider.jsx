@@ -30,6 +30,10 @@ const ChatProvider = ({ children }) => {
    fetchData(); 
  }, []);
 
+  const updateUser = (newUser) => {
+    setUser(newUser);
+  };
+
 
     const logoutHandler = () => {
       localStorage.removeItem("userInfo");
@@ -39,7 +43,7 @@ const ChatProvider = ({ children }) => {
 
   const contextValue = {
     user,
-    setUser,
+    setUser: updateUser,
     selectedChat,
     setSelectedChat,
     chats,
