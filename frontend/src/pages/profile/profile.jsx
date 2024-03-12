@@ -104,7 +104,7 @@ const Profile = () => {
        await setPic(cloudinaryData.url.toString());
 
       toast({
-        title: "Image uploaded successfully!",
+        title: "Profile picture updated!",
         status: "success",
         duration: 5000,
         isClosable: true,
