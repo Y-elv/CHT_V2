@@ -72,7 +72,7 @@ const CalendarInput = ({
         }
       );
 
-    if (response.status === 200) {
+    if (response.status >= 200 && response.status < 300) {
       console.log("Booking successful:", response.data);
       setSelectedDays([]);
       setSelectedTime("");
@@ -184,8 +184,8 @@ const CalendarInput = ({
           },
         }}
       >
-        <p style="font-size: small;">
-          {" "}
+        <p style={{ fontSize: "small" }}>
+          
           Hoolay !! Your meet up request has been received And Your daoctor has
           Been notified. Check your email for confirmation
         </p>
