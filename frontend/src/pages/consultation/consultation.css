@@ -116,7 +116,6 @@ form {
   flex-direction: column;
   justify-content: center;
   top: 5%;
-  
 }
 
 .btn-kh {
@@ -174,6 +173,18 @@ form {
 .calendar {
   height: 60vh;
   width: 55vw;
+}
+.layer9 input[type="image"] {
+  position: absolute;
+  bottom: -60%;
+  right: 30px;
+  transform: translateY(-50%);
+  z-index: 2;
+  transition: transform 0.3s ease-in-out; 
+}
+
+.layer9 input[type="image"]:hover {
+  transform: translateY(-50%) scale(1.1); 
 }
 
 @media screen and (max-width: 768px) {

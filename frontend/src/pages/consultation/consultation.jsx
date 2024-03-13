@@ -22,6 +22,7 @@ import juanita from "../../assets/juanita.png";
 import cooper from "../../assets/cooper.png";
 import kenny from "../../assets/kenny.png";
 import karenera from "../../assets/karenera.png";
+import submit from "../../assets/submit.png"
 const Consultation = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -218,7 +219,6 @@ const Consultation = () => {
                   fontSize: "24px",
                   fontWeight: "bold",
                   marginBottom: "10px",
-                  
                 }}
               >
                 TALK TO US
@@ -336,9 +336,18 @@ const Consultation = () => {
                   </div>
                 </div>
                 <br />
-                <button type="submit" value="Submit" className="btn-continue ">
-                  continue
-                </button>
+
+                <div
+                className="layer9"
+                >
+                  <input
+                    type="image"
+                    src={submit}
+                    alt="Submit"
+                    
+                    
+                  />
+                </div>
               </form>
             </div>
           </Modal>
