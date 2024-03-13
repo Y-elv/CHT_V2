@@ -12,6 +12,7 @@ import {
   Spinner,
   Flex,
 } from "@chakra-ui/react";
+import './SideDrawer.css'
 
 import { Text } from "@chakra-ui/layout";
 import React, { useState } from "react";
@@ -138,21 +139,20 @@ const SideDrawer = () => {
         borderWidth="5px"
       >
         <Tooltip label="Search users to chat" hasArrow placement="bottom-end">
-          <Flex alignItems="center">
-            <Button
-              variant="ghost"
-              onClick={onOpen}
-              display="flex"
-              flexDirection="row"
-              alignItems="center"
-              
-            >
-              <i className="fas fa-search"></i>
-              <Text display={{ base: "none", md: "flex" }} px="4">
-                Search User
-              </Text>
-            </Button>
-          </Flex>
+          <Button
+            variant="ghost"
+            onClick={onOpen}
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            className="icon-text"
+           
+          >
+            <i className="fas fa-search"></i>
+            <Text display={{ base: "none", md: "flex" }} px="4">
+              Search User
+            </Text>
+          </Button>
         </Tooltip>
       </Box>
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
