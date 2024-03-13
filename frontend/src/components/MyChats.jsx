@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChatState } from "./Context/chatProvider";
-import { Box, Button, Stack, useToast } from "@chakra-ui/react";
+import { Box, Button, Stack, useToast, Avatar } from "@chakra-ui/react";
 import axios from "axios";
 import { Text } from "@chakra-ui/layout";
 import { AddIcon } from "@chakra-ui/icons";
@@ -98,7 +98,16 @@ const MyChats = ({ fetchAgain }) => {
                 px={3}
                 py={2}
                 borderRadius="lg"
+                display="flex"
+                alignItems="center"
               >
+                <Avatar
+                  mr={2}
+                  size="sm"
+                  cursor="pointer"
+                  name={user.name}
+                  src={user.pic}
+                />
                 <Text>
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users)
