@@ -182,6 +182,7 @@ const LandingPage = () => {
                     padding: "8px",
                     fontSize: "16px",
                     background: "#E4EAFC",
+                    marginBottom: "5px",
                   }}
                   placeholder="Company Name"
                   name="companyName"
@@ -197,6 +198,7 @@ const LandingPage = () => {
                     padding: "8px",
                     fontSize: "16px",
                     background: "#E4EAFC",
+                    marginBottom: "5px",
                   }}
                   placeholder="street"
                   name="street"
@@ -212,6 +214,7 @@ const LandingPage = () => {
                     padding: "8px",
                     fontSize: "16px",
                     background: "#E4EAFC",
+                    marginBottom: "5px",
                   }}
                   placeholder="Contact Phone"
                   name="phone"
@@ -227,6 +230,7 @@ const LandingPage = () => {
                     padding: "8px",
                     fontSize: "16px",
                     background: "#E4EAFC",
+                    marginBottom: "5px",
                   }}
                   placeholder="E-mail"
                   name="email"
@@ -242,6 +246,7 @@ const LandingPage = () => {
                     padding: "8px",
                     fontSize: "16px",
                     background: "#E4EAFC",
+                    marginBottom: "10px",
                   }}
                   placeholder="Let's talk about your idea"
                   name="idea"
@@ -258,6 +263,7 @@ const LandingPage = () => {
                     onChange={handleChange}
                     style={{
                       padding: "10px",
+                      marginBottom: "15px",
                     }}
                   />
                   Agree and Continue
