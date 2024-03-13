@@ -175,18 +175,19 @@ const CalendarInput = ({
           content: {
             color: "black",
             backgroundColor: "#B8C2D7",
-            height: "55vh",
-            width: "80vw",
+            height: "50vh",
+            width: "95vw",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+            top: "20%",
+            right: "50%",
           },
         }}
       >
-        <p style={{ fontSize: "small" }}>
-          
-          Hoolay !! Your meet up request has been received And Your daoctor has
+        <p style={{ fontSize: "medium" }}>
+          Hoolay !! Your meet up request has been received And Your doctor has
           Been notified. Check your email for confirmation
         </p>
       </Modal>

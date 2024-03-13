@@ -11,10 +11,113 @@ import card6 from "../../assets/card6.png";
 import PhotoCard from "../../components/photoCard/photoCard";
 import Slideshow from "../../components/carouselCard/carouselcard";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useToast } from "@chakra-ui/react";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const toast = useToast();
+
+  const [formData, setFormData] = useState({
+    companyName: "",
+    street: "",
+    phone: "",
+    email: "",
+    idea: "",
+    agree: false,
+  });
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    console.log("Form Data:", formData);
+
+    if (
+      !formData.companyName ||
+      !formData.street ||
+      !formData.phone ||
+      !formData.email ||
+      !formData.idea
+    ) {
+      toast({
+        title: "Please fill in all fields",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Invalid email format",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    if (!formData.agree) {
+      toast({
+        title: "Please agree to the terms",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    try {
+      
+      const response = await axios.post(
+        " https://chtv2-bn.onrender.com/api/v2/user/getInTouch",
+        formData
+      );
+
+      
+      setFormData({
+        companyName: "",
+        street: "",
+        phone: "",
+        email: "",
+        idea: "",
+        agree: false,
+      });
+
+      console.log("response",response)
+      toast({
+        title: "Form submitted successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    } catch (error) {
+      
+      console.error("Request failed:", error);
+      toast({
+        title: "Error submitting the form",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+  };
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
 
@@ -65,11 +168,11 @@ const LandingPage = () => {
                 position: "relative",
                 display: "flex",
                 flexDirection: "column",
-               
+
                 height: "100vh",
               }}
             >
-              <form>
+              <form onSubmit={handleSubmit}>
                 <input
                   type="text"
                   style={{
@@ -81,6 +184,9 @@ const LandingPage = () => {
                     background: "#E4EAFC",
                   }}
                   placeholder="Company Name"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
                 />
                 <input
                   type="text"
@@ -93,6 +199,9 @@ const LandingPage = () => {
                     background: "#E4EAFC",
                   }}
                   placeholder="street"
+                  name="street"
+                  value={formData.street}
+                  onChange={handleChange}
                 />
                 <input
                   type="text"
@@ -105,6 +214,9 @@ const LandingPage = () => {
                     background: "#E4EAFC",
                   }}
                   placeholder="Contact Phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                 />
                 <input
                   type="text"
@@ -117,6 +229,9 @@ const LandingPage = () => {
                     background: "#E4EAFC",
                   }}
                   placeholder="E-mail"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
                 <input
                   type="text"
@@ -129,19 +244,25 @@ const LandingPage = () => {
                     background: "#E4EAFC",
                   }}
                   placeholder="Let's talk about your idea"
+                  name="idea"
+                  value={formData.idea}
+                  onChange={handleChange}
                 />
-                
+
                 <label>
                   <input
                     type="checkbox"
                     className="checkbox"
+                    name="agree"
+                    checked={formData.agree}
+                    onChange={handleChange}
                     style={{
                       padding: "10px",
                     }}
                   />
                   Agree and Continue
                 </label>
-                
+
                 <button className="btn-contact" type="submit">
                   Submit
                 </button>

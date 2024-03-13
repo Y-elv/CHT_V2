@@ -218,6 +218,7 @@ const Consultation = () => {
                   fontSize: "24px",
                   fontWeight: "bold",
                   marginBottom: "10px",
+                  
                 }}
               >
                 TALK TO US
