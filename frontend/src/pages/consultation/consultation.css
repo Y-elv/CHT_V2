@@ -27,12 +27,7 @@
   gap: 15rem;
   align-items: center;
 }
-.btn-kh {
-  border-radius: 3px;
-  padding: 3px;
-  color: #2c17ae;
-  background-color: #cedafa;
-}
+
 .cons-about {
   border: 8px solid #ffffff;
   background-color: #ffffff;
@@ -121,12 +116,16 @@ form {
 .btn-kh {
   border: 2px solid #2c17ae;
   color: #2c17ae;
-  width: 8vw;
-  padding: 5px 5px;
+  width: 100%; 
+  max-width: 200px; 
+  padding: 10px 20px; 
+  border-radius: 5px; 
+  font-size: 1rem; 
 }
 
+
 .btn-kh:hover {
-  border: 2px solid #f3931e;
+  border-color: #f3931e;
   color: #f3931e;
 }
 
