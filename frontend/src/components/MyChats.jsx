@@ -57,7 +57,7 @@ const MyChats = ({ fetchAgain }) => {
       <Box
         pb={3}
         px={3}
-        fontSize={{ base: "28px", md: "30px" }}
+        fontSize={{ base: "22px", md: "28px", lg: "30px" }}
         fontFamily="Work sans"
         display="flex"
         w="100%"
@@ -68,7 +68,7 @@ const MyChats = ({ fetchAgain }) => {
         <GroupChatModal>
           <Button
             display="flex"
-            fontSize={{ base: "17px", md: "10px", lg: "17px" }}
+            fontSize={{ base: "14px", md: "17px", lg: "17px" }}
             rightIcon={<AddIcon />}
           >
             New Group Chat
@@ -101,7 +101,6 @@ const MyChats = ({ fetchAgain }) => {
                 display="flex"
                 alignItems="center"
               >
-                
                 <Text>
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users)
