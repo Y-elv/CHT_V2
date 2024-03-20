@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./calendar.css";
 import Modal from "react-modal";
 import axios from "axios"
+import submit from "../../assets/submit.png";
 
 Modal.setAppElement("#root");
 
@@ -159,8 +160,19 @@ const CalendarInput = ({
               onChange={handleTimeChange}
             />
           </label>
-          <button type="submit" value="Submit" className="btn-confirm">
-            Confirm
+          <button
+            type="submit"
+            value="Submit"
+            className="btn-confirm"
+            
+          >
+            <span className="btn-text">Confirm</span>
+            <img
+              src={submit}
+              alt="Submit"
+              className="submit-image"
+              
+            />
           </button>
         </div>
       </form>

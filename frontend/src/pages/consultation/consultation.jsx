@@ -255,11 +255,11 @@ const Consultation = () => {
                       value={selectedDoctor}
                       onChange={handleDoctorChange}
                       style={{
-                        borderRadius: "5px", // Adjust the border-radius as needed
-                        width: "150px", // Adjust the width as needed
+                        borderRadius: "5px", 
+                        width: "150px", 
                         height: "30px",
-                        color: "#666666", // Adjust the height as needed
-                        backgroundColor: "#E8E4FF", // Adjust the background color as needed
+                        color: "#666666", 
+                        backgroundColor: "#E8E4FF", 
                       }}
                     >
                       <option value="Dr Agarwals">Dr Agarwals</option>
@@ -289,11 +289,11 @@ const Consultation = () => {
                       value={selectedDistrict}
                       onChange={handleDistrictChange}
                       style={{
-                        borderRadius: "5px", // Adjust the border-radius as needed
-                        width: "150px", // Adjust the width as needed
+                        borderRadius: "5px", 
+                        width: "150px", 
                         height: "30px",
-                        color: "#666666", // Adjust the height as needed
-                        backgroundColor: "#E8E4FF", // Adjust the background color as needed
+                        color: "#666666", 
+                        backgroundColor: "#E8E4FF", 
                       }}
                     >
                       <option value="Kicukiro">Kicukiro</option>
@@ -322,11 +322,11 @@ const Consultation = () => {
                       value={selectedService}
                       onChange={handleServiceChange}
                       style={{
-                        borderRadius: "5px", // Adjust the border-radius as needed
-                        width: "150px", // Adjust the width as needed
+                        borderRadius: "5px", 
+                        width: "150px", 
                         height: "30px",
-                        color: "#666666", // Adjust the height as needed
-                        backgroundColor: "#E8E4FF", // Adjust the background color as needed
+                        color: "#666666", 
+                        backgroundColor: "#E8E4FF", 
                       }}
                     >
                       <option value="Counseling and Therapy">Abortion</option>
