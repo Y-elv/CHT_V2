@@ -4,6 +4,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  InputLeftElement,
   VStack,
   Box,
   Image,
@@ -15,6 +16,8 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import "./login.css";
 import logo from "../../assets/LOGO FULL.png";
+import { CgMail } from "react-icons/cg";
+import { BiSolidLockAlt } from "react-icons/bi";
 
 const Login = () => {
   const [show, SetShow] = useState(false);
@@ -102,14 +105,36 @@ const Login = () => {
           <Image src={logo} alt="Logo" w="150px" h="auto" mb="-3" />
           <div className="signin-text">SignIn</div>
           <FormControl id="email" isRequired>
-            <Input
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Box
+                  as={CgMail}
+                  color="#2c17ae"
+                  bg="#f3931e"
+                  p="4px"
+                  borderRadius="md"
+                  fontSize="28px"
+                />
+              </InputLeftElement>
+              <Input
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </InputGroup>
           </FormControl>
           <FormControl id="password" isRequired>
             <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Box
+                  as={BiSolidLockAlt}
+                  color="#2c17ae"
+                  bg="#f3931e"
+                  p="4px"
+                  borderRadius="md"
+                  fontSize="28px"
+                />
+              </InputLeftElement>
               <Input
                 type={show ? "text" : "password"}
                 placeholder="Password"
@@ -124,20 +149,22 @@ const Login = () => {
             </InputGroup>
           </FormControl>
 
-          <Link align="end" to="/forgot-password" style={{ color: "white" }}>
+          <Link align="end" to="/forgot-password" style={{ color: "#2c17ae" }}>
             Forgot Password?
           </Link>
 
           <Button
             onClick={submitHandler}
             width="100%"
-            colorScheme="blue"
+            colorScheme="#f3931e"
+            color= "#2c17ae"
             style={{ marginTop: 15 }}
             isLoading={loading}
+            background="#f3931e"
           >
             login
           </Button>
-          <Link to="/register" mt="4" style={{ color: "white" }}>
+          <Link to="/register" mt="4" style={{ color: "#2c17ae" }}>
             New here! Register
           </Link>
         </Box>

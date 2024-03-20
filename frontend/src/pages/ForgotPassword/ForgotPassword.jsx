@@ -4,6 +4,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  InputLeftElement,
   VStack,
   Box,
   Link,
@@ -16,6 +17,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./ForgotPassword.css";
 import logo from "../../assets/LOGO FULL.png";
+import { CgMail } from "react-icons/cg";
+import { BiSolidLockAlt } from "react-icons/bi";
 
 const ForgotPassword = () => {
   const [show, setShow] = useState(false);
@@ -142,15 +145,37 @@ const submitHandler = async () => {
           <div className="forgot-text">Forget Password</div>
 
           <FormControl id="email" isRequired>
-            <Input
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Box
+                  as={CgMail}
+                  color="#2c17ae"
+                  bg="#f3931e"
+                  p="4px"
+                  borderRadius="md"
+                  fontSize="28px"
+                />
+              </InputLeftElement>
+              <Input
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </InputGroup>
           </FormControl>
 
           <FormControl id="newPassword" isRequired>
             <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Box
+                  as={BiSolidLockAlt}
+                  color="#2c17ae"
+                  bg="#f3931e"
+                  p="4px"
+                  borderRadius="md"
+                  fontSize="28px"
+                />
+              </InputLeftElement>
               <Input
                 type={show ? "text" : "password"}
                 placeholder="New Password"
@@ -166,6 +191,16 @@ const submitHandler = async () => {
           </FormControl>
           <FormControl id="confirmPassword" isRequired>
             <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Box
+                  as={BiSolidLockAlt}
+                  color="#2c17ae"
+                  bg="#f3931e"
+                  p="4px"
+                  borderRadius="md"
+                  fontSize="28px"
+                />
+              </InputLeftElement>
               <Input
                 type={show ? "text" : "password"}
                 placeholder="Confirm Password"
@@ -183,9 +218,11 @@ const submitHandler = async () => {
           <Button
             onClick={submitHandler}
             width="100%"
-            colorScheme="blue"
+            colorScheme="#f3931e"
             style={{ marginTop: 15 }}
             isLoading={loading}
+            color="#2c17ae"
+            background="#f3931e"
           >
             submit
           </Button>

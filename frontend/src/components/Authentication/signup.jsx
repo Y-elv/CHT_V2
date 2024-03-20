@@ -4,6 +4,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  InputLeftElement,
   VStack,
   Image,
   Box,
@@ -16,6 +17,9 @@ import { useNavigate, Link } from "react-router-dom";
 import wallpaper from "../../assets/wallpaper.png";
 import "./signup.css";
 import logo from "../../assets/LOGO FULL.png";
+import { CgMail } from "react-icons/cg";
+import { BiSolidLockAlt } from "react-icons/bi";
+import { BsFillPersonFill } from "react-icons/bs";
 
 const Signup = () => {
   const [show, SetShow] = useState(false);
@@ -134,22 +138,58 @@ const Signup = () => {
           <Image src={logo} alt="Logo" w="150px" h="auto" mb="-3" />
           <div className="signup-text">SignUp</div>
           <FormControl id="first-name" isRequired>
-            <Input
-              placeholder="Name"
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-            />
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Box
+                  as={BsFillPersonFill}
+                  color="#2c17ae"
+                  bg="#f3931e"
+                  p="4px"
+                  borderRadius="md"
+                  fontSize="28px"
+                />
+              </InputLeftElement>
+
+              <Input
+                placeholder="Name"
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+              />
+            </InputGroup>
           </FormControl>
 
           <FormControl id="email" isRequired>
-            <Input
-              placeholder="Email"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-            />
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Box
+                  as={CgMail}
+                  color="#2c17ae"
+                  bg="#f3931e"
+                  p="4px"
+                  borderRadius="md"
+                  fontSize="28px"
+                />
+              </InputLeftElement>
+
+              <Input
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+              />
+            </InputGroup>
           </FormControl>
           <FormControl id="password" isRequired>
             <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <Box
+                  as={BiSolidLockAlt}
+                  color="#2c17ae"
+                  bg="#f3931e"
+                  p="4px"
+                  borderRadius="md"
+                  fontSize="28px"
+                />
+              </InputLeftElement>
               <Input
                 type={show ? "text" : "password"}
                 placeholder="Password"
@@ -164,18 +204,18 @@ const Signup = () => {
             </InputGroup>
           </FormControl>
 
-       
-
           <Button
             onClick={submitHandler}
             width="100%"
-            colorScheme="blue"
+            colorScheme="#f3931e"
             style={{ marginTop: 15 }}
             isLoading={loading}
+            color="#2c17ae"
+            background="#f3931e"
           >
             signUp
           </Button>
-          <Link to="/login" mt="4" style={{ color: "white" }}>
+          <Link to="/login" mt="4" style={{ color: "#2c17ae" }}>
             Already have an Account? SignIn
           </Link>
         </Box>

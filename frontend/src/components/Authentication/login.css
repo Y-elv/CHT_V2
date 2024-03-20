@@ -1,48 +1,42 @@
 /* signup.css */
 
-.login-container{
-    margin: 0;
-    padding: 0;
-    background-image: url('../../assets/wallpaper.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
-    
+.login-container {
+  margin: 0;
+  padding: 0;
+  background-image: url("../../assets/wallpaper.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
 }
 .signin-text {
-    font-size: 20px;
-color: white;
-    font-weight:500;
-    margin-bottom: 36px;
-    
-  
-    
+  font-size: 20px;
+  color: #2c17ae;
+  font-weight: 500;
+  margin-bottom: 36px;
 }
 
-@media screen and (max-width:1000px) {
-    .login-container {
-        align-items: center; 
-    }
-    .login-class{
-        width: 100vw !important;
-        
-    }
+@media screen and (max-width: 1000px) {
+  .login-container {
+    align-items: center;
+  }
+  .login-class {
+    width: 100vw !important;
+  }
 }
 
-@media screen and (max-width:856px) {
-    .login-container {
-        align-items: center; 
-    }
-    .login-class{
-        width: 100vw !important;
-        
-    }
-    .box-login{
-        width: 80vw !important;
-    }
+@media screen and (max-width: 856px) {
+  .login-container {
+    align-items: center;
+  }
+  .login-class {
+    width: 100vw !important;
+  }
+  .box-login {
+    width: 80vw !important;
+  }
 }

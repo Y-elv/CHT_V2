@@ -158,121 +158,123 @@ const LandingPage = () => {
         </div>
         <div className="section-4">
           <div className="section-4-left">
-            <h3>
-              Get in <span>touch</span>{" "}
-            </h3>
-            <h6>Chat with Professinals in Mental,sexual,Dating </h6>
-            <div
-              className="input-contact"
-              style={{
-                position: "relative",
-                display: "flex",
-                flexDirection: "column",
+            <div className="section-4-left-contents">
+              <h3>
+                Get in <span>touch</span>{" "}
+              </h3>
+              <h6>Chat with Professinals in Mental,sexual,Dating </h6>
+              <div
+                className="input-contact"
+                style={{
+                  position: "relative",
+                  display: "flex",
+                  flexDirection: "column",
 
-                height: "100vh",
-              }}
-            >
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  style={{
-                    border: "none",
-                    borderBottom: "1px solid #737B7D",
-                    width: "60%",
-                    padding: "8px",
-                    fontSize: "16px",
-                    background: "#E4EAFC",
-                    marginBottom: "5px",
-                  }}
-                  placeholder="Company Name"
-                  name="companyName"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                />
-                <input
-                  type="text"
-                  style={{
-                    border: "none",
-                    borderBottom: "1px solid #737B7D",
-                    width: "60%",
-                    padding: "8px",
-                    fontSize: "16px",
-                    background: "#E4EAFC",
-                    marginBottom: "5px",
-                  }}
-                  placeholder="street"
-                  name="street"
-                  value={formData.street}
-                  onChange={handleChange}
-                />
-                <input
-                  type="text"
-                  style={{
-                    border: "none",
-                    borderBottom: "1px solid #737B7D",
-                    width: "60%",
-                    padding: "8px",
-                    fontSize: "16px",
-                    background: "#E4EAFC",
-                    marginBottom: "5px",
-                  }}
-                  placeholder="Contact Phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
-                <input
-                  type="text"
-                  style={{
-                    border: "none",
-                    borderBottom: "1px solid #737B7D",
-                    width: "60%",
-                    padding: "8px",
-                    fontSize: "16px",
-                    background: "#E4EAFC",
-                    marginBottom: "5px",
-                  }}
-                  placeholder="E-mail"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-                <input
-                  type="text"
-                  style={{
-                    border: "none",
-                    borderBottom: "1px solid #737B7D",
-                    width: "60%",
-                    padding: "8px",
-                    fontSize: "16px",
-                    background: "#E4EAFC",
-                    marginBottom: "10px",
-                  }}
-                  placeholder="Let's talk about your idea"
-                  name="idea"
-                  value={formData.idea}
-                  onChange={handleChange}
-                />
-
-                <label>
+                  height: "100vh",
+                }}
+              >
+                <form onSubmit={handleSubmit} className="get-in-touch">
                   <input
-                    type="checkbox"
-                    className="checkbox"
-                    name="agree"
-                    checked={formData.agree}
-                    onChange={handleChange}
+                    type="text"
                     style={{
-                      padding: "10px",
-                      marginBottom: "15px",
+                      border: "none",
+                      borderBottom: "1px solid #737B7D",
+                      width: "60%",
+                      padding: "8px",
+                      fontSize: "16px",
+                      background: "#E4EAFC",
+                      marginBottom: "5px",
                     }}
+                    placeholder="Company Name"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleChange}
                   />
-                  Agree and Continue
-                </label>
+                  <input
+                    type="text"
+                    style={{
+                      border: "none",
+                      borderBottom: "1px solid #737B7D",
+                      width: "60%",
+                      padding: "8px",
+                      fontSize: "16px",
+                      background: "#E4EAFC",
+                      marginBottom: "5px",
+                    }}
+                    placeholder="street"
+                    name="street"
+                    value={formData.street}
+                    onChange={handleChange}
+                  />
+                  <input
+                    type="text"
+                    style={{
+                      border: "none",
+                      borderBottom: "1px solid #737B7D",
+                      width: "60%",
+                      padding: "8px",
+                      fontSize: "16px",
+                      background: "#E4EAFC",
+                      marginBottom: "5px",
+                    }}
+                    placeholder="Contact Phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
+                  <input
+                    type="text"
+                    style={{
+                      border: "none",
+                      borderBottom: "1px solid #737B7D",
+                      width: "60%",
+                      padding: "8px",
+                      fontSize: "16px",
+                      background: "#E4EAFC",
+                      marginBottom: "5px",
+                    }}
+                    placeholder="E-mail"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                  <input
+                    type="text"
+                    style={{
+                      border: "none",
+                      borderBottom: "1px solid #737B7D",
+                      width: "60%",
+                      padding: "8px",
+                      fontSize: "16px",
+                      background: "#E4EAFC",
+                      marginBottom: "10px",
+                    }}
+                    placeholder="Let's talk about your idea"
+                    name="idea"
+                    value={formData.idea}
+                    onChange={handleChange}
+                  />
 
-                <button className="btn-contact" type="submit">
-                  Submit
-                </button>
-              </form>
+                  <label>
+                    <input
+                      type="checkbox"
+                      className="checkbox"
+                      name="agree"
+                      checked={formData.agree}
+                      onChange={handleChange}
+                      style={{
+                        padding: "10px",
+                        marginBottom: "15px",
+                      }}
+                    />
+                    Agree and Continue
+                  </label>
+
+                  <button className="btn-contact" type="submit">
+                    Submit
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
 
