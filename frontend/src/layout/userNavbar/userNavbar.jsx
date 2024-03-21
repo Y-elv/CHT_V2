@@ -4,11 +4,9 @@ import { Link } from "react-router-dom";
 import OffCanvasButton from "../../components/offCanvas";
 
 import { Dropdown, Space, Menu } from "antd";
-import  {ChatState}  from "../../components/Context/chatProvider";
+import { ChatState } from "../../components/Context/chatProvider";
 const UserNavbar = () => {
-  // const { user, logoutUser } = useContext(AuthContext);
   const { user, logoutHandler } = ChatState();
-
 
   const items = [
     {
@@ -24,8 +22,6 @@ const UserNavbar = () => {
       ),
     },
   ];
-
-  
 
   return (
     <nav
@@ -68,7 +64,6 @@ const UserNavbar = () => {
             {user && <h5 className="mb-0 me-3">{user?.name}</h5>}
 
             <Link className="iconn" style={{ textDecoration: "none" }}>
-              
               <>
                 <Dropdown
                   overlay={
@@ -88,7 +83,7 @@ const UserNavbar = () => {
                   >
                     <Space>
                       <img
-                        src={user.pic}
+                        src={user?.pic}
                         alt="Profile Avatar"
                         className="rounded-circle"
                         style={{ width: "60px", height: "60px" }}
