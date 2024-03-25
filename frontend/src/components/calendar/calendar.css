@@ -72,7 +72,28 @@
   width: 120px;
   height: 100px;
 }
+
+.btn-confirm-small{
+   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.2rem;
+  border: 1px solid #f3931e;
+  background-color: #f3931e;
+  color: #2c17ae;
+  border-radius: 5px;
+  margin-top: 10px;
+  width: 120px;
+  height: 100px;
+
+}
 .btn-confirm .submit-image {
+  filter: invert(23%) sepia(63%) saturate(5176%) hue-rotate(249deg)
+    brightness(95%) contrast(100%);
+}
+
+.btn-confirm-small .submit-image {
   filter: invert(23%) sepia(63%) saturate(5176%) hue-rotate(249deg)
     brightness(95%) contrast(100%);
 }

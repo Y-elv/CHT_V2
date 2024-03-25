@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./calendar.css";
 import Modal from "react-modal";
-import axios from "axios"
+import axios from "axios";
 import submit from "../../assets/submit.png";
 
 Modal.setAppElement("#root");
@@ -73,14 +73,14 @@ const CalendarInput = ({
         }
       );
 
-    if (response.status >= 200 && response.status < 300) {
-      console.log("Booking successful:", response.data);
-      setSelectedDays([]);
-      setSelectedTime("");
-      setIsConfirm(true);
-    } else {
-      console.error("Error submitting booking:", response.statusText);
-    }
+      if (response.status >= 200 && response.status < 300) {
+        console.log("Booking successful:", response.data);
+        setSelectedDays([]);
+        setSelectedTime("");
+        setIsConfirm(true);
+      } else {
+        console.error("Error submitting booking:", response.statusText);
+      }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -163,16 +163,12 @@ const CalendarInput = ({
           <button
             type="submit"
             value="Submit"
-            className="btn-confirm"
-            
+            className={
+              window.innerWidth <= 600 ? "btn-confirm-small" : "btn-confirm"
+            }
           >
             <span className="btn-text">Confirm</span>
-            <img
-              src={submit}
-              alt="Submit"
-              className="submit-image"
-              
-            />
+            <img src={submit} alt="Submit" className="submit-image" />
           </button>
         </div>
       </form>
@@ -188,7 +184,7 @@ const CalendarInput = ({
             color: "black",
             backgroundColor: "#B8C2D7",
             height: "50vh",
-            width: "95vw",
+            width: window.innerWidth <= 650 ? "80vw" : "95vw",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",

@@ -11,7 +11,27 @@
   align-items: center;
   gap: 3rem;
 }
+.layer-small-btn {
+  background-color: #2c17ae;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30vw;
+  height: 4vh;
+  border-radius: 10px;
+  padding: 5px 5px;
+}
+.layer-small-btn input[type="image"] {
+  border: none;
+  background: none;
+  width: 70%;
 
+  cursor: pointer;
+  padding: 10px 20px;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+}
 .cons-middle h2 {
   width: 40vw;
   height: 10vh;
@@ -116,24 +136,29 @@ form {
 .btn-kh {
   border: 2px solid #2c17ae;
   color: #2c17ae;
-  width: 100%; 
-  max-width: 200px; 
-  padding: 10px 20px; 
-  border-radius: 5px; 
-  font-size: 1rem; 
+  width: 100%;
+  max-width: 200px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
 }
-
 
 .btn-kh:hover {
   border-color: #f3931e;
   color: #f3931e;
 }
 
-
 .select-form {
   width: 35vw;
   display: flex;
 
+  gap: 3rem;
+}
+
+.select-form-small {
+  width: 35vw;
+  display: flex;
+  flex-direction: column;
   gap: 3rem;
 }
 .layer1 img {
@@ -174,17 +199,22 @@ form {
   height: 60vh;
   width: 55vw;
 }
+.pop-calendar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .layer9 input[type="image"] {
   position: absolute;
   bottom: -60%;
   right: 30px;
   transform: translateY(-50%);
   z-index: 2;
-  transition: transform 0.3s ease-in-out; 
+  transition: transform 0.3s ease-in-out;
 }
 
 .layer9 input[type="image"]:hover {
-  transform: translateY(-50%) scale(1.1); 
+  transform: translateY(-50%) scale(1.1);
 }
 
 @media screen and (max-width: 768px) {
