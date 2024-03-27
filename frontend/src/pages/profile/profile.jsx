@@ -101,7 +101,7 @@ const Profile = () => {
         })
       );
 
-       await setPic(cloudinaryData.url.toString());
+      await setPic(cloudinaryData.url.toString());
 
       toast({
         title: "Profile picture updated!",
@@ -143,20 +143,20 @@ const Profile = () => {
     };
   }, []);
 
-  const items = [
-    {
-      key: "1",
-      label: <Link to="/services">Counseling and Therapy</Link>,
-    },
-    {
-      key: "2",
-      label: <Link to="/services">Mental Health</Link>,
-    },
-    {
-      key: "3",
-      label: <Link to="/services">Sexual Advices</Link>,
-    },
-  ];
+  // const items = [
+  //   {
+  //     key: "1",
+  //     label: <Link to="/services">Counseling and Therapy</Link>,
+  //   },
+  //   {
+  //     key: "2",
+  //     label: <Link to="/services">Mental Health</Link>,
+  //   },
+  //   {
+  //     key: "3",
+  //     label: <Link to="/services">Sexual Advices</Link>,
+  //   },
+  // ];
 
   return (
     <>
@@ -233,19 +233,24 @@ const Profile = () => {
                   <img src={gameIcon} className="icons" />
                   <p>Game</p>
                 </Link>
-                <Link className="iconn" style={{ textDecoration: "none" }}>
+                <Link
+                  className="iconn"
+                  to="/services"
+                  style={{ textDecoration: "none" }}
+                >
                   <img src={menu} className="icons" />
-                  <>
+                  <p>Services</p>
+                  {/* <>
                     <Dropdown
-                      overlay={
-                        <Menu>
-                          {items.map((item) => (
-                            <Menu.Item key={item.key} icon={item.icon}>
-                              {item.label}
-                            </Menu.Item>
-                          ))}
-                        </Menu>
-                      }
+                    // overlay={
+                    //   <Menu>
+                    //     {items.map((item) => (
+                    //       <Menu.Item key={item.key} icon={item.icon}>
+                    //         {item.label}
+                    //       </Menu.Item>
+                    //     ))}
+                    //   </Menu>
+                    // }
                     >
                       <a
                         onClick={(e) => e.preventDefault()}
@@ -257,7 +262,7 @@ const Profile = () => {
                         </Space>
                       </a>
                     </Dropdown>
-                  </>
+                  </> */}
                 </Link>
                 <Link
                   to="/news"
