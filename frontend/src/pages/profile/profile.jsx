@@ -209,14 +209,14 @@ const Profile = () => {
                 <img src={logo} />
               </div>
               <div className="content-menu">
-                <Link
+                {/* <Link
                   to="/consultation"
                   className="iconn"
                   style={{ textDecoration: "none" }}
                 >
                   <img src={consultation} className="icons" />
                   <p>Consultation</p>
-                </Link>
+                </Link> */}
                 <Link
                   to="/chats"
                   className="iconn"

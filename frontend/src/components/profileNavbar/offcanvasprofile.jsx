@@ -14,7 +14,7 @@ function OffCanvasProfile() {
       {
         key: '1',
         label: (
-          <Link to="/service">
+          <Link to="/services">
             Counseling and Therapy
           </Link>
         ),
@@ -24,7 +24,7 @@ function OffCanvasProfile() {
       {
         key: '2',
         label: (
-          <Link to="/service">
+          <Link to="/services">
            Mental Health
           </Link>
         ),
@@ -33,7 +33,7 @@ function OffCanvasProfile() {
       {
         key: '3',
         label: (
-          <Link to="/service">
+          <Link to="/services">
            Sexual Advices 
           </Link>
         ),
@@ -63,8 +63,8 @@ function OffCanvasProfile() {
             <Offcanvas.Title><span className="navbar-toggler-icon"></span></Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body className="text-center">
-          <Link to="/consultation" className="d-block mb-2 text-black">Consultation</Link>
-          <Link to="/chat" className="d-block mb-2 text-black">Chat</Link>
+          {/* <Link to="/consultation" className="d-block mb-2 text-black">Consultation</Link> */}
+          <Link to="/chats" className="d-block mb-2 text-black">Chat</Link>
 
           <Link  className="d-block mb-2 text-black">
           

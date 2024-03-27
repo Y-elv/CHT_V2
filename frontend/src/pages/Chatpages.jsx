@@ -15,6 +15,7 @@ import { ChatState } from "../components/Context/chatProvider";
 import SideDrawer from "../components/miscellaneous/SideDrawer";
 import MyChats from "../components/MyChats";
 import ChatBox from "../components/ChatBox";
+import ProfileNavbar from "../components/profileNavbar/offcanvasprofile";
 
 const Chatpages = () => {
   const { user } = ChatState();
@@ -22,7 +23,7 @@ const Chatpages = () => {
 
   return (
     <div style={{ width: "100%" }}>
-      {user && <UserNavbar />}
+      {user && <UserNavbar/>}
       {user && <SideDrawer />}
       <Box
         display="flex"
