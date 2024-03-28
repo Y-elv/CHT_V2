@@ -12,6 +12,7 @@ import { useContext, useState, useEffect } from "react";
 import ProfileNavbar from "../../components/profileNavbar/profileNavbar";
 import { Dropdown, Space, Menu } from "antd";
 import { useToast } from "@chakra-ui/react";
+import UserNavbar from "../../layout/userNavbar/userNavbar";
 
 const Profile = () => {
   const { user, logoutHandler } = ChatState();
@@ -162,7 +163,7 @@ const Profile = () => {
     <>
       {isMobile ? (
         <>
-          <ProfileNavbar />
+          <UserNavbar />
           <div className="profile-right">
             <div className="welcome-text">Welcome to FH D</div>
             <div className="user-box-container">
