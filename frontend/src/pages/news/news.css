@@ -24,3 +24,9 @@
   gap: 1rem;
   align-items: center;
 }
+
+@media screen and (max-width: 415px) {
+  .news-middles {
+    height: 180vh;
+  }
+}

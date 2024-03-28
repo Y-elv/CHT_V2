@@ -1,28 +1,55 @@
-*{
-    padding: 0;
-    margin: 0;
-
+* {
+  padding: 0;
+  margin: 0;
 }
 .whole-card {
-    
-    width: 60vw;
-    height: 30vh;
-    position: relative;
-    background-color: white;
-    color: black;
-    border-radius: 8px;
+  width: 60vw;
+  height: 30vh;
+  position: relative;
+  background-color: white;
+  color: black;
+  border-radius: 8px;
 }
-    
+
 .news-pics {
-    position: absolute;
-    top:0;
-    left: -80px;
-    width: 11vw;
+  position: absolute;
+  top: 0;
+  left: -80px;
+  width: 11vw;
+}
+.texts {
+  position: absolute;
+  left: 70px;
+  width: 50vw;
+  height: 30vh;
+}
+.mobile-texts {
+  font-size: smaller;
+}
+.news-pics-mobile {
+  height: 20vh;
+  width: 30vw;
+}
+.whole-card-mobile {
+  width: 60vw;
+  height: 35vh;
+  gap: 2rem;
+  background-color: white;
+  color: black;
+  border-radius: 8px;
+}
+.mobile-arr {
+  display: flex;
+  flex-direction: column;
+
+  height: 75vw;
+}
+
+  @media screen and (max-width:415px){
+.whole-card-mobile {
+  width: 60vw;
+  height: 52vh;
+  gap: 2rem;
 
 }
-.texts{
-    position: absolute;
-    left:70px;
-    width: 50vw;
-    height: 30vh;
-}
+  }
