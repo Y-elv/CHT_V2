@@ -8,6 +8,8 @@ import UserNavbar from "../../layout/userNavbar/userNavbar";
 import { AiFillHome } from "react-icons/ai";
 import { ImLocation2 } from "react-icons/im";
 import { BsFillTelephoneFill } from "react-icons/bs";
+import modern from "../../assets/modernFam.jpg";
+import mila from "../../assets/Mila .jpg";
 const ServicePage = () => {
   return (
     <>
@@ -29,20 +31,20 @@ const ServicePage = () => {
               <div className="icons-service">
                 <div>
                   <ImLocation2 className="icon" />
-                  Current Location:Gatsibo District Eastern province Rwanda{" "}
+                  Current Location:MILA PHARMACY LTD{" "}
                 </div>
                 <div>
                   <AiFillHome className="icon" />
-                  info@kundwahealth.org
+                  milapharmacy.org
                 </div>
                 <div>
                   <BsFillTelephoneFill className="icon" />
-                  :+250789287267
+                  :+250788786699
                 </div>
               </div>
             </div>
             <div className="part2">
-              <img src={kipharma} />
+              <img src={mila} />
             </div>
             <div className="part3">
               <p>
@@ -72,7 +74,7 @@ const ServicePage = () => {
           </div>
           <div className="service-middle-right">
             <div className="part1">
-              <img src={gate} />
+              <img src={modern} />
             </div>
             <div className="part2">
               <p>
@@ -86,15 +88,15 @@ const ServicePage = () => {
               <div className="icons-service">
                 <div>
                   <ImLocation2 className="icon" />
-                  Current Location:Gatsibo District Eastern province Rwanda{" "}
+                  Current Location:Modern Family Pharmacy{" "}
                 </div>
                 <div>
                   <AiFillHome className="icon" />
-                  info@kundwahealth.org
+                  modernfamilypharmacy.org
                 </div>
                 <div>
                   <BsFillTelephoneFill className="icon" />
-                  :+250789287267
+                  :+250788461069
                 </div>
               </div>
             </div>

@@ -14,9 +14,11 @@ const NewsCard = ({img,text}) => {
             </div>
           ) : (
             <>
-              <div className="texts">{text}</div>
-              <div className="news-pics">
-                <img src={img} />
+              <div className="whole-card">
+                <div className="texts">{text}</div>
+                <div className="news-pics">
+                  <img src={img} />
+                </div>
               </div>
             </>
           )}
