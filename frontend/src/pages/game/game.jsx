@@ -1,4 +1,4 @@
-import gamePic from "../../assets/game.png"
+import gamePic from "../../assets/gamePic.jpg"
 import { CiPlay1 } from "react-icons/ci";
 import "./game.css"
 const Game = () => {

@@ -36,6 +36,9 @@ function OffCanvasButton() {
             <Link to="/chats" className="d-block mb-2 text-black">
               Chats
             </Link>
+            <Link to="/game" className="d-block mb-2 text-black">
+              Game
+            </Link>
             <Link to="/services" className="d-block mb-2 text-black">
               Services
             </Link>
@@ -45,7 +48,6 @@ function OffCanvasButton() {
             <Link
               onClick={() => logoutHandler()}
               to="/login"
-              
               className="d-block mb-2 text-black"
             >
               Logout

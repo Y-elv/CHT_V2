@@ -131,7 +131,7 @@ const Consultation = () => {
               </div>
               <div className="cons-about-down">
                 <p>
-                  kUNDWA HEALTH is youth-led organization working with young
+                  KUNDWA HEALTH is youth-led organization working with young
                   people to decentralize health information and service they
                   need to lead healthier lives through digital health means.it
                   was founded in Gatsibo district by three young health

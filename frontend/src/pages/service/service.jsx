@@ -22,11 +22,13 @@ const ServicePage = () => {
           <div className="service-middle-left">
             <div className="part1">
               <p>
-                shared interests are like glue in a relationship. when you and
-                your date have common hobbies or passions, it creates a strong
-                bond, making your connection more meaningful.Exploring these
-                shared activities together can lead to memorable experiences and
-                deeper understanding between you both
+                Mila Pharmacy Ltd prioritizes fostering robust connections among
+                colleagues through shared interests. Common passions, like a
+                dedication to pharmaceutical advancements or exceptional
+                customer service, cultivate profound bonds, enhancing teamwork
+                and understanding. Together, exploring mutual activities
+                strengthens unity, enriches experiences, and propels collective
+                success, fostering a culture of mutual appreciation.
               </p>
               <div className="icons-service">
                 <div>
@@ -78,12 +80,13 @@ const ServicePage = () => {
             </div>
             <div className="part2">
               <p>
-                mental health is as crucial as physical health. it affect our
-                emotions, thoughts, and daily functioning.just like we
-                prioritize our physical well-being.it’s essential to care for
-                our mental health.seeking support, practicing self care, and
-                reducing stigma can lead to better overall well-being and a more
-                fulfilling life.
+                Modern Family Pharmacy, shared interests are valued for their
+                ability to fortify connections among colleagues. A mutual
+                dedication to innovative healthcare solutions or exceptional
+                patient care cultivates unity and a cohesive work environment.
+                By engaging in these shared activities, we enhance teamwork,
+                enrich experiences, and propel collective success, reflecting
+                our commitment to collaboration and mutual appreciation.
               </p>
               <div className="icons-service">
                 <div>

@@ -265,6 +265,7 @@ const Profile = () => {
                     </Dropdown>
                   </> */}
                 </Link>
+                
                 <Link
                   to="/news"
                   className="iconn"
