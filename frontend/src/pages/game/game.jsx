@@ -2,7 +2,7 @@ import gamePic from "../../assets/gamePic.jpg"
 import { CiPlay1 } from "react-icons/ci";
 import "./game.css"
 const Game = () => {
-     const gameUrl = "https://kundwahealth.org/funhealth/funhealth.html";
+     const gameUrl = "https://kundwahealth.org/funhealth/index.html";
     return (
       <>
         <div className="game-container">
