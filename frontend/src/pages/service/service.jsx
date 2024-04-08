@@ -15,7 +15,7 @@ const ServicePage = () => {
     <>
       <div className="service-container">
         <div className="service-header">
-          <UserNavbar />
+          <UserNavbar/>
         </div>
         <div className="service-title">WE GOT YOU !</div>
         <div className="service-middle">

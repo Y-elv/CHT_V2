@@ -33,26 +33,39 @@ function OffCanvasButton() {
             </Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body className="text-center">
-            <Link to="/chats" className="d-block mb-2 text-black">
-              Chats
-            </Link>
-            <Link to="/game" className="d-block mb-2 text-black">
-              Game
-            </Link>
-            <Link to="/services" className="d-block mb-2 text-black">
-              Services
-            </Link>
-            <Link to="/news" className="d-block mb-2 text-black">
-              News
-            </Link>
-            <Link
-              onClick={() => logoutHandler()}
-              to="/login"
-              className="d-block mb-2 text-black"
-            >
-              Logout
-            </Link>
-            {/* <Link to="/register" className="d-block text-black">Sign Up</Link> */}
+            {user ? (
+              <>
+                <Link to="/chats" className="d-block mb-2 text-black">
+                  Chats
+                </Link>
+                <Link to="/game" className="d-block mb-2 text-black">
+                  Game
+                </Link>
+                <Link to="/services" className="d-block mb-2 text-black">
+                  Services
+                </Link>
+                <Link to="/news" className="d-block mb-2 text-black">
+                  News
+                </Link>
+                <Link
+                  onClick={() => logoutHandler()}
+                  to="/login"
+                  className="d-block mb-2 text-black"
+                >
+                  Logout
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="d-block mb-2 text-black">
+                  Login
+                </Link>
+                <Link to="/register" className="d-block text-black">
+                  Sign Up
+                </Link>
+              </>
+            )}
+            
           </Offcanvas.Body>
         </Offcanvas>
       </>

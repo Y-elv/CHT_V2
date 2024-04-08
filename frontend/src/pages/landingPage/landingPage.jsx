@@ -128,7 +128,7 @@ const LandingPage = () => {
     <>
       <div className="landing-sections">
         <div className="section-1">
-          <Navbar />
+          <Navbar/>
         </div>
         <div className="section-2">
           <div className="left-sec-2">
