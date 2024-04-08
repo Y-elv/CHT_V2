@@ -51,7 +51,8 @@ const Signup = () => {
     const weakPasswordRegex = /^(?=.*[a-z]).{6,}$/; // Example: At least 6 characters and at least one lowercase letter
     if (!weakPasswordRegex.test(password)) {
       toast({
-        title: "Weak Password",
+        title:
+          "Weak Password , your passowrd must be At least 6 characters and at least one lowercase letter",
         status: "warning",
         duration: 5000,
         isClosable: true,
