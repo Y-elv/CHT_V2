@@ -144,20 +144,20 @@ const Profile = () => {
     };
   }, []);
 
-  // const items = [
-  //   {
-  //     key: "1",
-  //     label: <Link to="/services">Counseling and Therapy</Link>,
-  //   },
-  //   {
-  //     key: "2",
-  //     label: <Link to="/services">Mental Health</Link>,
-  //   },
-  //   {
-  //     key: "3",
-  //     label: <Link to="/services">Sexual Advices</Link>,
-  //   },
-  // ];
+  const items = [
+    {
+      key: "1",
+      label: <Link to="/services">Hospital</Link>,
+    },
+    {
+      key: "2",
+      label: <Link to="/services">Health Care</Link>,
+    },
+    {
+      key: "3",
+      label: <Link to="/services">Pharmacy</Link>,
+    },
+  ];
 
   return (
     <>
@@ -240,18 +240,18 @@ const Profile = () => {
                   style={{ textDecoration: "none" }}
                 >
                   <img src={menu} className="icons" />
-                  <p>Services</p>
-                  {/* <>
+                 
+                  <>
                     <Dropdown
-                    // overlay={
-                    //   <Menu>
-                    //     {items.map((item) => (
-                    //       <Menu.Item key={item.key} icon={item.icon}>
-                    //         {item.label}
-                    //       </Menu.Item>
-                    //     ))}
-                    //   </Menu>
-                    // }
+                    overlay={
+                      <Menu>
+                        {items.map((item) => (
+                          <Menu.Item key={item.key} icon={item.icon}>
+                            {item.label}
+                          </Menu.Item>
+                        ))}
+                      </Menu>
+                    }
                     >
                       <a
                         onClick={(e) => e.preventDefault()}
@@ -263,7 +263,7 @@ const Profile = () => {
                         </Space>
                       </a>
                     </Dropdown>
-                  </> */}
+                  </>
                 </Link>
                 
                 <Link
