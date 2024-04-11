@@ -31,15 +31,15 @@ const ServicePage = () => {
                 prioritizing patient well-being and reproductive health.
               </p>
               <div className="icons-service">
-                <div>
+                <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
                   Current Location: KARAMBO Health Center{" "}
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <AiFillHome className="icon" />
                   nembahc@gmail.com
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
                   0788550295
                 </div>
@@ -60,15 +60,15 @@ const ServicePage = () => {
                 sanctioned abortion
               </p>
               <div className="icons-service">
-                <div>
+                <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
-                  Current Location: Remera Mbogo Health Center {" "}
+                  Current Location: Remera Mbogo Health Center{" "}
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <AiFillHome className="icon" />
                   remerambogohc@rutongohospital.gov.rw
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
                   0788587357
                 </div>
@@ -91,7 +91,7 @@ const ServicePage = () => {
                 commitment to holistic healthcare.
               </p>
               <div className="icons-service">
-                <div>
+                <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
                   Current Location:Juru Health Center{" "}
                 </div>
@@ -99,7 +99,7 @@ const ServicePage = () => {
                   <AiFillHome className="icon" />
                   modernfamilypharmacy.org
                 </div> */}
-                <div>
+                <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
                   0784 531 581
                 </div>

@@ -32,15 +32,15 @@ function Hospital() {
                 accessible and comprehensive healthcare to the community.
               </p>
               <div className="icons-service">
-                <div>
+                <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
                   Address:KIGALI CITY-NYARUGENGE DISTRICT-MUHIMA SECTOR{" "}
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <AiFillHome className="icon" />
                   muhima.hospital@moh.gov.rw
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
                   0784352617
                 </div>
@@ -62,15 +62,15 @@ function Hospital() {
                 region.
               </p>
               <div className="icons-service">
-                <div>
+                <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
                   Address: Director General: P.Box: 49 Nyagatare{" "}
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <AiFillHome className="icon" />
                   ngarama.hospital.moh.gov.rw
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
                   0785398394
                 </div>
@@ -93,15 +93,15 @@ function Hospital() {
                 nearly 500,000 people with 158 beds and five ambulances.
               </p>
               <div className="icons-service">
-                <div>
+                <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
                   Address: P.Box: 53 RWAMAGANA{" "}
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <AiFillHome className="icon" />
                   kiziguro.hospital.hospital@moh.gov.rw
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
                   0726903769, 0788329851
                 </div>

@@ -33,17 +33,17 @@ const Pharmacy = () => {
                 you to make informed choices about your sexual health.
               </p>
               <div className="icons-service">
-                <div>
+                <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
                   Current Location:MILA PHARMACY LTD{" "}
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <AiFillHome className="icon" />
                   milapharmacy.org
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
-                  :+250788786699
+                  +250788786699
                 </div>
               </div>
             </div>
@@ -61,17 +61,17 @@ const Pharmacy = () => {
                 about their reproductive health.
               </p>
               <div className="icons-service">
-                <div>
+                <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
                   Current Location:Gatsibo District Eastern province Rwanda{" "}
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <AiFillHome className="icon" />
                   info@kundwahealth.org
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
-                  :+250789287267
+                  +250789287267
                 </div>
               </div>
             </div>
@@ -92,17 +92,17 @@ const Pharmacy = () => {
                 about their reproductive well-being.
               </p>
               <div className="icons-service">
-                <div>
+                <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
                   Current Location:Modern Family Pharmacy{" "}
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <AiFillHome className="icon" />
                   modernfamilypharmacy.org
                 </div>
-                <div>
+                <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
-                  :+250788461069
+                  +250788461069
                 </div>
               </div>
             </div>

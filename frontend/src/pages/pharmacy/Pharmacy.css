@@ -64,6 +64,10 @@ gap:2rem;
     margin-right: 10px; /* Adjust the margin to provide spacing between icons and text */
   }
 
+  .icon-wrapper{
+    display: flex;
+}
+
   @media screen and (max-width:931px){
     .service-middle img{
         width: 30vw;
