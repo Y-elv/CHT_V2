@@ -1,14 +1,14 @@
 import Navbar from "../../components/navbar/navbar";
 import Footer from "../../layout/footer/footer";
 import "./service.css";
-import kipharma from "../../assets/kipharma.png";
-import reproductive from "../../assets/reproductive.png";
-import gate from "../../assets/gate.png";
+import juru from "../../assets/juru.png";
+import remera from "../../assets/remera.png";
+import gashora from "../../assets/gashora.png";
 import UserNavbar from "../../layout/userNavbar/userNavbar";
 import { AiFillHome } from "react-icons/ai";
 import { ImLocation2 } from "react-icons/im";
 import { BsFillTelephoneFill } from "react-icons/bs";
-import modern from "../../assets/modernFam.jpg";
+import karambo from "../../assets/karambo.png";
 import mila from "../../assets/Mila .jpg";
 const ServicePage = () => {
   return (
@@ -22,91 +22,91 @@ const ServicePage = () => {
           <div className="service-middle-left">
             <div className="part1">
               <p>
-                Mila Pharmacy is your go-to destination for sexual health needs,
-                offering a discreet and comprehensive range of services. From
-                contraception pills to condoms, we provide access to essential
-                products that promote safe and responsible sexual practices. Our
-                knowledgeable pharmacists offer personalized consultations,
-                ensuring you receive the right guidance and support. At Mila
-                Pharmacy, we prioritize your privacy and well-being, empowering
-                you to make informed choices about your sexual health.
+                KARAMBO Health Center, part of the NEMBA District Hospital's
+                catchment area, is committed to providing comprehensive
+                healthcare services. This includes specialized care in sexual
+                reproductive health, ensuring access to legally sanctioned
+                abortion services. Located in the vibrant community of NEMBA,
+                the health center caters to diverse healthcare needs,
+                prioritizing patient well-being and reproductive health.
               </p>
               <div className="icons-service">
                 <div>
                   <ImLocation2 className="icon" />
-                  Current Location:MILA PHARMACY LTD{" "}
+                  Current Location: KARAMBO Health Center{" "}
                 </div>
                 <div>
                   <AiFillHome className="icon" />
-                  milapharmacy.org
+                  nembahc@gmail.com
                 </div>
                 <div>
                   <BsFillTelephoneFill className="icon" />
-                  :+250788786699
+                  0788550295
                 </div>
               </div>
             </div>
             <div className="part2">
-              <img src={mila} />
+              <img src={karambo} />
             </div>
             <div className="part3">
               <p>
-                youth face unique reproductive challenges. they may lack
-                comprehensive education, access to contraception, and experience
-                peer pressure. these factors can lead to unintended pregnancies
-                or the spread of sexually transmitted infections.providing
-                accurate information, safe spaces for discussion, and accessible
-                healthcare can empower young people to make informed decisions
-                about their reproductive health.
+                Remera Mbogo Health Center is a comprehensive healthcare
+                facility in Ngoma Sector, Rulindo District, serving residents of
+                Ngoma Sector, Cyinzuzi Sector, and surrounding areas. Operating
+                24/7, it offers a range of services including curative
+                consultations, hospitalization, maternity care, laboratory
+                services, family planning, vaccination, ARV treatment, GBV
+                prevention, and reproductive health services, including legally
+                sanctioned abortion
               </p>
               <div className="icons-service">
                 <div>
                   <ImLocation2 className="icon" />
-                  Current Location:Gatsibo District Eastern province Rwanda{" "}
+                  Current Location: Remera Mbogo Health Center {" "}
                 </div>
                 <div>
                   <AiFillHome className="icon" />
-                  info@kundwahealth.org
+                  remerambogohc@rutongohospital.gov.rw
                 </div>
                 <div>
                   <BsFillTelephoneFill className="icon" />
-                  :+250789287267
+                  0788587357
                 </div>
               </div>
             </div>
           </div>
           <div className="service-middle-right">
             <div className="part1">
-              <img src={modern} />
+              <img src={remera} />
             </div>
             <div className="part2">
               <p>
-                Modern Family Pharmacy specializes in providing a range of
-                sexual and reproductive health services, including contraception
-                pills and condoms. As a trusted healthcare provider, we offer
-                confidential consultations and personalized guidance to ensure
-                our clients receive the most suitable options for their needs.
-                Our goal is to promote safe and responsible sexual health
-                practices, empowering individuals to make informed decisions
-                about their reproductive well-being.
+                Juru Health Center, established in July 2011, is a vital
+                healthcare provider in Bugesera District, Southern Rwanda,
+                catering to a population of 30,163. Alongside its comprehensive
+                medical services, the center is dedicated to sexual reproductive
+                health. As of April 2020, Juru Health Center has conducted
+                211,737 consultations, facilitated 5,038 deliveries, and
+                registered 7,734 new antenatal care cases, emphasizing its
+                commitment to holistic healthcare.
               </p>
               <div className="icons-service">
                 <div>
                   <ImLocation2 className="icon" />
-                  Current Location:Modern Family Pharmacy{" "}
+                  Current Location:Juru Health Center{" "}
                 </div>
-                <div>
+                {/* <div>
                   <AiFillHome className="icon" />
                   modernfamilypharmacy.org
-                </div>
+                </div> */}
                 <div>
                   <BsFillTelephoneFill className="icon" />
-                  :+250788461069
+                  0784 531 581
                 </div>
               </div>
             </div>
             <div className="part3">
-              <img src={reproductive} />
+              <img src={juru} />
             </div>
           </div>
         </div>

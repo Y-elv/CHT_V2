@@ -2,15 +2,14 @@ import React from "react";
 import Navbar from "../../components/navbar/navbar";
 import Footer from "../../layout/footer/footer";
 import "./Hospital.css";
-import kipharma from "../../assets/kipharma.png";
-import reproductive from "../../assets/reproductive.png";
-import gate from "../../assets/gate.png";
+import muhima from "../../assets/muhima.png";
+import kiziguro from "../../assets/kiziguro.png";
+import ngarama from "../../assets/ngarama.png";
 import UserNavbar from "../../layout/userNavbar/userNavbar";
 import { AiFillHome } from "react-icons/ai";
 import { ImLocation2 } from "react-icons/im";
 import { BsFillTelephoneFill } from "react-icons/bs";
-import modern from "../../assets/modernFam.jpg";
-import mila from "../../assets/Mila .jpg";
+
 function Hospital() {
   return (
     <>
@@ -18,96 +17,98 @@ function Hospital() {
         <div className="service-header">
           <UserNavbar />
         </div>
-        <div className="service-title">WE GOT YOU ! Hospital</div>
+        <div className="service-title">WE GOT YOU !</div>
         <div className="service-middle">
           <div className="service-middle-left">
             <div className="part1">
               <p>
-                Mila Pharmacy is your go-to destination for sexual health needs,
-                offering a discreet and comprehensive range of services. From
-                contraception pills to condoms, we provide access to essential
-                products that promote safe and responsible sexual practices. Our
-                knowledgeable pharmacists offer personalized consultations,
-                ensuring you receive the right guidance and support. At Mila
-                Pharmacy, we prioritize your privacy and well-being, empowering
-                you to make informed choices about your sexual health.
+                Muhima Hospital, a public healthcare facility in Nyarugenge
+                District, City of Kigali, offers a wide range of medical
+                services, including sexual reproductive health. Established in
+                2001 as an extension of the Muhima Health Center, which dates
+                back to 1988, the hospital was funded by the World Bank's "Santé
+                Population" project. In July 2001, it was entrusted to the
+                Ministry of Health, playing a crucial role in providing
+                accessible and comprehensive healthcare to the community.
               </p>
               <div className="icons-service">
                 <div>
                   <ImLocation2 className="icon" />
-                  Current Location:MILA PHARMACY LTD{" "}
+                  Address:KIGALI CITY-NYARUGENGE DISTRICT-MUHIMA SECTOR{" "}
                 </div>
                 <div>
                   <AiFillHome className="icon" />
-                  milapharmacy.org
+                  muhima.hospital@moh.gov.rw
                 </div>
                 <div>
                   <BsFillTelephoneFill className="icon" />
-                  :+250788786699
+                  0784352617
                 </div>
               </div>
             </div>
             <div className="part2">
-              <img src={mila} />
+              <img src={muhima} />
             </div>
             <div className="part3">
               <p>
-                youth face unique reproductive challenges. they may lack
-                comprehensive education, access to contraception, and experience
-                peer pressure. these factors can lead to unintended pregnancies
-                or the spread of sexually transmitted infections.providing
-                accurate information, safe spaces for discussion, and accessible
-                healthcare can empower young people to make informed decisions
-                about their reproductive health.
+                NGARAMA District Hospital, situated in Gatsibo district, Eastern
+                Province, Rwanda, is a public hospital established in 1982 with
+                support from the Dutch state. Located 20 km from the main
+                Kigali-Kagitumba road and 172 km from Kigali city, it provides
+                comprehensive healthcare services, including sexual reproductive
+                health and legally sanctioned abortion. With a capacity of 127
+                beds, the hospital offers a range of outpatient and inpatient
+                services, as well as supervision for health centers in the
+                region.
               </p>
               <div className="icons-service">
                 <div>
                   <ImLocation2 className="icon" />
-                  Current Location:Gatsibo District Eastern province Rwanda{" "}
+                  Address: Director General: P.Box: 49 Nyagatare{" "}
                 </div>
                 <div>
                   <AiFillHome className="icon" />
-                  info@kundwahealth.org
+                  ngarama.hospital.moh.gov.rw
                 </div>
                 <div>
                   <BsFillTelephoneFill className="icon" />
-                  :+250789287267
+                  0785398394
                 </div>
               </div>
             </div>
           </div>
           <div className="service-middle-right">
             <div className="part1">
-              <img src={modern} />
+              <img src={ngarama} />
             </div>
             <div className="part2">
               <p>
-                Modern Family Pharmacy specializes in providing a range of
-                sexual and reproductive health services, including contraception
-                pills and condoms. As a trusted healthcare provider, we offer
-                confidential consultations and personalized guidance to ensure
-                our clients receive the most suitable options for their needs.
-                Our goal is to promote safe and responsible sexual health
-                practices, empowering individuals to make informed decisions
-                about their reproductive well-being.
+                Kiziguro District Hospital, established in 1985 by the Catholic
+                Diocese of Byumba, serves as one of the two hospitals in Gatsibo
+                district, Rwanda. Located in the Eastern Province, it provides a
+                range of services, including sexual reproductive health and
+                legally sanctioned abortion. The hospital's 12 departments cater
+                to various medical needs, such as surgical, pediatric,
+                maternity, and mental health care, serving a catchment area of
+                nearly 500,000 people with 158 beds and five ambulances.
               </p>
               <div className="icons-service">
                 <div>
                   <ImLocation2 className="icon" />
-                  Current Location:Modern Family Pharmacy{" "}
+                  Address: P.Box: 53 RWAMAGANA{" "}
                 </div>
                 <div>
                   <AiFillHome className="icon" />
-                  modernfamilypharmacy.org
+                  kiziguro.hospital.hospital@moh.gov.rw
                 </div>
                 <div>
                   <BsFillTelephoneFill className="icon" />
-                  :+250788461069
+                  0726903769, 0788329851
                 </div>
               </div>
             </div>
             <div className="part3">
-              <img src={reproductive} />
+              <img src={kiziguro} />
             </div>
           </div>
         </div>

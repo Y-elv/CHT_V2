@@ -18,7 +18,7 @@ const Pharmacy = () => {
         <div className="service-header">
           <UserNavbar />
         </div>
-        <div className="service-title">WE GOT YOU ! Pharmacy</div>
+        <div className="service-title">WE GOT YOU ! </div>
         <div className="service-middle">
           <div className="service-middle-left">
             <div className="part1">
