@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Chatpages from "./pages/Chatpages";
 import ServicePage from "./pages/service/service";
+import Pharmacy from "./pages/pharmacy/Pharmacy";
 import LandingPage from "./pages/landingPage/landingPage";
 import Game from "./pages/game/game";
 import News from "./pages/news/news";
@@ -14,6 +15,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Login from "./components/Authentication/login";
 import Signup from "./components/Authentication/signup";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+import Hospital from "./pages/hospital/Hospital";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/chats" element={<Chatpages />} />
         <Route path="/services" element={<ServicePage />} />
+        <Route path="/pharmacy" element={<Pharmacy />} />
+        <Route path="/hospital" element={<Hospital/>} />
         <Route path="/game" element={<Game />} />
         <Route path="/news" element={<News />} />
         <Route path="/menu" element={<Menu />} />

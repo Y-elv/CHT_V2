@@ -1,6 +1,7 @@
+import React from 'react'
 import Navbar from "../../components/navbar/navbar";
 import Footer from "../../layout/footer/footer";
-import "./service.css";
+import "./Pharmacy.css";
 import kipharma from "../../assets/kipharma.png";
 import reproductive from "../../assets/reproductive.png";
 import gate from "../../assets/gate.png";
@@ -10,14 +11,14 @@ import { ImLocation2 } from "react-icons/im";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import modern from "../../assets/modernFam.jpg";
 import mila from "../../assets/Mila .jpg";
-const ServicePage = () => {
+const Pharmacy = () => {
   return (
     <>
       <div className="service-container">
         <div className="service-header">
           <UserNavbar />
         </div>
-        <div className="service-title">WE GOT YOU !</div>
+        <div className="service-title">WE GOT YOU ! Pharmacy</div>
         <div className="service-middle">
           <div className="service-middle-left">
             <div className="part1">
@@ -118,4 +119,4 @@ const ServicePage = () => {
   );
 };
 
-export default ServicePage;
+export default Pharmacy

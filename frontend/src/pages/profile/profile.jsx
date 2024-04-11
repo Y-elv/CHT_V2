@@ -147,7 +147,7 @@ const Profile = () => {
   const items = [
     {
       key: "1",
-      label: <Link to="/services">Hospital</Link>,
+      label: <Link to="/hospital">Hospital</Link>,
     },
     {
       key: "2",
@@ -155,7 +155,7 @@ const Profile = () => {
     },
     {
       key: "3",
-      label: <Link to="/services">Pharmacy</Link>,
+      label: <Link to="/pharmacy">Pharmacy</Link>,
     },
   ];
 
