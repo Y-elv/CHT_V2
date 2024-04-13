@@ -25,8 +25,7 @@ const ServicePage = () => {
                 KARAMBO Health Center, part of the NEMBA District Hospital's
                 catchment area, is committed to providing comprehensive
                 healthcare services. This includes specialized care in sexual
-                reproductive health, ensuring access to legally sanctioned
-                abortion services. Located in the vibrant community of NEMBA,
+                reproductive health. Located in the vibrant community of NEMBA,
                 the health center caters to diverse healthcare needs,
                 prioritizing patient well-being and reproductive health.
               </p>
@@ -56,8 +55,7 @@ const ServicePage = () => {
                 24/7, it offers a range of services including curative
                 consultations, hospitalization, maternity care, laboratory
                 services, family planning, vaccination, ARV treatment, GBV
-                prevention, and reproductive health services, including legally
-                sanctioned abortion
+                prevention, and reproductive health services.
               </p>
               <div className="icons-service">
                 <div className="icon-wrapper">

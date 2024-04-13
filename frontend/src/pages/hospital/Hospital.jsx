@@ -55,11 +55,10 @@ function Hospital() {
                 Province, Rwanda, is a public hospital established in 1982 with
                 support from the Dutch state. Located 20 km from the main
                 Kigali-Kagitumba road and 172 km from Kigali city, it provides
-                comprehensive healthcare services, including sexual reproductive
-                health and legally sanctioned abortion. With a capacity of 127
-                beds, the hospital offers a range of outpatient and inpatient
-                services, as well as supervision for health centers in the
-                region.
+                comprehensive healthcare services .including sexual reproductive
+                health, With a capacity of 127 beds, the hospital offers a range
+                of outpatient and inpatient services, as well as supervision for
+                health centers in the region.
               </p>
               <div className="icons-service">
                 <div className="icon-wrapper">
@@ -86,11 +85,11 @@ function Hospital() {
                 Kiziguro District Hospital, established in 1985 by the Catholic
                 Diocese of Byumba, serves as one of the two hospitals in Gatsibo
                 district, Rwanda. Located in the Eastern Province, it provides a
-                range of services, including sexual reproductive health and
-                legally sanctioned abortion. The hospital's 12 departments cater
-                to various medical needs, such as surgical, pediatric,
-                maternity, and mental health care, serving a catchment area of
-                nearly 500,000 people with 158 beds and five ambulances.
+                range of services, including sexual reproductive health . The
+                hospital's 12 departments cater to various medical needs, such
+                as surgical, pediatric, maternity, and mental health care,
+                serving a catchment area of nearly 500,000 people with 158 beds
+                and five ambulances.
               </p>
               <div className="icons-service">
                 <div className="icon-wrapper">
