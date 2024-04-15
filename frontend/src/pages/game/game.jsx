@@ -9,8 +9,7 @@ const Game = () => {
          <div className="game-container">
            <div className="word">
              <h5>PLAY NOW</h5>
-             <h5>Shutters and ladder Funhealth Game</h5>
-             
+             <h5>Chutes and ladders funhealth Game</h5>
            </div>
            <div className="game-img">
              <img src={gamePic} />
