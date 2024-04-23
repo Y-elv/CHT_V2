@@ -20,7 +20,7 @@ function Hospital() {
         <div className="service-title">WE GOT YOU !</div>
         <div className="service-middle">
           <div className="service-middle-left">
-            <div className="part1">
+            {/* <div className="part1">
               <p>
                 Muhima Hospital, a public healthcare facility in Nyarugenge
                 District, City of Kigali, offers a wide range of medical
@@ -48,7 +48,7 @@ function Hospital() {
             </div>
             <div className="part2">
               <img src={muhima} />
-            </div>
+            </div> */}
             <div className="part3">
               <p>
                 NGARAMA District Hospital, situated in Gatsibo district, Eastern
@@ -74,12 +74,13 @@ function Hospital() {
                   0785398394
                 </div>
               </div>
+             
+              <div className="part1">
+                <img src={ngarama} />
+              </div>
             </div>
           </div>
           <div className="service-middle-right">
-            <div className="part1">
-              <img src={ngarama} />
-            </div>
             <div className="part2">
               <p>
                 Kiziguro District Hospital, established in 1985 by the Catholic

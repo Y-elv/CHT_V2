@@ -151,7 +151,7 @@ const Profile = () => {
     },
     {
       key: "2",
-      label: <Link to="/services">Health Care</Link>,
+      label: <Link to="/services">Health Center</Link>,
     },
     {
       key: "3",

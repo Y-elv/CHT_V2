@@ -22,25 +22,27 @@ const ServicePage = () => {
           <div className="service-middle-left">
             <div className="part1">
               <p>
-                KARAMBO Health Center, part of the NEMBA District Hospital's
-                catchment area, is committed to providing comprehensive
-                healthcare services. This includes specialized care in sexual
-                reproductive health. Located in the vibrant community of NEMBA,
-                the health center caters to diverse healthcare needs,
-                prioritizing patient well-being and reproductive health.
+                Rugarama Health Center in Northern Rwanda's Burera District
+                offers vital sexual and reproductive health services tailored
+                for youth. Our dedicated team provides comprehensive care,
+                including counseling, screenings, and education on family
+                planning, STIs, and reproductive rights. We prioritize
+                confidentiality, respect, and accessibility to ensure every
+                young person receives the support they need for a healthy future
+                .
               </p>
               <div className="icons-service">
                 <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
-                  Current Location: KARAMBO Health Center{" "}
+                  Current Location: Burera district{" "}
                 </div>
                 <div className="icon-wrapper">
                   <AiFillHome className="icon" />
-                  nembahc@gmail.com
+                  butaro.hospital@moh.gov.rw
                 </div>
                 <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
-                  0788550295
+                  0788331114
                 </div>
               </div>
             </div>
@@ -49,26 +51,28 @@ const ServicePage = () => {
             </div>
             <div className="part3">
               <p>
-                Remera Mbogo Health Center is a comprehensive healthcare
-                facility in Ngoma Sector, Rulindo District, serving residents of
-                Ngoma Sector, Cyinzuzi Sector, and surrounding areas. Operating
-                24/7, it offers a range of services including curative
-                consultations, hospitalization, maternity care, laboratory
-                services, family planning, vaccination, ARV treatment, GBV
-                prevention, and reproductive health services.
+                Kiziguro Health Center, nestled in Eastern Province's Gatsibo
+                District, Kiziguro Sector, specializes in empowering youth
+                through comprehensive sexual and reproductive health services.
+                Our dedicated team offers confidential consultations,
+                screenings, and education on family planning, STIs, and
+                reproductive health rights. We prioritize youth-friendly
+                services, ensuring a supportive and inclusive environment where
+                every young person can access the care they need for a healthy
+                and fulfilling life
               </p>
               <div className="icons-service">
                 <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
-                  Current Location: Remera Mbogo Health Center{" "}
+                  Current Location: Gatsibo district{" "}
                 </div>
                 <div className="icon-wrapper">
                   <AiFillHome className="icon" />
-                  remerambogohc@rutongohospital.gov.rw
+                  kiziguro.hospital.hospital@moh.gov.rw
                 </div>
                 <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
-                  0788587357
+                  0788329851
                 </div>
               </div>
             </div>
@@ -79,27 +83,27 @@ const ServicePage = () => {
             </div>
             <div className="part2">
               <p>
-                Juru Health Center, established in July 2011, is a vital
-                healthcare provider in Bugesera District, Southern Rwanda,
-                catering to a population of 30,163. Alongside its comprehensive
-                medical services, the center is dedicated to sexual reproductive
-                health. As of April 2020, Juru Health Center has conducted
-                211,737 consultations, facilitated 5,038 deliveries, and
-                registered 7,734 new antenatal care cases, emphasizing its
-                commitment to holistic healthcare.
+                Kabarore Health Center, situated in Eastern Province's Gatsibo
+                District, Kabarore Sector, is dedicated to delivering essential
+                sexual and reproductive health services tailored for youth. Our
+                compassionate team provides a wide range of services including
+                counseling, screenings, and education on family planning, STIs,
+                and reproductive rights. We prioritize confidentiality, respect,
+                and youth-friendly care to ensure every young person receives
+                the support they need for a healthy and empowered life.
               </p>
               <div className="icons-service">
                 <div className="icon-wrapper">
                   <ImLocation2 className="icon" />
-                  Current Location:Juru Health Center{" "}
+                  Current Location: Gatsibo district{" "}
                 </div>
-                {/* <div>
+                <div>
                   <AiFillHome className="icon" />
-                  modernfamilypharmacy.org
-                </div> */}
+                  kiziguro.hospital.hospital@moh.gov.rw
+                </div>
                 <div className="icon-wrapper">
                   <BsFillTelephoneFill className="icon" />
-                  0784 531 581
+                  0788329851
                 </div>
               </div>
             </div>
