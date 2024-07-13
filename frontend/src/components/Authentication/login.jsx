@@ -1,6 +1,5 @@
 import {
   FormControl,
-  FormLabel,
   Input,
   InputGroup,
   InputRightElement,
@@ -9,7 +8,7 @@ import {
   Box,
   Image,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
@@ -18,14 +17,20 @@ import "./login.css";
 import logo from "../../assets/LOGO FULL.png";
 import { CgMail } from "react-icons/cg";
 import { BiSolidLockAlt } from "react-icons/bi";
+import { useBadgeStore } from "../../zustandStore/store";
+
 
 const Login = () => {
+  const navigate = useNavigate()
   const [show, SetShow] = useState(false);
   const [loading, setLoading] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const history = useNavigate();
   const toast = useToast();
+  const setProfile = useBadgeStore(state => state.setProfile)
+  const profile = useBadgeStore(state => state.profile)
+  const setIsLoggedIn = useBadgeStore(state => state.setIsLoggedIn)
   const handleClick = () => SetShow(!show);
 
   const submitHandler = async () => {
@@ -67,7 +72,11 @@ const Login = () => {
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
-      history("/profile");
+      setIsLoggedIn(true)
+      setProfile(data)
+      // navigate("/profile", {state:{data:data}})
+      navigate("/profile")
+      // history("/profile");
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -80,6 +89,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+  console.log("Zus Profile", profile)
   return (
     <div className="login-container">
       <VStack

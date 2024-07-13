@@ -16,15 +16,17 @@ import SideDrawer from "../components/miscellaneous/SideDrawer";
 import MyChats from "../components/MyChats";
 import ChatBox from "../components/ChatBox";
 import ProfileNavbar from "../components/profileNavbar/offcanvasprofile";
+import { useBadgeStore } from "../zustandStore/store";
 
 const Chatpages = () => {
   const { user } = ChatState();
   const [fetchAgain, setFetchAgain] = useState(false);
+  const profile = useBadgeStore((state) => state.profile) || null;
 
   return (
     <div style={{ width: "100%" }}>
-      {user && <UserNavbar/>}
-      {user && <SideDrawer />}
+      {profile && <UserNavbar/>}
+      {profile && <SideDrawer />}
       <Box
         display="flex"
         justifyContent="space-between"
@@ -33,8 +35,8 @@ const Chatpages = () => {
         p="10px"
         bg="#B8C2D7"
       >
-        {user && <MyChats fetchAgain={fetchAgain} />}
-        {user && (
+        {profile && <MyChats fetchAgain={fetchAgain} />}
+        {profile && (
           <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         )}
       </Box>

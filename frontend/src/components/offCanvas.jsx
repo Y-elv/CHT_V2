@@ -62,6 +62,7 @@ function OffCanvasButton() {
                 }}
               >
                 <>
+                
                   <Dropdown
                     overlay={
                       <Menu>
@@ -102,6 +103,12 @@ function OffCanvasButton() {
               </Link>
               <Link to="/register" className="d-block text-black">
                 Sign Up
+              </Link>
+              <Link to="/updates" className="d-block text-black">
+                Updates
+              </Link>
+              <Link to="/about" className="d-block text-black">
+                About
               </Link>
             </>
           )}

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useBadgeStore } from "../../zustandStore/store";
 
 const ChatContext = createContext();
 
@@ -8,13 +9,15 @@ const ChatProvider = ({ children }) => {
   const [selectedChat, setSelectedChat] = useState();
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
+  const setIsLoggedIn = useBadgeStore((state) => state.setIsLoggedIn);
+  const setProfile = useBadgeStore((state) => state.setProfile);
 
  useEffect(() => {
     console.log("ChatProvider useEffect triggered");
    const fetchData = async () => {
      try {
        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-       console.log("User Info from localStorage:", userInfo);
+      
 
        if (!userInfo) {
          navigate("/home");
@@ -38,6 +41,8 @@ const ChatProvider = ({ children }) => {
     const logoutHandler = () => {
       localStorage.removeItem("userInfo");
       setUser(null);
+      setProfile(null)
+      setIsLoggedIn(false)
       navigate("/login");
     };
 
