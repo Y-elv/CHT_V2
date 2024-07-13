@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import "./App.css";
 import Chatpages from "./pages/Chatpages";
@@ -16,6 +16,11 @@ import Login from "./components/Authentication/login";
 import Signup from "./components/Authentication/signup";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import Hospital from "./pages/hospital/Hospital";
+import OurTeamPage from "./pages/OurTeamPage";
+import NewsPage from "./pages/NewsPage";
+import ArticlesPage from "./pages/ArticlesPage";
+import ServicesPage from "./pages/ServicesPage";
+import ErrorPage from "./pages/ErrorPage";
 
 function App() {
   return (
@@ -35,7 +40,11 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/home" element={<LandingPage />} />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/our-teamm" element={<OurTeamPage />} />
+        <Route path="/our-services" element={<ServicesPage />} />
+        <Route path="/our-news" element={<NewsPage />} />
+        <Route path="/our-articles" element={<ArticlesPage />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>
   );

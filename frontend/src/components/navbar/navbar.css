@@ -2,13 +2,15 @@ nav{
     
       padding: 0;
       margin-top: 0px;
-      background-color:#B8C2D7 ;
+      /* background-color:#B8C2D7 ; */
+      
     
 
     
 }
 
 .navbar {
-    box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0px 2px 40px rgba(0, 0, 0, 0.2) !important;
+    
   }
   

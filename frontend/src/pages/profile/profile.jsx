@@ -1,29 +1,47 @@
 import "./profile.css";
 import logo from "../../assets/LOGO FULL.png";
-import { Link } from "react-router-dom";
-import consultation from "../../assets/consultation.png";
-import chat from "../../assets/chats.png";
-import notification from "../../assets/notification.png";
-import menu from "../../assets/menu.png";
-import gameIcon from "../../assets/gameIcon.png";
-import logoutcurve from "../../assets/logoutcurve.png";
+import { Link, useLocation } from "react-router-dom";
 import { ChatState } from "../../components/Context/chatProvider";
 import { useContext, useState, useEffect } from "react";
-import ProfileNavbar from "../../components/profileNavbar/profileNavbar";
 import { Dropdown, Space, Menu } from "antd";
 import { useToast } from "@chakra-ui/react";
 import UserNavbar from "../../layout/userNavbar/userNavbar";
+import { IoChatboxOutline, IoLogOut, IoNewspaperOutline } from "react-icons/io5";
+import { RiGamepadLine } from "react-icons/ri";
+import { MdMiscellaneousServices } from "react-icons/md";
+import { useBadgeStore } from "../../zustandStore/store";
 
 const Profile = () => {
   const { user, logoutHandler } = ChatState();
-  console.log("User in Profile:", user);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [myUser, setMyUser] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const profile = useBadgeStore((state) => state.profile) || null;
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const [pic, setPic] = useState();
 
+
+  console.log("Zustand profile: ", profile)
+
+  console.log("User Info from localStorage yyy:", user);
+  const getUser = async()=>{
+  if(!profile){
+    setMyUser(user)
+  } 
+
+  setMyUser(profile)
+
+  }
+
+
+
+  useEffect(()=>{
+    getUser()
+  },[])
+
+  console.log("User in setUser:", myUser);
   const handleImageClick = () => {
     setIsPopupOpen(true);
   };
@@ -47,7 +65,7 @@ const Profile = () => {
       return;
     }
 
-    if (pics.type !== "image/jpeg" && pics.type !== "image/png") {
+    if (pics?.type !== "image/jpeg" && pics?.type !== "image/png") {
       toast({
         title: "Please select a valid image (JPEG or PNG)!",
         status: "warning",
@@ -65,7 +83,7 @@ const Profile = () => {
     data.append("cloud_name", "dmzieqsir");
 
     try {
-      const user = JSON.parse(localStorage.getItem("userInfo"));
+      const user = await JSON.parse(localStorage.getItem("userInfo"));
       const token = user.token;
       const cloudinaryResponse = await fetch(
         "https://api.cloudinary.com/v1_1/dmzieqsir/image/upload",
@@ -159,6 +177,7 @@ const Profile = () => {
     },
   ];
 
+
   return (
     <>
       {isMobile ? (
@@ -170,15 +189,15 @@ const Profile = () => {
               <div className="user-box">
                 <div className="profile-image-container">
                   <div>
-                    {user && (
+                    {/* {user && ( */}
                       <>
-                        {console.log("User profile picture:", user?.pic)}
+                        {console.log("User profile picture:", myUser?.pic)}
                         <img
-                          src={selectedImage ? selectedImage : user.pic}
+                          src={selectedImage ? selectedImage : myUser?.pic}
                           onClick={handleImageClick}
                         />
                       </>
-                    )}
+                    {/* )} */}
 
                     {isPopupOpen && (
                       <div className="popup">
@@ -193,9 +212,9 @@ const Profile = () => {
                   </div>
 
                   <div>
-                    {user && (
-                      <div className="username-sec">Welcome {user?.name}</div>
-                    )}
+                    {/* {profile && ( */}
+                      <div className="username-sec">Welcome {profile?.name}</div>
+                    {/* )} */}
                   </div>
                 </div>
               </div>
@@ -207,12 +226,12 @@ const Profile = () => {
           <div className="profile-left">
             <div className="profile-contents">
               <div className="logo">
-                <img src={logo} />
+                <img src={logo}  className="h-20 "/>
               </div>
-              <div className="content-menu">
+              <div className="content-menu my-5 flex flex-col items-start">
                 {/* <Link
                   to="/consultation"
-                  className="iconn"
+                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                   style={{ textDecoration: "none" }}
                 >
                   <img src={consultation} className="icons" />
@@ -220,26 +239,27 @@ const Profile = () => {
                 </Link> */}
                 <Link
                   to="/chats"
-                  className="iconn"
+                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                   style={{ textDecoration: "none" }}
                 >
-                  <img src={chat} className="icons" />
+                  {/* <img src={chat} className="icons" /> */}
+                  <IoChatboxOutline className="text-2xl"/>
                   <p>Chats</p>
                 </Link>
                 <Link
                   to="/game"
-                  className="iconn"
+                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                   style={{ textDecoration: "none" }}
                 >
-                  <img src={gameIcon} className="icons" />
+                  <RiGamepadLine className="text-2xl"/>
                   <p>Game</p>
                 </Link>
                 <Link
-                  className="iconn"
+                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                   to="/services"
                   style={{ textDecoration: "none" }}
                 >
-                  <img src={menu} className="icons" />
+                  <MdMiscellaneousServices className="text-2xl" />
                  
                   <>
                     <Dropdown
@@ -255,7 +275,7 @@ const Profile = () => {
                     >
                       <a
                         onClick={(e) => e.preventDefault()}
-                        className="iconn"
+                        className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                         style={{ textDecoration: "none" }}
                       >
                         <Space>
@@ -268,23 +288,23 @@ const Profile = () => {
                 
                 <Link
                   to="/news"
-                  className="iconn"
+                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                   style={{ textDecoration: "none" }}
                 >
-                  <img src={notification} className="icons" />
+                  <IoNewspaperOutline className="text-2xl" />
                   <p> News</p>
                 </Link>
-                {user && (
+                {profile && (
                   <Link
                     onClick={() => logoutHandler()}
                     to="/login"
-                    className="iconn"
+                    className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                     style={{ textDecoration: "none" }}
                   >
-                    <img src={logoutcurve} className="icons" />
-                    <p>Sign Out</p>
+                    <IoLogOut className="text-2xl" />
+                    <p className="text-xs">Sign Out</p>
                   </Link>
-                )}
+                 )} 
               </div>
             </div>
           </div>
@@ -292,14 +312,15 @@ const Profile = () => {
             <div className="welcome-text">Welcome to FH D</div>
             <div className="user-box-container">
               <div className="user-box">
-                <div className="profile-image-container">
+                <div className="profile-image-container ">
                   <div>
-                    {user && (
+                    {profile && (
                       <>
-                        {console.log("User profile picture:", user?.pic)}
+                        {console.log("User profile picture:", profile?.pic)}
                         <img
-                          src={selectedImage ? selectedImage : user.pic}
+                          src={selectedImage ? selectedImage : profile?.pic}
                           onClick={handleImageClick}
+                          className="object-cover w-32 h-32 rounded-full"
                         />
                       </>
                     )}
@@ -317,8 +338,8 @@ const Profile = () => {
                   </div>
 
                   <div>
-                    {user && (
-                      <div className="username-sec">Welcome {user?.name}</div>
+                    {profile && (
+                      <div className="username-sec">Welcome {profile?.name}</div>
                     )}
                   </div>
                 </div>
