@@ -18,7 +18,8 @@ import { RiMentalHealthFill } from "react-icons/ri";
 import { MdHealthAndSafety } from "react-icons/md";
 import { useBadgeStore } from "../../zustandStore/store";
 import { motion } from "framer-motion";
-import HomeSlideShowComponent from "../../components/HomeSlideShowComponent";
+// import HomeSlideShowComponent from "../../components/HomeSlideShowComponent";
+
 
 const LandingPage = () => {
   const navigate = useNavigate();
