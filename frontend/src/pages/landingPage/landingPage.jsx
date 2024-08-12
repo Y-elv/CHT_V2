@@ -20,6 +20,7 @@ import { useBadgeStore } from "../../zustandStore/store";
 import { motion } from "framer-motion";
 // import HomeSlideShowComponent from "../../components/HomeSlideShowComponent";
 
+
 const LandingPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
