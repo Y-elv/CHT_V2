@@ -120,9 +120,9 @@ const Consultation = () => {
               </Row>
             </Container>
             <div className="kh-rooms">
-              {/* <button className="btn-kh" onClick={showModal}>
-                talk to us
-              </button> */}
+              <button className="btn-kh" onClick={showModal}>
+                talk to us 
+              </button>
             </div>
             <div className="cons-about">
               <div className="cons-about-up">

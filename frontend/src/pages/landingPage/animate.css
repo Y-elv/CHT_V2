@@ -1,19 +1,16 @@
-
-
 @media (prefers-reduced-motion: no-preference) {
-    .slide-in {
-      scale: 0.8;
+  @keyframes slideInUp {
+    0% {
+      transform: translateY(70px);
       opacity: 0;
-      animation: fade-in linear forwards;
-      animation-timeline: view();
-      animation-range: 60vh 10vh;
-      animation-range: entry;
     }
-  
-    @keyframes fade-in {
-      to {
-        scale: 1;
-        opacity: 1;
-      }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
     }
   }
+
+  .animate-slideInUp {
+    animation: slideInUp 1s ease-in-out forwards;
+  }
+}
