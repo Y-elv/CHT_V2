@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "framer-motion": "^11.3.8",
+    "react-slideshow-image": "^4.3.1",
+    "zustand": "^4.5.4"
+  }
+}

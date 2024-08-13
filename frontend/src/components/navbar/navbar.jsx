@@ -101,4 +101,3 @@ const Navbar = ({active}) => {
 };
 
 export default Navbar;
-
