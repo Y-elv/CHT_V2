@@ -30,23 +30,22 @@ const LandingPage = () => {
   const ImageArray2 = [
     {
       url: Image1,
-      title: "First Image Title",
-      text: "First Image Text",
+      title: "Welcome to FunHealth",
+      text: "Welcome to FunHealth, where we provide comprehensive care and support to keep your mind and body healthy.",
       buttonText: "Learn More",
     },
     {
       url: Image2,
-      title: "Second Image Title",
-      text: "Second Image Text",
+      title: "Mental Wellness",
+      text: "Explore our resources and activities designed to boost your mental health and well-being.",
       buttonText: "Explore",
     },
     {
       url: Image3,
-      title: "Third Image Title",
-      text: "Third Image Text",
+      title: "Your Health, Our Priority",
+      text: "Discover how we make healthcare simple and accessible, supporting your journey to a healthier life.",
       buttonText: "Get Started",
     },
-    // Add more images, titles, text, and buttons here
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -249,6 +248,12 @@ const LandingPage = () => {
               {ImageArray2[currentImageIndex].text}
             </p>
             <button
+              onClick={() => {
+                const section = document.querySelector(".services-section");
+                if (section) {
+                  section.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
               className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-700 transition rounded-xl animate-slideInUp delay-300"
               key={ImageArray2[currentImageIndex].buttonText}
             >
@@ -275,8 +280,8 @@ const LandingPage = () => {
 
               <p className="font-medium">Pharmacy</p>
               <p className="text-sm">
-                Lorem ipsum dolor sit amet consectetur. In eu aliquet orci ac
-                risus lobortis aenean diam aenean. Quam sodales faucibus amet.
+                Access essential medications and expert advice to support your
+                health, ensuring you receive the care you need.
               </p>
             </motion.div>
 
@@ -292,8 +297,8 @@ const LandingPage = () => {
 
               <p className="font-medium">Mental Support</p>
               <p className="text-sm">
-                Lorem ipsum dolor sit amet consectetur. In eu aliquet orci ac
-                risus lobortis aenean diam aenean. Quam sodales faucibus amet.
+                We offer resources and guidance to help you achieve mental
+                wellness, fostering resilience and emotional balance.
               </p>
             </motion.div>
             <motion.div
@@ -308,8 +313,9 @@ const LandingPage = () => {
 
               <p className="font-medium">Health Care</p>
               <p className="text-sm">
-                Lorem ipsum dolor sit amet consectetur. In eu aliquet orci ac
-                risus lobortis aenean diam aenean. Quam sodales faucibus amet.
+                In FunHealth, we provide personalized care to support your
+                overall well-being, helping you achieve balance in mind and
+                body.
               </p>
             </motion.div>
           </div>
@@ -322,7 +328,7 @@ const LandingPage = () => {
 
           <div className="content flex flex-col w-[85%] tablet:w-[70%] px-3 tablet:px-10 mx-auto">
             <p className="text-sm slide-in">
-              kUNDWA HEALTH is youth-led organization working with young people
+              Kundwa Health is youth-led organization working with young people
               to decentralize health information and service they need to lead
               healthier lives through digital health means.it was founded in
               Gatsibo district by three young health activits,who were driven by

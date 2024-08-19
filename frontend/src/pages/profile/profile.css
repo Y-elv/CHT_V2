@@ -1,235 +1,189 @@
-*{
-    margin: 0;
-    padding: 0;
-    
+* {
+  margin: 0;
+  padding: 0;
 }
-.profile-sec{
-    display: flex;
-    flex-direction: row;
-   
+.profile-sec {
+  display: flex;
+  flex-direction: row;
 }
-.profile-left{
-background-color: #E9EFFF;
-width: 50%;
-height: 100vh;
+.profile-circle {
+  width: 80px; /* Adjust size as needed */
+  height: 10px; /* Adjust size as needed */
+  border-radius: 80%;
+  object-fit: cover; /* Ensures the image covers the circle without distortion */
+  border: 2px solid #ccc; /* Optional: adds a border around the circle */
 }
-.profile-right{
-    background-color: #B8C2D7;
-    width: 70%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-   
-}
-.content-menu{
-    display: flex;
-    flex-direction: column;
-    height: 60vh;
-    
-    text-decoration: none;
-    width: 10vw;
-    gap:1rem;
-    
-    
-   
 
+.profile-left {
+  background-color: #e9efff;
+  width: 50%;
+  height: 100vh;
 }
-.content-menu p{
-    text-decoration: none;
+.profile-right {
+  background-color: #b8c2d7;
+  width: 70%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.content-menu {
+  display: flex;
+  flex-direction: column;
+  height: 60vh;
+
+  text-decoration: none;
+  width: 10vw;
+  gap: 1rem;
+}
+.content-menu p {
+  text-decoration: none;
+  display: flex;
+}
+.icons {
+  width: 30%;
+  height: 60%;
+}
+.iconn {
+  display: flex;
+  gap: 1rem;
+}
+.profile-contents {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  height: 100vh;
+}
+.user-box {
+  border: 2px solid #2c17ae;
+  border-radius: 15px;
+  width: 40vw;
+  height: 30vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.iconn P {
+  color: black;
+}
+
+.welcome-text {
+  color: #e2891d;
+  width: 70vw;
+  height: 35vh;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+}
+.user-box-container {
+  width: 70vw;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+}
+
+/* Add this to your CSS file */
+.profile-img {
+  width: 8vw;
+  height: 18vh;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.profile-image-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-image-container img {
+  gap: 1rem;
+
+  width: 8vw;
+  height: 17vh;
+  border-radius: 50%;
+}
+
+.popup {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 10px);
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}
+
+.popup input[type="file"] {
+  margin-bottom: 10px;
+}
+
+.popup button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.username-sec {
+  color: black;
+  width: 30vw;
+  display: flex;
+  justify-content: center;
+}
+
+@media screen and (max-width: 1118px) {
+  .profile-right {
+    width: 100%;
     display: flex;
-    
-}
-.icons{
-   
-    width: 30%;
-    height: 60%;
-    
-    
-}
-.iconn{
-    display: flex;
-    gap:1rem;
-}
-.profile-contents{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    justify-self: center;
-    height: 100vh;
+    align-items: center;
+  }
 
+  .profile-image-container img {
+    gap: 1rem;
+
+    width: 25vw;
+    height: 17vh;
+    border-radius: 50%;
+  }
 }
-.user-box{
-    border: 2px solid #2C17AE;
+
+@media screen and (max-width: 768px) {
+  .profile-right {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .user-box {
+    border: 2px solid #2c17ae;
     border-radius: 15px;
-    width: 40vw;
+    width: 80vw;
     height: 30vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    
-    
-  
-    
- 
-}
-.iconn P{
-    color:black;
-    
-}
-
-.welcome-text{
-    color: #E2891D;
-    width: 70vw;
-    height: 35vh;
-    display: flex;
-    align-items: center;
-    justify-items: center;
-    justify-content: center;
-}
-.user-box-container{
-
-    width:70vw;
-    height: 70vh;
-    display: flex;
-    justify-content: center;
-}
-
-/* Add this to your CSS file */
-.profile-img{
-   
-                  
-        width: 8vw;
-        height: 18vh;
-        border-radius: 50%;
-        object-fit: cover;
-        cursor: pointer;
-       
-     
-}
-
-.profile-image-container  {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-   
-
-    
-
   }
 
   .profile-image-container img {
-    
     gap: 1rem;
-   
-    width: 8vw;
-    height: 17vh;
-    border-radius:50%;
 
-    
-
-  }
-  
-
-  
-  .popup {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translate(-50%, 10px);
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-    z-index: 999;
-  }
-  
-  .popup input[type="file"] {
-    margin-bottom: 10px;
-  }
-  
-  .popup button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  .username-sec{
-    color: black;
-    width: 30vw;
-    display: flex;
-    justify-content: center;
-  }
-
-   @media screen and (max-width:1118px){
-    .profile-right{
-       
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      
-    }
-  
-      .profile-image-container img {
-    
-    gap: 1rem;
-    
-    width: 25vw;
-    height: 17vh;
-    border-radius:50%;
-
-    
-
-  }
-    
-    
-  }
-
-  @media screen and (max-width:768px){
-    .profile-right{
-       
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      
-    }
-    .user-box{
-        border: 2px solid #2C17AE;
-        border-radius: 15px;
-        width: 80vw;
-        height: 30vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        
-     
-    }
-
-      .profile-image-container img {
-    
-    gap: 1rem;
-    
     width: 30vw;
     height: 17vh;
-    border-radius:50%;
-
-    
-
+    border-radius: 50%;
   }
-    
-    
+}
+@media screen and (max-width: 350px) {
+  .username-sec {
+    width: 45vw;
   }
-  @media screen and (max-width:350px){
-    .username-sec{
-        
-        
-        width: 45vw;
-       
-      }
-  }
+}
