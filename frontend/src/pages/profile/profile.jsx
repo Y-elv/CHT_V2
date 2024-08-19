@@ -10,6 +10,8 @@ import { IoChatboxOutline, IoLogOut, IoNewspaperOutline } from "react-icons/io5"
 import { RiGamepadLine } from "react-icons/ri";
 import { MdMiscellaneousServices } from "react-icons/md";
 import { useBadgeStore } from "../../zustandStore/store";
+import consultation from "../../assets/consultation.png";
+import { FaUserMd } from "react-icons/fa";
 
 const Profile = () => {
   const { user, logoutHandler } = ChatState();
@@ -190,13 +192,13 @@ const Profile = () => {
                 <div className="profile-image-container">
                   <div>
                     {/* {user && ( */}
-                      <>
-                        {console.log("User profile picture:", myUser?.pic)}
-                        <img
-                          src={selectedImage ? selectedImage : myUser?.pic}
-                          onClick={handleImageClick}
-                        />
-                      </>
+                    <>
+                      {console.log("User profile picture:", myUser?.pic)}
+                      <img
+                        src={selectedImage ? selectedImage : myUser?.pic}
+                        onClick={handleImageClick}
+                      />
+                    </>
                     {/* )} */}
 
                     {isPopupOpen && (
@@ -213,7 +215,7 @@ const Profile = () => {
 
                   <div>
                     {/* {profile && ( */}
-                      <div className="username-sec">Welcome {profile?.name}</div>
+                    <div className="username-sec">Welcome {profile?.name}</div>
                     {/* )} */}
                   </div>
                 </div>
@@ -226,24 +228,24 @@ const Profile = () => {
           <div className="profile-left">
             <div className="profile-contents">
               <div className="logo">
-                <img src={logo}  className="h-20 "/>
+                <img src={logo} className="h-20 " />
               </div>
               <div className="content-menu my-5 flex flex-col items-start">
-                {/* <Link
+                <Link
                   to="/consultation"
                   className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                   style={{ textDecoration: "none" }}
                 >
-                  <img src={consultation} className="icons" />
+                  <FaUserMd className="text-2xl" />
                   <p>Consultation</p>
-                </Link> */}
+                </Link>
                 <Link
                   to="/chats"
                   className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                   style={{ textDecoration: "none" }}
                 >
                   {/* <img src={chat} className="icons" /> */}
-                  <IoChatboxOutline className="text-2xl"/>
+                  <IoChatboxOutline className="text-2xl" />
                   <p>Chats</p>
                 </Link>
                 <Link
@@ -251,10 +253,10 @@ const Profile = () => {
                   className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                   style={{ textDecoration: "none" }}
                 >
-                  <RiGamepadLine className="text-2xl"/>
+                  <RiGamepadLine className="text-2xl" />
                   <p>Game</p>
                 </Link>
-                <Link
+                {/* <Link
                   className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
                   to="/services"
                   style={{ textDecoration: "none" }}
@@ -284,8 +286,8 @@ const Profile = () => {
                       </a>
                     </Dropdown>
                   </>
-                </Link>
-                
+                </Link> */}
+
                 <Link
                   to="/news"
                   className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
@@ -304,7 +306,7 @@ const Profile = () => {
                     <IoLogOut className="text-2xl" />
                     <p className="text-xs">Sign Out</p>
                   </Link>
-                 )} 
+                )}
               </div>
             </div>
           </div>
@@ -339,7 +341,9 @@ const Profile = () => {
 
                   <div>
                     {profile && (
-                      <div className="username-sec">Welcome {profile?.name}</div>
+                      <div className="username-sec">
+                        Welcome {profile?.name}
+                      </div>
                     )}
                   </div>
                 </div>
