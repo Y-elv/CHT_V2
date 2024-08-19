@@ -30,23 +30,22 @@ const LandingPage = () => {
   const ImageArray2 = [
     {
       url: Image1,
-      title: "First Image Title",
-      text: "First Image Text",
+      title: "Welcome to FunHealth",
+      text: "Welcome to FunHealth, where we provide comprehensive care and support to keep your mind and body healthy.",
       buttonText: "Learn More",
     },
     {
       url: Image2,
-      title: "Second Image Title",
-      text: "Second Image Text",
+      title: "Mental Wellness",
+      text: "Explore our resources and activities designed to boost your mental health and well-being.",
       buttonText: "Explore",
     },
     {
       url: Image3,
-      title: "Third Image Title",
-      text: "Third Image Text",
+      title: "Your Health, Our Priority",
+      text: "Discover how we make healthcare simple and accessible, supporting your journey to a healthier life.",
       buttonText: "Get Started",
     },
-    // Add more images, titles, text, and buttons here
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -225,7 +224,7 @@ const LandingPage = () => {
         {/* </div> */}
 
         <div
-          className="hero-section flex flex-col tablet:flex-row w-full py-3 tablet:h-[100vh] bg-white p-3 tablet:p-10 relative"
+          className="hero-section flex flex-col tablet:flex-row w-full min-h-[50vh] tablet:h-[100vh] h-[40vh] bg-white p-3 tablet:p-10 relative"
           style={{
             backgroundImage: `url(${ImageArray2[currentImageIndex].url})`,
             backgroundSize: "cover",
@@ -233,23 +232,29 @@ const LandingPage = () => {
           }}
         >
           <div
-            className="text-overlay flex flex-col justify-center items-center w-full h-full absolute top-0 left-0"
+            className="text-overlay flex flex-col justify-center items-center w-full h-full absolute top-0 left-0 text-center"
             style={{ backgroundColor: "rgba(245, 241, 241, 0.081)" }}
           >
             <h1
-              className="text-white text-5xl font-bold mb-4 animate-slideInUp"
+              className="text-white text-2xl tablet:text-4xl font-bold mb-1 tablet:mb-3 animate-slideInUp"
               key={ImageArray2[currentImageIndex].title}
             >
               {ImageArray2[currentImageIndex].title}
             </h1>
             <p
-              className="text-white text-2xl mb-6 animate-slideInUp delay-150"
+              className="text-white text-lg tablet:text-xl mb-2 tablet:mb-4 animate-slideInUp delay-150"
               key={ImageArray2[currentImageIndex].text}
             >
               {ImageArray2[currentImageIndex].text}
             </p>
             <button
-              className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-700 transition rounded-xl animate-slideInUp delay-300"
+              onClick={() => {
+                const section = document.querySelector(".services-section");
+                if (section) {
+                  section.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              className="bg-blue-500 text-white text-xs tablet:text-sm px-2 py-1 tablet:px-3 tablet:py-2 hover:bg-blue-700 transition rounded-md animate-slideInUp delay-300"
               key={ImageArray2[currentImageIndex].buttonText}
             >
               {ImageArray2[currentImageIndex].buttonText}
@@ -275,8 +280,8 @@ const LandingPage = () => {
 
               <p className="font-medium">Pharmacy</p>
               <p className="text-sm">
-                Lorem ipsum dolor sit amet consectetur. In eu aliquet orci ac
-                risus lobortis aenean diam aenean. Quam sodales faucibus amet.
+                Access essential medications and expert advice to support your
+                health, ensuring you receive the care you need.
               </p>
             </motion.div>
 
@@ -292,8 +297,8 @@ const LandingPage = () => {
 
               <p className="font-medium">Mental Support</p>
               <p className="text-sm">
-                Lorem ipsum dolor sit amet consectetur. In eu aliquet orci ac
-                risus lobortis aenean diam aenean. Quam sodales faucibus amet.
+                We offer resources and guidance to help you achieve mental
+                wellness, fostering resilience and emotional balance.
               </p>
             </motion.div>
             <motion.div
@@ -308,8 +313,9 @@ const LandingPage = () => {
 
               <p className="font-medium">Health Care</p>
               <p className="text-sm">
-                Lorem ipsum dolor sit amet consectetur. In eu aliquet orci ac
-                risus lobortis aenean diam aenean. Quam sodales faucibus amet.
+                In FunHealth, we provide personalized care to support your
+                overall well-being, helping you achieve balance in mind and
+                body.
               </p>
             </motion.div>
           </div>
@@ -322,7 +328,7 @@ const LandingPage = () => {
 
           <div className="content flex flex-col w-[85%] tablet:w-[70%] px-3 tablet:px-10 mx-auto">
             <p className="text-sm slide-in">
-              kUNDWA HEALTH is youth-led organization working with young people
+              Kundwa Health is youth-led organization working with young people
               to decentralize health information and service they need to lead
               healthier lives through digital health means.it was founded in
               Gatsibo district by three young health activits,who were driven by
