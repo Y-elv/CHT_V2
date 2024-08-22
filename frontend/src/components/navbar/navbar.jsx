@@ -5,9 +5,8 @@ import { IoClose } from "react-icons/io5";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useState } from "react";
 
-const Navbar = ({active}) => {
-
-  const [showMenu, setShowMenu] = useState(false)
+const Navbar = ({ active }) => {
+  const [showMenu, setShowMenu] = useState(false);
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-[#B8C2D7] px-10 py-2">
       <div className="container-fluid relative">
@@ -68,7 +67,7 @@ const Navbar = ({active}) => {
           <Link className="nav-link" to="/login">
             Our Team
           </Link>
-          <Link className="nav-link" to="/login">
+          <Link className="nav-link hover:text-[#F95700FF]" to="/login">
             Menu
           </Link>
         </div>
