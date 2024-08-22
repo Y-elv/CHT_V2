@@ -31,17 +31,17 @@ const Navbar = ({active}) => {
             <IoClose className="text-xl   transition-all " />
           </div>
           <div className="links flex flex-col items-start justify-start  gap-3 my-5 ">
-            <Link className="nav-link text-black" to="/updates">
+            <Link className="nav-link text-black" to="/login">
               Updates
             </Link>
             <Link
               className="nav-link text-black"
-              to="/our-team"
+              to="/login"
               style={{ color: active == "ourTeam" ? "orange" : "red" }}
             >
               Our Team
             </Link>
-            <Link className="nav-link text-black" to="/menu">
+            <Link className="nav-link text-black" to="/login">
               Menu
             </Link>
           </div>
@@ -62,13 +62,13 @@ const Navbar = ({active}) => {
           </div>
         </div>
         <div className=" hidden tablet:flex items-center justify-center gap-5">
-          <Link className="nav-link" to="/updates">
+          <Link className="nav-link" to="/login">
             Updates
           </Link>
-          <Link className="nav-link" to="/our-team">
+          <Link className="nav-link" to="/login">
             Our Team
           </Link>
-          <Link className="nav-link" to="/menu">
+          <Link className="nav-link" to="/login">
             Menu
           </Link>
         </div>
