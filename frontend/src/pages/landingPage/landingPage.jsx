@@ -249,7 +249,7 @@ const LandingPage = () => {
               {ImageArray2[currentImageIndex].text}
             </p>
             <button
-              className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-700 transition rounded-xl animate-slideInUp delay-300"
+              className="bg-black text-[#F95700FF] px-4 py-3 hover:bg-blue-600 hover:text-white transition rounded-full animate-slideInUp delay-300"
               key={ImageArray2[currentImageIndex].buttonText}
             >
               {ImageArray2[currentImageIndex].buttonText}
