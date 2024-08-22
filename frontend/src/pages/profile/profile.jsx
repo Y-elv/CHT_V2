@@ -6,7 +6,11 @@ import { useContext, useState, useEffect } from "react";
 import { Dropdown, Space, Menu } from "antd";
 import { useToast } from "@chakra-ui/react";
 import UserNavbar from "../../layout/userNavbar/userNavbar";
-import { IoChatboxOutline, IoLogOut, IoNewspaperOutline } from "react-icons/io5";
+import {
+  IoChatboxOutline,
+  IoLogOut,
+  IoNewspaperOutline,
+} from "react-icons/io5";
 import { RiGamepadLine } from "react-icons/ri";
 import { MdMiscellaneousServices } from "react-icons/md";
 import { useBadgeStore } from "../../zustandStore/store";
@@ -24,24 +28,20 @@ const Profile = () => {
   const toast = useToast();
   const [pic, setPic] = useState();
 
-
-  console.log("Zustand profile: ", profile)
+  console.log("Zustand profile: ", profile);
 
   console.log("User Info from localStorage yyy:", user);
-  const getUser = async()=>{
-  if(!profile){
-    setMyUser(user)
-  } 
+  const getUser = async () => {
+    if (!profile) {
+      setMyUser(user);
+    }
 
-  setMyUser(profile)
+    setMyUser(profile);
+  };
 
-  }
-
-
-
-  useEffect(()=>{
-    getUser()
-  },[])
+  useEffect(() => {
+    getUser();
+  }, []);
 
   console.log("User in setUser:", myUser);
   const handleImageClick = () => {
@@ -179,7 +179,6 @@ const Profile = () => {
     },
   ];
 
-
   return (
     <>
       {isMobile ? (
@@ -233,7 +232,7 @@ const Profile = () => {
               <div className="content-menu my-5 flex flex-col items-start">
                 <Link
                   to="/consultation"
-                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
+                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-[#F95700FF]"
                   style={{ textDecoration: "none" }}
                 >
                   <FaUserMd className="text-2xl" />
@@ -241,7 +240,7 @@ const Profile = () => {
                 </Link>
                 <Link
                   to="/chats"
-                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
+                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-[#F95700FF]"
                   style={{ textDecoration: "none" }}
                 >
                   {/* <img src={chat} className="icons" /> */}
@@ -250,7 +249,7 @@ const Profile = () => {
                 </Link>
                 <Link
                   to="/game"
-                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
+                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-[#F95700FF]"
                   style={{ textDecoration: "none" }}
                 >
                   <RiGamepadLine className="text-2xl" />
@@ -290,7 +289,7 @@ const Profile = () => {
 
                 <Link
                   to="/news"
-                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
+                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-[#F95700FF]"
                   style={{ textDecoration: "none" }}
                 >
                   <IoNewspaperOutline className="text-2xl" />
@@ -300,7 +299,7 @@ const Profile = () => {
                   <Link
                     onClick={() => logoutHandler()}
                     to="/login"
-                    className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
+                    className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-[#F95700FF]"
                     style={{ textDecoration: "none" }}
                   >
                     <IoLogOut className="text-2xl" />

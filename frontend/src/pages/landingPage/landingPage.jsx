@@ -26,7 +26,6 @@ const LandingPage = () => {
   const profile = useBadgeStore((state) => state.profile) || null;
   const [background, setBackground] = useState(Image1);
   let ImageArray = [Image1, Image2, Image3];
-
   const ImageArray2 = [
     {
       url: Image1,
@@ -224,7 +223,7 @@ const LandingPage = () => {
         {/* </div> */}
 
         <div
-          className="hero-section flex flex-col tablet:flex-row w-full min-h-[50vh] tablet:h-[100vh] h-[40vh] bg-white p-3 tablet:p-10 relative"
+          className="hero-section flex flex-col tablet:flex-row w-full py-3 tablet:h-[100vh] bg-white p-3 tablet:p-10 relative"
           style={{
             backgroundImage: `url(${ImageArray2[currentImageIndex].url})`,
             backgroundSize: "cover",
@@ -232,17 +231,17 @@ const LandingPage = () => {
           }}
         >
           <div
-            className="text-overlay flex flex-col justify-center items-center w-full h-full absolute top-0 left-0 text-center"
+            className="text-overlay flex flex-col justify-center items-center w-full h-full absolute top-0 left-0"
             style={{ backgroundColor: "rgba(245, 241, 241, 0.081)" }}
           >
             <h1
-              className="text-white text-2xl tablet:text-4xl font-bold mb-1 tablet:mb-3 animate-slideInUp"
+              className="text-white text-5xl font-bold mb-4 animate-slideInUp"
               key={ImageArray2[currentImageIndex].title}
             >
               {ImageArray2[currentImageIndex].title}
             </h1>
             <p
-              className="text-white text-lg tablet:text-xl mb-2 tablet:mb-4 animate-slideInUp delay-150"
+              className="text-white text-2xl mb-6 animate-slideInUp delay-150"
               key={ImageArray2[currentImageIndex].text}
             >
               {ImageArray2[currentImageIndex].text}
@@ -254,7 +253,7 @@ const LandingPage = () => {
                   section.scrollIntoView({ behavior: "smooth" });
                 }
               }}
-              className="bg-blue-500 text-white text-xs tablet:text-sm px-2 py-1 tablet:px-3 tablet:py-2 hover:bg-blue-700 transition rounded-md animate-slideInUp delay-300"
+              className="bg-black text-[#F95700FF] px-4 py-3 hover:bg-blue-600 hover:text-white transition rounded-full animate-slideInUp delay-300"
               key={ImageArray2[currentImageIndex].buttonText}
             >
               {ImageArray2[currentImageIndex].buttonText}
@@ -328,7 +327,7 @@ const LandingPage = () => {
 
           <div className="content flex flex-col w-[85%] tablet:w-[70%] px-3 tablet:px-10 mx-auto">
             <p className="text-sm slide-in">
-              Kundwa Health is youth-led organization working with young people
+              kUNDWA HEALTH is youth-led organization working with young people
               to decentralize health information and service they need to lead
               healthier lives through digital health means.it was founded in
               Gatsibo district by three young health activits,who were driven by

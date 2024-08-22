@@ -76,13 +76,13 @@ const Navbar = ({active}) => {
         <div className=" mx-3 hidden tablet:flex flex-row items-center justify-center gap-3">
           <Link
             to="/login"
-            className="px-4 py-2 bg-orange-400 hover:bg-orange-600 rounded-full"
+            className="px-4 py-2 bg-[#F95700FF] hover:bg-orange-600 rounded-full"
           >
             Login
           </Link>
           <Link
             to="/register"
-            className="px-4 py-2 bg-blue-400 hover:bg-blue-600 rounded-full"
+            className="px-4 py-2 bg-black hover:bg-blue-600 rounded-full text-[#F95700FF]"
           >
             Signup
           </Link>
