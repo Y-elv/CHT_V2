@@ -149,8 +149,8 @@ const submitHandler = async () => {
               <InputLeftElement pointerEvents="none">
                 <Box
                   as={CgMail}
-                  color="#2c17ae"
-                  bg="#f3931e"
+                  color="#000000"
+                  bg="#F95700FF"
                   p="4px"
                   borderRadius="md"
                   fontSize="28px"
@@ -169,8 +169,8 @@ const submitHandler = async () => {
               <InputLeftElement pointerEvents="none">
                 <Box
                   as={BiSolidLockAlt}
-                  color="#2c17ae"
-                  bg="#f3931e"
+                  color="#000000"
+                  bg="#F95700FF"
                   p="4px"
                   borderRadius="md"
                   fontSize="28px"
@@ -194,8 +194,8 @@ const submitHandler = async () => {
               <InputLeftElement pointerEvents="none">
                 <Box
                   as={BiSolidLockAlt}
-                  color="#2c17ae"
-                  bg="#f3931e"
+                  color="#000000"
+                  bg="#F95700FF"
                   p="4px"
                   borderRadius="md"
                   fontSize="28px"
@@ -218,11 +218,11 @@ const submitHandler = async () => {
           <Button
             onClick={submitHandler}
             width="100%"
-            colorScheme="#f3931e"
+            colorScheme="#F95700FF"
             style={{ marginTop: 15 }}
             isLoading={loading}
-            color="#2c17ae"
-            background="#f3931e"
+            color="#000000"
+            background="#F95700FF"
           >
             submit
           </Button>

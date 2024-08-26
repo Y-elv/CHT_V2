@@ -119,8 +119,8 @@ const Login = () => {
               <InputLeftElement pointerEvents="none">
                 <Box
                   as={CgMail}
-                  color="#2c17ae"
-                  bg="#f3931e"
+                  color="#000000"
+                  bg="#F95700FF"
                   p="4px"
                   borderRadius="md"
                   fontSize="28px"
@@ -138,8 +138,8 @@ const Login = () => {
               <InputLeftElement pointerEvents="none">
                 <Box
                   as={BiSolidLockAlt}
-                  color="#2c17ae"
-                  bg="#f3931e"
+                  color="#000000"
+                  bg="#F95700FF"
                   p="4px"
                   borderRadius="md"
                   fontSize="28px"
@@ -159,22 +159,22 @@ const Login = () => {
             </InputGroup>
           </FormControl>
 
-          <Link align="end" to="/forgot-password" style={{ color: "#2c17ae" }}>
+          <Link align="end" to="/forgot-password" style={{ color: "#000000" }}>
             Forgot Password?
           </Link>
 
           <Button
             onClick={submitHandler}
             width="100%"
-            colorScheme="#f3931e"
-            color= "#2c17ae"
+            colorScheme="#F95700FF"
+            color="#000000"
             style={{ marginTop: 15 }}
             isLoading={loading}
-            background="#f3931e"
+            background="#F95700FF"
           >
             login
           </Button>
-          <Link to="/register" mt="4" style={{ color: "#2c17ae" }}>
+          <Link to="/register" mt="4" style={{ color: "#000000" }}>
             New here! Register
           </Link>
         </Box>
