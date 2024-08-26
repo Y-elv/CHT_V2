@@ -38,7 +38,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #f3931e;
+  color: #F95700FF;
 }
 .prof-card {
   height: 180vh;
@@ -134,8 +134,8 @@ form {
 }
 
 .btn-kh {
-  border: 2px solid #2c17ae;
-  color: #2c17ae;
+  border: 2px solid  #000000;
+  color: #F95700FF;
   width: 100%;
   max-width: 200px;
   padding: 10px 20px;
@@ -144,8 +144,8 @@ form {
 }
 
 .btn-kh:hover {
-  border-color: #f3931e;
-  color: #f3931e;
+  border-color: #F95700FF;
+  color: #000000;
 }
 
 .select-form {
