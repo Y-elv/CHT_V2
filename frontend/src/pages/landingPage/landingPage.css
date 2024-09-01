@@ -134,11 +134,11 @@ height:100%;
 padding:30px
 }
 
-.get-in-touch{
+/* .get-in-touch{
 display:flex;
 flex-direction:column;
 gap:10px;
-}
+} */
 
 .className{
     position: absolute;

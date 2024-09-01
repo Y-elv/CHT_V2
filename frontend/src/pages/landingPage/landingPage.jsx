@@ -223,7 +223,7 @@ const LandingPage = () => {
         {/* </div> */}
 
         <div
-          className="hero-section flex flex-col tablet:flex-row w-full py-3 tablet:h-[100vh] bg-white p-3 tablet:p-10 relative"
+          className="hero-section flex flex-col tablet:flex-row w-full py-3 tablet:h-[100vh] bg-white p-3 tablet:p-10 relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh]"
           style={{
             backgroundImage: `url(${ImageArray2[currentImageIndex].url})`,
             backgroundSize: "cover",
@@ -235,13 +235,13 @@ const LandingPage = () => {
             style={{ backgroundColor: "rgba(245, 241, 241, 0.081)" }}
           >
             <h1
-              className="text-white text-5xl font-bold mb-4 animate-slideInUp"
+              className="text-white text-3xl tablet:text-4xl laptop:text-5xl font-bold mb-4 animate-slideInUp"
               key={ImageArray2[currentImageIndex].title}
             >
               {ImageArray2[currentImageIndex].title}
             </h1>
             <p
-              className="text-white text-2xl mb-6 animate-slideInUp delay-150"
+              className="text-white text-lg tablet:text-xl laptop:text-2xl mb-6 animate-slideInUp delay-150 text-center tablet:text-left max-w-[90%] tablet:max-w-[70%] laptop:max-w-[50%]"
               key={ImageArray2[currentImageIndex].text}
             >
               {ImageArray2[currentImageIndex].text}
@@ -253,7 +253,7 @@ const LandingPage = () => {
                   section.scrollIntoView({ behavior: "smooth" });
                 }
               }}
-              className="bg-black text-[#F95700FF] px-4 py-3 hover:bg-blue-600 hover:text-white transition rounded-full animate-slideInUp delay-300"
+              className="bg-black text-[#F95700FF] px-4 py-2 tablet:px-6 tablet:py-3 hover:bg-blue-600 hover:text-white transition rounded-full animate-slideInUp delay-300"
               key={ImageArray2[currentImageIndex].buttonText}
             >
               {ImageArray2[currentImageIndex].buttonText}
@@ -327,7 +327,7 @@ const LandingPage = () => {
 
           <div className="content flex flex-col w-[85%] tablet:w-[70%] px-3 tablet:px-10 mx-auto">
             <p className="text-sm slide-in">
-              kUNDWA HEALTH is youth-led organization working with young people
+              Kundwa Health is youth-led organization working with young people
               to decentralize health information and service they need to lead
               healthier lives through digital health means.it was founded in
               Gatsibo district by three young health activits,who were driven by
@@ -335,7 +335,7 @@ const LandingPage = () => {
               health issues through supporting adolescents and young people to
               have access to life-saving information and services on sexual and
               reproductive health,mental health and youth empowerment through
-              mentorship.kUNDWA means “loved” it is name we choose for our
+              mentorship.Kundwa means “loved” it is name we choose for our
               organization which reflects how young people should be loved and
               cared for as the future of the nation. our intervention goal is to
               provide young people with different health tools including
@@ -380,29 +380,33 @@ const LandingPage = () => {
         </div>
 
         <div className="flex flex-row flex-wrap tablet:h-[95vh] mb-5">
-          <div className="left w-full tablet:w-[65%]  bg-blue-300 h-[65vh] tablet:h-full p-5 tablet:p-10 justify-center items-center  flex flex-col ">
-            <div className=" bg tablet:p-10  h-full">
-              <h3 className="text-xl font-semibold text-[#4635AB] my-2">
+          <div className="left w-full tablet:w-[65%] bg-blue-300 h-auto tablet:h-full p-5 tablet:p-10 flex flex-col justify-center items-center">
+            <div className="bg tablet:p-10 h-full w-full max-w-[500px]">
+              <h3 className="text-lg tablet:text-xl font-semibold text-[#4635AB] my-2 text-center tablet:text-left">
                 Get in{" "}
-                <span className="text-xl text-orange-500 font-semibold">
+                <span className="text-lg tablet:text-xl text-orange-500 font-semibold">
                   touch
-                </span>{" "}
+                </span>
               </h3>
-              <h6>Chat with Professinals in Mental,sexual,Dating </h6>
+              <h6 className="text-center tablet:text-left text-sm tablet:text-base mb-4">
+                Chat with Professionals in Mental, Sexual, Dating
+              </h6>
               <div
-                className="input-contact p-10 w-full"
+                className="input-contact p-4 tablet:p-10 w-full"
                 style={{
                   position: "relative",
                   display: "flex",
                   flexDirection: "column",
-
-                  height: "100vh",
+                  height: "auto",
                 }}
               >
-                <form onSubmit={handleSubmit} className="get-in-touch slide-in">
+                <form
+                  onSubmit={handleSubmit}
+                  className="get-in-touch slide-in w-full"
+                >
                   <input
                     type="text"
-                    className="border-none border-b border-[#737B7D] tablet:w-[60%]  p-2 text-base bg-transparent outline-none mb-2"
+                    className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
                     style={{
                       borderBottom: "1px solid #737B7D",
                     }}
@@ -413,18 +417,18 @@ const LandingPage = () => {
                   />
                   <input
                     type="text"
-                    className="border-none border-b border-[#737B7D] tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
+                    className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
                     style={{
                       borderBottom: "1px solid #737B7D",
                     }}
-                    placeholder="street"
+                    placeholder="Street"
                     name="street"
                     value={formData.street}
                     onChange={handleChange}
                   />
                   <input
                     type="text"
-                    className="border-none border-b border-[#737B7D] tablet:w-[60%]  p-2 text-base bg-transparent outline-none mb-2"
+                    className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
                     style={{
                       borderBottom: "1px solid #737B7D",
                     }}
@@ -435,7 +439,7 @@ const LandingPage = () => {
                   />
                   <input
                     type="text"
-                    className="border-none border-b border-[#737B7D] tablet:w-[60%]  p-2 text-base bg-transparent outline-none mb-2"
+                    className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
                     style={{
                       borderBottom: "1px solid #737B7D",
                     }}
@@ -446,7 +450,7 @@ const LandingPage = () => {
                   />
                   <input
                     type="text"
-                    className="border-none border-b border-[#737B7D] tablet:w-[60%]  p-2 text-base bg-transparent outline-none mb-2"
+                    className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
                     style={{
                       borderBottom: "1px solid #737B7D",
                     }}
@@ -456,24 +460,19 @@ const LandingPage = () => {
                     onChange={handleChange}
                   />
 
-                  <label>
+                  <label className="flex items-center mb-4">
                     <input
                       type="checkbox"
-                      className="checkbox"
+                      className="checkbox mr-2"
                       name="agree"
                       checked={formData.agree}
                       onChange={handleChange}
-                      style={{
-                        padding: "10px",
-                        marginBottom: "15px",
-                        marginRight: "15px",
-                      }}
                     />
                     Agree and Continue
                   </label>
 
                   <button
-                    className="tablet:w-[60%] bg-[#4635AB] hover:bg-indigo-900 text-white rounded py-3 px-5"
+                    className="w-full tablet:w-[60%] bg-[#4635AB] hover:bg-indigo-900 text-white rounded py-2 tablet:py-3 px-4 tablet:px-5 transition duration-300"
                     type="submit"
                   >
                     Submit
@@ -490,6 +489,7 @@ const LandingPage = () => {
             />
           </div>
         </div>
+        
         <div className="section-5">
           <Footer />
         </div>
