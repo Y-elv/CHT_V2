@@ -12,12 +12,16 @@ import woman2 from "../../assets/round-woman2.svg";
 import Image1 from "../../assets/Background1.svg";
 import Image2 from "../../assets/Background2.svg";
 import Image3 from "../../assets/Background3.svg";
+import Kigali from "../../assets/Kigali city.jpeg";
 import star from "../../assets/Star1.svg";
 import { MdLocalPharmacy } from "react-icons/md";
 import { RiMentalHealthFill } from "react-icons/ri";
 import { MdHealthAndSafety } from "react-icons/md";
 import { useBadgeStore } from "../../zustandStore/store";
 import { motion } from "framer-motion";
+import { IoLocationSharp } from "react-icons/io5";
+import { MdEmail } from "react-icons/md";
+import { FaPhoneAlt } from "react-icons/fa";
 // import HomeSlideShowComponent from "../../components/HomeSlideShowComponent";
 
 const LandingPage = () => {
@@ -261,7 +265,7 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <div className="services-section flex flex-col tablet:flex-col w-full tablet:h-[80vh] bg-blue-50 p-3 tablet:p-10">
+        <div className="services-section flex flex-col tablet:flex-col w-full tablet:h-[85vh] bg-blue-50 p-3 tablet:p-10">
           <h2 className="title p-5 px-10 font-medium slide-in">
             &#x2022; Our Services
           </h2>
@@ -320,7 +324,7 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <div className="about-sectio flex flex-col tablet:flex-col w-full h-auto tablet:h-[70vh]  bg-white p-3 tablet:p-10">
+        <div className="about-section flex flex-col tablet:flex-col w-full h-auto tablet:h-[70vh]  bg-white p-3 tablet:p-10">
           <h2 className="title p-5 px-10 font-medium slide-in">
             &#x2022; About Us
           </h2>
@@ -379,117 +383,152 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <div className="flex flex-row flex-wrap tablet:h-[95vh] mb-5">
-          <div className="left w-full tablet:w-[65%] bg-blue-300 h-auto tablet:h-full p-5 tablet:p-10 flex flex-col justify-center items-center">
-            <div className="bg tablet:p-10 h-full w-full max-w-[500px]">
-              <h3 className="text-lg tablet:text-xl font-semibold text-[#4635AB] my-2 text-center tablet:text-left">
-                Get in{" "}
-                <span className="text-lg tablet:text-xl text-orange-500 font-semibold">
-                  touch
-                </span>
-              </h3>
-              <h6 className="text-center tablet:text-left text-sm tablet:text-base mb-4">
-                Chat with Professionals in Mental, Sexual, Dating
-              </h6>
-              <div
-                className="input-contact p-4 tablet:p-10 w-full"
-                style={{
-                  position: "relative",
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "auto",
-                }}
-              >
-                <form
-                  onSubmit={handleSubmit}
-                  className="get-in-touch slide-in w-full"
-                >
-                  <input
-                    type="text"
-                    className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
-                    style={{
-                      borderBottom: "1px solid #737B7D",
-                    }}
-                    placeholder="Company Name"
-                    name="companyName"
-                    value={formData.companyName}
-                    onChange={handleChange}
-                  />
-                  <input
-                    type="text"
-                    className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
-                    style={{
-                      borderBottom: "1px solid #737B7D",
-                    }}
-                    placeholder="Street"
-                    name="street"
-                    value={formData.street}
-                    onChange={handleChange}
-                  />
-                  <input
-                    type="text"
-                    className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
-                    style={{
-                      borderBottom: "1px solid #737B7D",
-                    }}
-                    placeholder="Contact Phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                  />
-                  <input
-                    type="text"
-                    className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
-                    style={{
-                      borderBottom: "1px solid #737B7D",
-                    }}
-                    placeholder="E-mail"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                  <input
-                    type="text"
-                    className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
-                    style={{
-                      borderBottom: "1px solid #737B7D",
-                    }}
-                    placeholder="Let's talk about your idea"
-                    name="idea"
-                    value={formData.idea}
-                    onChange={handleChange}
-                  />
+        <div
+          className="relative flex flex-col tablet:flex-row tablet:h-[110vh] mb-5"
+          style={{
+            backgroundImage: `url(${Kigali})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-black opacity-80"></div>
 
-                  <label className="flex items-center mb-4">
+          {/* Centered text overlay */}
+          <div className="relative flex flex-col w-full text-white z-10">
+            {/* Top center alignment for h1 and p */}
+            <div className="flex flex-col justify-start items-center w-full text-center pt-10">
+              <h1 className="text-3xl tablet:text-5xl font-bold">
+                Get in touch
+              </h1>
+              <p className="text-lg tablet:text-2xl mt-2">
+                Chat with Professionals in Mental, Sexual, Dating
+              </p>
+            </div>
+
+            {/* Left and right sections below the title */}
+            <div className="flex flex-col tablet:flex-row justify-between w-full h-full mt-10 px-10">
+              {/* Left section - hidden on small devices */}
+              <div className="contact-left hidden tablet:flex flex-col h-[300px] tablet:h-[450px] p-5 mr-5 space-y-10">
+                {/* Address */}
+                <div className="material flex flex-row items-center space-x-6">
+                  <div className="w-16 h-16 rounded-full bg-white flex justify-center items-center mr-2">
+                    <IoLocationSharp className="text-2xl text-black" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold">Address</h2>
+                    <p className="text-sm">
+                      Gatsibo District Eastern province Rwanda
+                    </p>
+                  </div>
+                </div>
+                {/* Phone */}
+                <div className="material flex flex-row items-center space-x-6">
+                  <div className="w-16 h-16 rounded-full bg-white flex justify-center items-center mr-2">
+                    <FaPhoneAlt className="text-2xl text-black" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold">Phone</h2>
+                    <p className="text-sm">+250789287267</p>
+                  </div>
+                </div>
+                {/* Email */}
+                <div className="material flex flex-row items-center space-x-6">
+                  <div className="w-16 h-16 rounded-full bg-white flex justify-center items-center mr-2">
+                    <MdEmail className="text-2xl text-black" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold">Email</h2>
+                    <p className="text-sm">info@kundwahealth.org</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right section */}
+              <div className="contact-right flex-1 h-[200px] tablet:h-[450px] p-5 ml-5 bg-white">
+                <div
+                  className="input-contact p-4 tablet:p-10 w-full"
+                  style={{
+                    position: "relative",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "auto",
+                  }}
+                >
+                  <form
+                    onSubmit={handleSubmit}
+                    className="get-in-touch slide-in w-full"
+                  >
                     <input
-                      type="checkbox"
-                      className="checkbox mr-2"
-                      name="agree"
-                      checked={formData.agree}
+                      type="text"
+                      className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-white outline-none mb-2"
+                      style={{ borderBottom: "1px solid #737B7D" }}
+                      placeholder="Company Name"
+                      name="companyName"
+                      value={formData.companyName}
                       onChange={handleChange}
                     />
-                    Agree and Continue
-                  </label>
+                    <input
+                      type="text"
+                      className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
+                      style={{ borderBottom: "1px solid #737B7D" }}
+                      placeholder="Street"
+                      name="street"
+                      value={formData.street}
+                      onChange={handleChange}
+                    />
+                    <input
+                      type="text"
+                      className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2 text-black"
+                      style={{ borderBottom: "1px solid #737B7D" }}
+                      placeholder="Contact Phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                    />
+                    <input
+                      type="text"
+                      className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
+                      style={{ borderBottom: "1px solid #737B7D" }}
+                      placeholder="E-mail"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                    <input
+                      type="text"
+                      className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
+                      style={{ borderBottom: "1px solid #737B7D" }}
+                      placeholder="Let's talk about your idea"
+                      name="idea"
+                      value={formData.idea}
+                      onChange={handleChange}
+                    />
 
-                  <button
-                    className="w-full tablet:w-[60%] bg-[#4635AB] hover:bg-indigo-900 text-white rounded py-2 tablet:py-3 px-4 tablet:px-5 transition duration-300"
-                    type="submit"
-                  >
-                    Submit
-                  </button>
-                </form>
+                    <label className="flex items-center mb-4">
+                      <input
+                        type="checkbox"
+                        className="checkbox mr-2"
+                        name="agree"
+                        checked={formData.agree}
+                        onChange={handleChange}
+                      />
+                      Agree and Continue
+                    </label>
+
+                    <button
+                      className="w-full tablet:w-[60%] bg-[#4635AB] hover:bg-indigo-900 text-white rounded py-2 tablet:py-3 px-4 tablet:px-5 transition duration-300"
+                      type="submit"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="right hidden tablet:flex items-center justify-center w-full tablet:w-[35%] bg-orange-500 h-[100%]">
-            <img
-              src={africa}
-              className="tablet:ml-[-100%] slide-in tablet:w-full w-[200px] tablet:h-[70%]"
-            />
-          </div>
         </div>
-        
+
         <div className="section-5">
           <Footer />
         </div>
