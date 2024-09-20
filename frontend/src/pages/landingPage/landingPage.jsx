@@ -505,7 +505,7 @@ const LandingPage = () => {
                       onChange={handleChange}
                     />
 
-                    <label className="flex items-center mb-4">
+                    <label className="flex items-center mb-4 text-black text-xs tablet:text-sm">
                       <input
                         type="checkbox"
                         className="checkbox mr-2"
