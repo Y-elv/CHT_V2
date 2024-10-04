@@ -23,6 +23,7 @@ import cooper from "../../assets/cooper.png";
 import kenny from "../../assets/kenny.png";
 import karenera from "../../assets/karenera.png";
 import submit from "../../assets/submit.png";
+import { useNavigate } from "react-router-dom";
 const Consultation = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
@@ -33,8 +34,10 @@ const Consultation = () => {
   };
 
   const showModal = () => {
-    if (window.innerWidth <= 600) {
-      setIsModalOpen2(true);
+     const screenWidth = window.innerWidth;
+    if (screenWidth <= 600) {
+       navigate("/try-page");
+      // setIsModalOpen2(true);
     } else {
       setIsModalOpen(true);
     }
