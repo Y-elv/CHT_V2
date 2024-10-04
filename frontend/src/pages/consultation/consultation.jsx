@@ -25,6 +25,7 @@ import karenera from "../../assets/karenera.png";
 import submit from "../../assets/submit.png";
 import { useNavigate } from "react-router-dom";
 const Consultation = () => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -34,14 +35,22 @@ const Consultation = () => {
   };
 
   const showModal = () => {
-     const screenWidth = window.innerWidth;
+    const screenWidth = window.innerWidth / window.devicePixelRatio;
+
+    // Log the screen width to the console
+    console.log(`Screen width: ${screenWidth}px`);
+
     if (screenWidth <= 600) {
-       navigate("/try-page");
-      // setIsModalOpen2(true);
+      console.log("Small device detected, navigating to /try-page");
+      //  navigate("/try-page");
+      document.body.style.overflow = "hidden"; 
+      setIsModalOpen2(true); // You can uncomment this if needed
     } else {
+      console.log("Larger device detected, opening modal");
       setIsModalOpen(true);
     }
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setIsModalOpen2(false);
@@ -124,7 +133,7 @@ const Consultation = () => {
             </Container>
             <div className="kh-rooms">
               <button className="btn-kh" onClick={showModal}>
-                talk to us 
+                talk to us
               </button>
             </div>
             <div className="cons-about">
@@ -134,7 +143,7 @@ const Consultation = () => {
               </div>
               <div className="cons-about-down">
                 <p>
-                  KUNDWA HEALTH is youth-led organization working with young
+                  Kundwa Health is youth-led organization working with young
                   people to decentralize health information and service they
                   need to lead healthier lives through digital health means.it
                   was founded in Gatsibo district by three young health
@@ -371,6 +380,9 @@ const Consultation = () => {
               style={{
                 overlay: {
                   backgroundColor: "grey",
+                  overflow: "hidden",
+
+                  // Position the modal at 40% from the top of the screen
                 },
                 content: {
                   color: "black",
@@ -382,7 +394,7 @@ const Consultation = () => {
                   justifyContent: "center",
                   alignItems: "center",
 
-                  position: "relative",
+                  position: "relative", // Ensures the modal is fixed in the viewport
                 },
               }}
             >

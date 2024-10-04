@@ -38,7 +38,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #F95700FF;
+  color: #f95700ff;
 }
 .prof-card {
   height: 180vh;
@@ -134,8 +134,8 @@ form {
 }
 
 .btn-kh {
-  border: 2px solid  #000000;
-  color: #F95700FF;
+  border: 2px solid #000000;
+  color: #f95700ff;
   width: 100%;
   max-width: 200px;
   padding: 10px 20px;
@@ -144,7 +144,7 @@ form {
 }
 
 .btn-kh:hover {
-  border-color: #F95700FF;
+  border-color: #f95700ff;
   color: #000000;
 }
 
@@ -216,6 +216,7 @@ form {
 .layer9 input[type="image"]:hover {
   transform: translateY(-50%) scale(1.1);
 }
+
 
 @media screen and (max-width: 768px) {
   .cons-middle {
