@@ -42,9 +42,9 @@ const Consultation = () => {
 
     if (screenWidth <= 600) {
       console.log("Small device detected, navigating to /try-page");
-      //  navigate("/try-page");
+       navigate("/book");
       document.body.style.overflow = "hidden"; 
-      setIsModalOpen2(true); // You can uncomment this if needed
+      // setIsModalOpen2(true); // You can uncomment this if needed
     } else {
       console.log("Larger device detected, opening modal");
       setIsModalOpen(true);
@@ -355,7 +355,9 @@ const Consultation = () => {
                           backgroundColor: "#E8E4FF",
                         }}
                       >
-                        <option value="Counseling and Therapy">Abortion</option>
+                        <option value="Counseling and Therapy">
+                          Counseling and Therapy
+                        </option>
                         <option value="Sexual advices">Sexual advices</option>
                         <option value="Mental Health">Mental Health</option>
                       </select>
@@ -372,7 +374,7 @@ const Consultation = () => {
           </div>
         )}
 
-        {isModalOpen2 && (
+        {/* {isModalOpen2 && (
           <div className="modal-small">
             <Modal
               isOpen={isModalOpen2}
@@ -380,9 +382,6 @@ const Consultation = () => {
               style={{
                 overlay: {
                   backgroundColor: "grey",
-                  overflow: "hidden",
-
-                  // Position the modal at 40% from the top of the screen
                 },
                 content: {
                   color: "black",
@@ -535,7 +534,7 @@ const Consultation = () => {
               </div>
             </Modal>
           </div>
-        )}
+        )} */}
 
         <div className="pop-calendar">
           <Modal

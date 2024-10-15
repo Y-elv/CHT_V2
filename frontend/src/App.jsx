@@ -21,7 +21,7 @@ import NewsPage from "./pages/NewsPage";
 import ArticlesPage from "./pages/ArticlesPage";
 import ServicesPage from "./pages/ServicesPage";
 import ErrorPage from "./pages/ErrorPage";
-import TryPage from "./pages/tryPage";
+import BookingOnSmallDevice from "./pages/BookingOnSmallDevice";
 
 function App() {
   return (
@@ -45,7 +45,7 @@ function App() {
         <Route path="/our-services" element={<ServicesPage />} />
         <Route path="/our-news" element={<NewsPage />} />
         <Route path="/our-articles" element={<ArticlesPage />} />
-        <Route path="/try-page" element={<TryPage />} />
+        <Route path="/book" element={<BookingOnSmallDevice />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>
