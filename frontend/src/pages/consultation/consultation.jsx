@@ -23,7 +23,9 @@ import cooper from "../../assets/cooper.png";
 import kenny from "../../assets/kenny.png";
 import karenera from "../../assets/karenera.png";
 import submit from "../../assets/submit.png";
+import { useNavigate } from "react-router-dom";
 const Consultation = () => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -33,12 +35,22 @@ const Consultation = () => {
   };
 
   const showModal = () => {
-    if (window.innerWidth <= 600) {
-      setIsModalOpen2(true);
+    const screenWidth = window.innerWidth / window.devicePixelRatio;
+
+    // Log the screen width to the console
+    console.log(`Screen width: ${screenWidth}px`);
+
+    if (screenWidth <= 600) {
+      console.log("Small device detected, navigating to /try-page");
+       navigate("/book");
+      document.body.style.overflow = "hidden"; 
+      // setIsModalOpen2(true); // You can uncomment this if needed
     } else {
+      console.log("Larger device detected, opening modal");
       setIsModalOpen(true);
     }
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setIsModalOpen2(false);
@@ -121,7 +133,7 @@ const Consultation = () => {
             </Container>
             <div className="kh-rooms">
               <button className="btn-kh" onClick={showModal}>
-                talk to us 
+                talk to us
               </button>
             </div>
             <div className="cons-about">
@@ -131,7 +143,7 @@ const Consultation = () => {
               </div>
               <div className="cons-about-down">
                 <p>
-                  KUNDWA HEALTH is youth-led organization working with young
+                  Kundwa Health is youth-led organization working with young
                   people to decentralize health information and service they
                   need to lead healthier lives through digital health means.it
                   was founded in Gatsibo district by three young health
@@ -343,7 +355,9 @@ const Consultation = () => {
                           backgroundColor: "#E8E4FF",
                         }}
                       >
-                        <option value="Counseling and Therapy">Abortion</option>
+                        <option value="Counseling and Therapy">
+                          Counseling and Therapy
+                        </option>
                         <option value="Sexual advices">Sexual advices</option>
                         <option value="Mental Health">Mental Health</option>
                       </select>
@@ -360,7 +374,7 @@ const Consultation = () => {
           </div>
         )}
 
-        {isModalOpen2 && (
+        {/* {isModalOpen2 && (
           <div className="modal-small">
             <Modal
               isOpen={isModalOpen2}
@@ -379,7 +393,7 @@ const Consultation = () => {
                   justifyContent: "center",
                   alignItems: "center",
 
-                  position: "relative",
+                  position: "relative", // Ensures the modal is fixed in the viewport
                 },
               }}
             >
@@ -520,7 +534,7 @@ const Consultation = () => {
               </div>
             </Modal>
           </div>
-        )}
+        )} */}
 
         <div className="pop-calendar">
           <Modal
