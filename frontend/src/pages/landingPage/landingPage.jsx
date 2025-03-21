@@ -1,5 +1,6 @@
 import Navbar from "../../components/navbar/navbar";
 import Footer from "../../layout/footer/footer";
+import AIAssistant from "../../components/AIAssistant/AIAssistant";
 // import "./landingPage.css";
 import "./animate.css";
 import africa from "../../assets/africa.png";
@@ -264,6 +265,8 @@ const LandingPage = () => {
             </button>
           </div>
         </div>
+
+        <AIAssistant />
 
         <div className="services-section flex flex-col tablet:flex-col w-full tablet:h-[85vh] bg-blue-50 p-3 tablet:p-10">
           <h2 className="title p-5 px-10 font-medium slide-in">
