@@ -61,7 +61,7 @@ const AIAssistant = () => {
       )}
 
       {isOpen && (
-        <div className="w-80 md:w-96 bg-white rounded-lg shadow-xl overflow-hidden border border-red-500 flex flex-col h-[400px]">
+        <div className="w-80 md:w-96 bg-white rounded-lg shadow-xl overflow-hidden border border-red-500 flex flex-col h-[500px]">
           <div className="bg-[#F95700FF] text-black p-4 relative border border-red-500">
             <h3 className="font-bold">AI Assistant</h3>
             <p className="text-sm">How can I help you today?</p>
@@ -88,7 +88,7 @@ const AIAssistant = () => {
 
           <div
             ref={chatboxRef}
-            className="p-4 flex-1 overflow-y-auto bg-gray-50 border border-red-500"
+            className="p-10 flex-1 overflow-y-auto bg-gray-50 border border-red-500"
           >
             {chatHistory.length === 0 ? (
               <p className="text-gray-500 text-center italic text-sm">
@@ -98,7 +98,7 @@ const AIAssistant = () => {
               chatHistory.map((msg, index) => (
                 <div
                   key={index}
-                  className={`p-3 rounded-lg max-w-[80%] border border-red-500 ${
+                  className={`p-3 rounded-lg max-w-[80%] border border-red-500 mb-2 ${
                     msg.sender === "user"
                       ? "bg-blue-100 ml-auto text-right"
                       : "bg-gray-200"
@@ -113,7 +113,7 @@ const AIAssistant = () => {
           {/* Input field with icon inside */}
           <form
             onSubmit={handleSubmit}
-            className="p-3 border-t border-gray-200 flex gap-2 border border-red-500"
+            className="p-3 border-t border-gray-200 flex gap-2 border border-red-500 h-[50px]"
           >
             <div className="relative flex items-center w-[90%] md:w-[70%] lg:w-[60%]">
               <input
