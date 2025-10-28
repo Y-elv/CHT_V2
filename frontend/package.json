@@ -8,7 +8,10 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "audit": "npm audit",
+    "audit:fix": "npm audit fix",
+    "security:check": "npm audit && npm outdated"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -18,7 +21,7 @@
     "@react-icons/all-files": "^4.1.0",
     "@types/react-datepicker": "^7.0.0",
     "antd": "^5.14.2",
-    "axios": "^1.6.7",
+    "axios": "^1.13.0",
     "bootstrap": "^5.3.3",
     "framer-motion": "^11.3.24",
     "react": "^18.2.0",

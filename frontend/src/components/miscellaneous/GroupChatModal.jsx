@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "../../config/axiosConfig";
 import { FormControl, useDisclosure, useToast } from "@chakra-ui/react";
 import {
   Modal,
@@ -13,7 +14,6 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { ChatState } from "../Context/chatProvider";
-import axios from "axios";
 import UserListItem from "../UserListItem";
 import UserBadgetItem from "../UserBadgetItem";
 
@@ -51,9 +51,12 @@ const GroupChatModal = ({ children }) => {
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
+      // Extract error message from the API response
+      const errorMessage =
+        error.response?.data?.message || "Failed to load the search result";
+
       toast({
-        title: "Error Occured!",
-        description: "failed to load the search result ",
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -65,8 +68,7 @@ const GroupChatModal = ({ children }) => {
   const handleSubmit = async () => {
     if (!groupChatName || !selectedUsers) {
       toast({
-        title: "Please fill all fiels!",
-
+        description: "Please fill all fields!",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -95,17 +97,21 @@ const GroupChatModal = ({ children }) => {
       setChats([data, ...chats]);
       onClose();
       toast({
-        title: "New Group Chat Created!",
-
+        description: "New Group Chat Created!",
         status: "success",
         duration: 5000,
         isClosable: true,
         position: "bottom",
       });
     } catch (error) {
+      // Extract error message from the API response
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data ||
+        "Failed to create Group";
+
       toast({
-        title: "Failed to create Group!",
-        description: error.response.data,
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -117,7 +123,7 @@ const GroupChatModal = ({ children }) => {
   const handleGroup = (userToAdd) => {
     if (selectedUsers.includes(userToAdd)) {
       toast({
-        title: "User already added",
+        description: "User already added",
         status: "warning",
         duration: 5000,
         isClosable: true,

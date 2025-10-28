@@ -12,7 +12,7 @@ import {
 import React, { useState } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
-import axios from "axios";
+import axios from "../../config/axiosConfig";
 import { useNavigate, Link } from "react-router-dom";
 import wallpaper from "../../assets/wallpaper.png";
 import "./signup.css";
@@ -34,12 +34,11 @@ const Signup = () => {
 
   const handleClick = () => SetShow(!show);
 
-
   const submitHandler = async () => {
     setLoading(true);
     if (!name || !email || !password) {
       toast({
-        title: "Please fill all fields !",
+        description: "Please fill all fields!",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -51,8 +50,8 @@ const Signup = () => {
     const weakPasswordRegex = /^(?=.*[a-z]).{6,}$/; // Example: At least 6 characters and at least one lowercase letter
     if (!weakPasswordRegex.test(password)) {
       toast({
-        title:
-          "Weak Password , your passowrd must be At least 6 characters and at least one lowercase letter",
+        description:
+          "Weak Password, your password must be at least 6 characters and at least one lowercase letter",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -78,23 +77,61 @@ const Signup = () => {
       console.log("data are :", data);
 
       toast({
-        title: "Registration successfully!",
+        description: "Registration successfully!",
         status: "success",
         duration: 5000,
         isClosable: true,
         position: "bottom",
       });
-      
+
       setLoading(false);
       history("/login");
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
+      // Debug: Log the error structure to understand the format
+      console.log("Full error object:", error);
+      console.log("Error response:", error.response);
+      console.log("Error response data:", error.response?.data);
+
+      // Check for password strength error in different possible formats
+      const errorMessage =
+        error.response?.data?.error || error.response?.data?.message || "";
+      const isPasswordError =
+        errorMessage.includes("Password must be a strong password") ||
+        errorMessage.includes("strong password") ||
+        errorMessage.includes("password strength");
+
+      if (isPasswordError) {
         toast({
-          title: "Error Occurred!",
+          description: (
+            <div>
+              <div style={{ marginBottom: "8px" }}>{errorMessage}</div>
+              <div style={{ fontSize: "14px", color: "#666" }}>
+                <strong>Make sure your password:</strong>
+                <ul style={{ margin: "4px 0", paddingLeft: "20px" }}>
+                  <li>Has uppercase and lowercase letters</li>
+                  <li>Includes a number</li>
+                  <li>Has at least one special character (like @, #, !, $)</li>
+                </ul>
+              </div>
+            </div>
+          ),
+          status: "error",
+          duration: 8000,
+          isClosable: true,
+          position: "bottom",
+        });
+      } else if (error.response?.data?.error) {
+        // Handle other errors with error field
+        toast({
+          description: error.response.data.error,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      } else if (error.response?.data?.message) {
+        // Handle other errors with message field
+        toast({
           description: error.response.data.message,
           status: "error",
           duration: 5000,
@@ -102,9 +139,8 @@ const Signup = () => {
           position: "bottom",
         });
       } else {
-       
         toast({
-          title: "Unexpected Error Occurred!",
+          description: "Unexpected error occurred",
           status: "error",
           duration: 5000,
           isClosable: true,

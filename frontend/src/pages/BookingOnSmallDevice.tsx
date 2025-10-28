@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import axios from "axios";
+import axios from "../config/axiosConfig";
 
 Modal.setAppElement("#root"); // Necessary for accessibility
 
-const  BookingOnSmallDevice = ()=> {
+const BookingOnSmallDevice = () => {
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedService, setSelectedService] = useState("");
@@ -94,7 +94,10 @@ const  BookingOnSmallDevice = ()=> {
   };
 
   return (
-    <div className="container mx-auto p-4 min-h-screen w-full"style={{ backgroundColor: "#B8C2D7" }}>
+    <div
+      className="container mx-auto p-4 min-h-screen w-full"
+      style={{ backgroundColor: "#B8C2D7" }}
+    >
       <h1 className="text-2xl font-bold mb-6">TALK TO US</h1>
       <p className="mb-4">
         One click away to meeting our best doctors and wellness experts
@@ -162,7 +165,9 @@ const  BookingOnSmallDevice = ()=> {
             onChange={handleServiceChange}
             className="mt-1 block w-64 p-2 border border-gray-300 rounded-md bg-gray-50"
           >
-            <option value="Counseling and Therapy">Counseling and Therapy</option>
+            <option value="Counseling and Therapy">
+              Counseling and Therapy
+            </option>
             <option value="Sexual advices">Sexual advices</option>
             <option value="Mental Health">Mental Health</option>
           </select>
@@ -230,6 +235,6 @@ const  BookingOnSmallDevice = ()=> {
       )}
     </div>
   );
-}
+};
 
-export default  BookingOnSmallDevice;
+export default BookingOnSmallDevice;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./calendar.css";
 import Modal from "react-modal";
-import axios from "axios";
+import axios from "../../config/axiosConfig";
 import submit from "../../assets/submit.png";
 
 Modal.setAppElement("#root");

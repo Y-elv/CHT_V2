@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
-import axios from "axios";
+import axios from "../../config/axiosConfig";
 import { useNavigate, Link } from "react-router-dom";
 import "./login.css";
 import logo from "../../assets/LOGO FULL.png";
@@ -19,26 +19,24 @@ import { CgMail } from "react-icons/cg";
 import { BiSolidLockAlt } from "react-icons/bi";
 import { useBadgeStore } from "../../zustandStore/store";
 
-
 const Login = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [show, SetShow] = useState(false);
   const [loading, setLoading] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const history = useNavigate();
   const toast = useToast();
-  const setProfile = useBadgeStore(state => state.setProfile)
-  const profile = useBadgeStore(state => state.profile)
-  const setIsLoggedIn = useBadgeStore(state => state.setIsLoggedIn)
+  const setProfile = useBadgeStore((state) => state.setProfile);
+  const profile = useBadgeStore((state) => state.profile);
+  const setIsLoggedIn = useBadgeStore((state) => state.setIsLoggedIn);
   const handleClick = () => SetShow(!show);
 
   const submitHandler = async () => {
     setLoading(true);
     if (!email || !password) {
       toast({
-        title: "Please fill all fields!",
-
+        description: "Please fill all fields!",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -64,7 +62,7 @@ const Login = () => {
       console.log("Data received from login endpoint:", data);
 
       toast({
-        title: "Login successfully!",
+        description: "Login successfully!",
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -72,15 +70,21 @@ const Login = () => {
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
-      setIsLoggedIn(true)
-      setProfile(data)
+      setIsLoggedIn(true);
+      setProfile(data);
       // navigate("/profile", {state:{data:data}})
-      navigate("/profile")
+      navigate("/profile");
       // history("/profile");
     } catch (error) {
-      toast({
-        title: "Error Occured!",
+      console.log("Login error:", error);
+      console.log("Error response:", error.response);
+      console.log("Error response data:", error.response?.data);
 
+      // Extract error message from the API response
+      const errorMessage = error.response?.data?.message || "An error occurred";
+
+      toast({
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -89,7 +93,7 @@ const Login = () => {
       setLoading(false);
     }
   };
-  console.log("Zus Profile", profile)
+  console.log("Zus Profile", profile);
   return (
     <div className="login-container">
       <VStack

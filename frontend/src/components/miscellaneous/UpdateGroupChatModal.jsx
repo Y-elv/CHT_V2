@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../../config/axiosConfig";
 import {
   Modal,
   ModalOverlay,
@@ -55,9 +55,12 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
+      // Extract error message from the API response
+      const errorMessage =
+        error.response?.data?.message || "Failed to load the search result";
+
       toast({
-        title: "Error Occured!",
-        description: "failed to load the search result ",
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -88,9 +91,11 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
       setFetchAgain(!fetchAgain);
       setRenameLoading(false);
     } catch (error) {
+      // Extract error message from the API response
+      const errorMessage = error.response?.data?.message || "An error occurred";
+
       toast({
-        title: "Error Occured!",
-        description: error.response.data.message,
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -104,8 +109,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const handleAddUser = async (user1) => {
     if (selectedChat.users.find((u) => u._id === user1._id)) {
       toast({
-        title: "User Already in group!",
-
+        description: "User already in group!",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -116,8 +120,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
     if (selectedChat.groupAdmin._id !== user._id) {
       toast({
-        title: "Only admins can add someone!",
-
+        description: "Only admins can add someone!",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -148,9 +151,11 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
       setFetchAgain(!fetchAgain);
       setLoading(false);
     } catch (error) {
+      // Extract error message from the API response
+      const errorMessage = error.response?.data?.message || "An error occurred";
+
       toast({
-        title: "Error Occured!",
-        description: error.response.data.message,
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -163,7 +168,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const handleRemove = async (user1) => {
     if (selectedChat.groupAdmin._id !== user._id && user1._id !== user._id) {
       toast({
-        title: "Only admins can remove someone!",
+        description: "Only admins can remove someone!",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -193,9 +198,11 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
       fetchMessages();
       setLoading(false);
     } catch (error) {
+      // Extract error message from the API response
+      const errorMessage = error.response?.data?.message || "An error occurred";
+
       toast({
-        title: "Error Occured!",
-        description: error.response.data.message,
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,

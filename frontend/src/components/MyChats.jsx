@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ChatState } from "./Context/chatProvider";
 import { Box, Button, Stack, useToast, Avatar } from "@chakra-ui/react";
-import axios from "axios";
+import axios from "../config/axiosConfig";
 import { Text } from "@chakra-ui/layout";
 import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
@@ -28,8 +28,11 @@ const MyChats = ({ fetchAgain }) => {
       console.log("data for chats", data);
       setChats(data);
     } catch (error) {
+      // Extract error message from the API response
+      const errorMessage = error.response?.data?.message || "An error occurred";
+
       toast({
-        title: "Error Occured!",
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,

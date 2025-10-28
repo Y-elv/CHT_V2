@@ -12,10 +12,11 @@ import {
   Spinner,
   Flex,
 } from "@chakra-ui/react";
-import './SideDrawer.css'
+import "./SideDrawer.css";
 
 import { Text } from "@chakra-ui/layout";
 import React, { useState } from "react";
+import axios from "../../config/axiosConfig";
 
 import {
   Menu,
@@ -29,7 +30,6 @@ import {
   Drawer,
   Input,
 } from "@chakra-ui/react";
-import axios from "axios";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { ChatState } from "../Context/chatProvider";
 import { useNavigate } from "react-router-dom";
@@ -47,13 +47,11 @@ const SideDrawer = () => {
 
   const { user, setSelectedChat, chats, setChats } = ChatState();
 
-
-
   const toast = useToast();
   const handleSearch = async () => {
     if (!search) {
       toast({
-        title: "Please enter something in search",
+        description: "Please enter something in search",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -83,9 +81,12 @@ const SideDrawer = () => {
       setSearchResult(data);
       console.log("data:", data);
     } catch (error) {
+      // Extract error message from the API response
+      const errorMessage =
+        error.response?.data?.message || "Failed to load the search result";
+
       toast({
-        title: "Error Occured!",
-        description: "failed to load the search result ",
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -116,9 +117,14 @@ const SideDrawer = () => {
       setLoading(false);
       onClose();
     } catch (error) {
+      // Extract error message from the API response
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Error fetching chats";
+
       toast({
-        title: "Error fetching chats!",
-        description: error.message,
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -146,7 +152,6 @@ const SideDrawer = () => {
             flexDirection="row"
             alignItems="center"
             className="icon-text"
-           
           >
             <i className="fas fa-search"></i>
             <Text display={{ base: "none", md: "flex" }} px="4">

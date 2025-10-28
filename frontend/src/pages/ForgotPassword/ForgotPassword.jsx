@@ -13,7 +13,7 @@ import {
 import React, { useState } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
-import axios from "axios";
+import axios from "../../config/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import "./ForgotPassword.css";
 import logo from "../../assets/LOGO FULL.png";
@@ -30,94 +30,94 @@ const ForgotPassword = () => {
   const toast = useToast();
   const handleClick = () => setShow(!show);
 
-const submitHandler = async () => {
-  setLoading(true);
+  const submitHandler = async () => {
+    setLoading(true);
 
-  if (!email || !newPassword || !confirmPassword) {
-    toast({
-      title: "Please fill all fields!",
-      status: "warning",
-      duration: 5000,
-      isClosable: true,
-      position: "bottom",
-    });
-    setLoading(false);
-    return;
-  }
+    if (!email || !newPassword || !confirmPassword) {
+      toast({
+        description: "Please fill all fields!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
 
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      toast({
+        description:
+          "Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one number, and one of the following symbols: @, $, !, %, *, ?, &",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
 
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  if (!passwordRegex.test(newPassword)) {
-    toast({
-      title:
-        "Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one number, and one of the following symbols: @, $, !, %, *, ?, &",
-      status: "error",
-      duration: 5000,
-      isClosable: true,
-      position: "bottom",
-    });
-    setLoading(false);
-    return;
-  }
+    if (newPassword !== confirmPassword) {
+      toast({
+        description: "New Password and Confirm Password do not match",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
 
-  
-  if (newPassword !== confirmPassword) {
-    toast({
-      title: "New Password and Confirm Password do not match",
-      status: "error",
-      duration: 5000,
-      isClosable: true,
-      position: "bottom",
-    });
-    setLoading(false);
-    return;
-  }
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
 
-  try {
-    const config = {
-      headers: {
-        "Content-type": "application/json",
-      },
-    };
+      const { data } = await axios.post(
+        "  https://chtv2-bn.onrender.com/api/v2/user/reset",
+        {
+          email,
+          newPassword,
+          confirmPassword,
+        },
+        config
+      );
 
-   
-    const { data } = await axios.post(
-      "  https://chtv2-bn.onrender.com/api/v2/user/reset",
-      {
-        email,
-        newPassword,
-        confirmPassword,
-      },
-      config
-    );
+      console.log("Data received from password reset endpoint:", data);
 
-    console.log("Data received from password reset endpoint:", data);
+      toast({
+        description: "Password reset successful!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
 
-    toast({
-      title: "Password reset successful!",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-      position: "bottom",
-    });
+      setLoading(false);
+      history("/login");
+    } catch (error) {
+      console.error("Error during password reset:", error);
 
-    setLoading(false);
-    history("/login"); 
-  } catch (error) {
-    console.error("Error during password reset:", error);
+      // Extract error message from the API response
+      const errorMessage = error.response?.data?.message || "An error occurred";
 
-    toast({
-      title: "Error Occurred!",
-      status: "error",
-      duration: 5000,
-      isClosable: true,
-      position: "bottom",
-    });
+      toast({
+        description: errorMessage,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
 
-    setLoading(false);
-  }
-};
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="forgot-container">

@@ -5,7 +5,7 @@ import "./animate.css";
 import africa from "../../assets/africa.png";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../config/axiosConfig";
 import { useToast } from "@chakra-ui/react";
 import woman1 from "../../assets/round-woman.svg";
 import woman2 from "../../assets/round-woman2.svg";
@@ -92,7 +92,7 @@ const LandingPage = () => {
       !formData.idea
     ) {
       toast({
-        title: "Please fill in all fields",
+        description: "Please fill in all fields",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -104,7 +104,7 @@ const LandingPage = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       toast({
-        title: "Invalid email format",
+        description: "Invalid email format",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -115,7 +115,7 @@ const LandingPage = () => {
 
     if (!formData.agree) {
       toast({
-        title: "Please agree to the terms",
+        description: "Please agree to the terms",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -141,7 +141,7 @@ const LandingPage = () => {
 
       console.log("response", response);
       toast({
-        title: "Form submitted successfully!",
+        description: "Form submitted successfully!",
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -149,8 +149,13 @@ const LandingPage = () => {
       });
     } catch (error) {
       console.error("Request failed:", error);
+
+      // Extract error message from the API response
+      const errorMessage =
+        error.response?.data?.message || "Error submitting the form";
+
       toast({
-        title: "Error submitting the form",
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,

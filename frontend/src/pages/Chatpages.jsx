@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import UserNavbar from "../layout/userNavbar/userNavbar";
-import axios from "axios";
+import axios from "../config/axiosConfig";
 import {
   Box,
   Container,
@@ -25,7 +25,7 @@ const Chatpages = () => {
 
   return (
     <div style={{ width: "100%" }}>
-      {profile && <UserNavbar/>}
+      {profile && <UserNavbar />}
       {profile && <SideDrawer />}
       <Box
         display="flex"

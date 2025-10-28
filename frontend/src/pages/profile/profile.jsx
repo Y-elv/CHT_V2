@@ -57,7 +57,7 @@ const Profile = () => {
 
     if (!pics) {
       toast({
-        title: "Please select an image!",
+        description: "Please select an image!",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -69,7 +69,7 @@ const Profile = () => {
 
     if (pics?.type !== "image/jpeg" && pics?.type !== "image/png") {
       toast({
-        title: "Please select a valid image (JPEG or PNG)!",
+        description: "Please select a valid image (JPEG or PNG)!",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -125,7 +125,7 @@ const Profile = () => {
       await setPic(cloudinaryData.url.toString());
 
       toast({
-        title: "Profile picture updated!",
+        description: "Profile picture updated!",
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -135,8 +135,14 @@ const Profile = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error:", error);
+
+      // Extract error message from the API response
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred while uploading the image.";
+
       toast({
-        title: "An error occurred while uploading the image.",
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,

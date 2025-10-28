@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChatState } from "./Context/chatProvider";
-import axios from "axios";
+import axios from "../config/axiosConfig";
 import "../components/css/styles.css";
 import {
   Box,
@@ -18,7 +18,6 @@ import ProfileModal from "./miscellaneous/profileModal.jsx";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal.jsx";
 import io from "socket.io-client";
 
-
 const ENDPOINT = "https://chtv2-bn.onrender.com";
 
 var socket, selectedChatCompare;
@@ -32,11 +31,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
   const toast = useToast();
 
-    useEffect(() => {
-      socket = io(ENDPOINT);
-      socket.emit("setup", user);
-      socket.on("connection", () => setSocketConnected(true));
-    }, []);
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connection", () => setSocketConnected(true));
+  }, []);
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -65,9 +64,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
       socket.emit("join chat", selectedChat._id);
     } catch (error) {
+      // Extract error message from the API response
+      const errorMessage =
+        error.response?.data?.message || "Failed to Load the Messages";
+
       toast({
-        title: "Error Occured!",
-        description: "Failed to Load the Messages",
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -75,8 +77,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       });
     }
   };
-
-
 
   useEffect(() => {
     fetchMessages();
@@ -95,7 +95,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         setMessages([...messages, newMessageRecevied]);
       }
     });
-  },);
+  });
 
   const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage) {
@@ -122,9 +122,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
         setMessages([...messages, data]);
       } catch (error) {
+        // Extract error message from the API response
+        const errorMessage =
+          error.response?.data?.message || "Failed to send the Message";
+
         toast({
-          title: "Error Occured!",
-          description: "Failed to send the Message",
+          description: errorMessage,
           status: "error",
           duration: 5000,
           isClosable: true,
