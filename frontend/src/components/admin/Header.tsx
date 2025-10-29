@@ -39,6 +39,50 @@ import { useNavigate } from "react-router-dom";
 
 const MotionBox = motion(Box);
 
+// Dummy notification data
+const notificationData = [
+  {
+    id: "n1",
+    title: "New consultation request",
+    message: "Alice Johnson requested a consultation with Dr. Sarah Williams",
+    time: "2 minutes ago",
+    type: "consultation",
+    unread: true,
+  },
+  {
+    id: "n2",
+    title: "System update",
+    message: "Health game analytics have been updated",
+    time: "1 hour ago",
+    type: "system",
+    unread: true,
+  },
+  {
+    id: "n3",
+    title: "New user registration",
+    message: "Bob Smith has joined the platform",
+    time: "3 hours ago",
+    type: "user",
+    unread: false,
+  },
+  {
+    id: "n4",
+    title: "Consultation completed",
+    message: "Dr. Michael Chen completed consultation with Charlie Brown",
+    time: "5 hours ago",
+    type: "consultation",
+    unread: false,
+  },
+  {
+    id: "n5",
+    title: "Maintenance scheduled",
+    message: "System maintenance scheduled for tomorrow 2 AM",
+    time: "1 day ago",
+    type: "system",
+    unread: false,
+  },
+];
+
 // Dummy search data
 const searchData = {
   users: [
@@ -142,6 +186,7 @@ const Header: React.FC<HeaderProps> = ({
   const [notifications] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
 
   const bgColor = useColorModeValue("white", "gray.800");
@@ -207,6 +252,17 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const handleNotificationClick = () => {
+    setShowNotifications(!showNotifications);
+    setShowSuggestions(false); // Close search suggestions when opening notifications
+  };
+
+  const handleNotificationItemClick = (notification: any) => {
+    // Handle notification click - could navigate to relevant page
+    console.log("Notification clicked:", notification);
+    setShowNotifications(false);
+  };
+
   return (
     <Box
       h="70px"
@@ -220,7 +276,7 @@ const Header: React.FC<HeaderProps> = ({
       px={6}
       py={3}
     >
-      <Flex align="center" justify="space-between" h="full">
+      <Flex align="center" justify="space-between" h="full" minW={0}>
         {/* Mobile Menu Button */}
         <IconButton
           aria-label="Menu"
@@ -232,7 +288,13 @@ const Header: React.FC<HeaderProps> = ({
         />
 
         {/* Search */}
-        <Box position="relative" maxW={{ base: "250px", md: "400px" }} flex={1}>
+        <Box
+          position="relative"
+          w={{ base: "100%", md: "400px" }}
+          maxW="100%"
+          px={{ base: 1, md: 0 }}
+          flex={1}
+        >
           <InputGroup>
             <InputLeftElement pointerEvents="none">
               <RiSearchLine size={20} />
@@ -254,8 +316,8 @@ const Header: React.FC<HeaderProps> = ({
             <Box
               position="absolute"
               top="100%"
-              left="0"
-              right="0"
+              left={{ base: -4, md: 0 }}
+              right={{ base: -4, md: 0 }}
               mt={2}
               bg={dropdownBg}
               border="1px"
@@ -263,15 +325,18 @@ const Header: React.FC<HeaderProps> = ({
               borderRadius="lg"
               boxShadow="xl"
               zIndex={9999}
-              maxH="400px"
+              maxH={{ base: "60vh", md: "400px" }}
+              overflowX="hidden"
               overflowY="auto"
+              width={{ base: "calc(100% + 32px)", md: "auto" }}
+              maxWidth="100%"
             >
               {totalResults > 0 ? (
                 <VStack align="stretch" spacing={2} p={2}>
                   {searchResults.users.length > 0 && (
                     <>
                       <Text
-                        fontSize="xs"
+                        fontSize={{ base: "sm", md: "sm" }}
                         fontWeight="semibold"
                         px={2}
                         color="gray.500"
@@ -284,25 +349,38 @@ const Header: React.FC<HeaderProps> = ({
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           whileHover={{ bg: hoverBg }}
-                          p={2}
+                          p={{ base: 2, md: 2 }}
                           borderRadius="md"
                           cursor="pointer"
                           onClick={() => handleResultClick(user)}
                         >
-                          <HStack spacing={3}>
+                          <HStack spacing={3} minW={0}>
                             <Avatar
                               size="sm"
                               name={user.name}
                               src={user.avatar}
+                              flexShrink={0}
                             />
-                            <Box flex="1">
-                              <HStack>
+                            <Box flex={1} minW={0}>
+                              <HStack minW={0}>
                                 <RiUserLine size={16} />
-                                <Text fontSize="sm" fontWeight="medium">
+                                <Text
+                                  fontSize={{ base: "sm", md: "sm" }}
+                                  fontWeight="medium"
+                                  overflow="hidden"
+                                  textOverflow="ellipsis"
+                                  whiteSpace="nowrap"
+                                >
                                   {user.name}
                                 </Text>
                               </HStack>
-                              <Text fontSize="xs" color="gray.500">
+                              <Text
+                                fontSize={{ base: "sm", md: "sm" }}
+                                color="gray.500"
+                                overflow="hidden"
+                                textOverflow="ellipsis"
+                                whiteSpace="nowrap"
+                              >
                                 Age: {user.age}
                               </Text>
                             </Box>
@@ -316,7 +394,7 @@ const Header: React.FC<HeaderProps> = ({
                     <>
                       {searchResults.users.length > 0 && <Divider />}
                       <Text
-                        fontSize="xs"
+                        fontSize={{ base: "sm", md: "sm" }}
                         fontWeight="semibold"
                         px={2}
                         color="gray.500"
@@ -329,25 +407,38 @@ const Header: React.FC<HeaderProps> = ({
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           whileHover={{ bg: hoverBg }}
-                          p={2}
+                          p={{ base: 2, md: 2 }}
                           borderRadius="md"
                           cursor="pointer"
                           onClick={() => handleResultClick(doctor)}
                         >
-                          <HStack spacing={3}>
+                          <HStack spacing={3} minW={0}>
                             <Avatar
                               size="sm"
                               name={doctor.name}
                               src={doctor.avatar}
+                              flexShrink={0}
                             />
-                            <Box flex="1">
-                              <HStack>
+                            <Box flex={1} minW={0}>
+                              <HStack minW={0}>
                                 <RiUserHeartLine size={16} />
-                                <Text fontSize="sm" fontWeight="medium">
+                                <Text
+                                  fontSize={{ base: "sm", md: "sm" }}
+                                  fontWeight="medium"
+                                  overflow="hidden"
+                                  textOverflow="ellipsis"
+                                  whiteSpace="nowrap"
+                                >
                                   {doctor.name}
                                 </Text>
                               </HStack>
-                              <Text fontSize="xs" color="gray.500">
+                              <Text
+                                fontSize={{ base: "sm", md: "sm" }}
+                                color="gray.500"
+                                overflow="hidden"
+                                textOverflow="ellipsis"
+                                whiteSpace="nowrap"
+                              >
                                 {doctor.specialty}
                               </Text>
                             </Box>
@@ -362,7 +453,7 @@ const Header: React.FC<HeaderProps> = ({
                       {(searchResults.users.length > 0 ||
                         searchResults.doctors.length > 0) && <Divider />}
                       <Text
-                        fontSize="xs"
+                        fontSize={{ base: "sm", md: "sm" }}
                         fontWeight="semibold"
                         px={2}
                         color="gray.500"
@@ -375,19 +466,31 @@ const Header: React.FC<HeaderProps> = ({
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           whileHover={{ bg: hoverBg }}
-                          p={2}
+                          p={{ base: 2, md: 2 }}
                           borderRadius="md"
                           cursor="pointer"
                           onClick={() => handleResultClick(consultation)}
                         >
-                          <HStack spacing={3}>
+                          <HStack spacing={3} minW={0}>
                             <RiStethoscopeLine size={16} />
-                            <Box flex="1">
-                              <Text fontSize="sm" fontWeight="medium">
+                            <Box flex={1} minW={0}>
+                              <Text
+                                fontSize={{ base: "sm", md: "sm" }}
+                                fontWeight="medium"
+                                overflow="hidden"
+                                textOverflow="ellipsis"
+                                whiteSpace="nowrap"
+                              >
                                 {consultation.userName} →{" "}
                                 {consultation.doctorName}
                               </Text>
-                              <Text fontSize="xs" color="gray.500">
+                              <Text
+                                fontSize={{ base: "sm", md: "sm" }}
+                                color="gray.500"
+                                overflow="hidden"
+                                textOverflow="ellipsis"
+                                whiteSpace="nowrap"
+                              >
                                 Status: {consultation.status}
                               </Text>
                             </Box>
@@ -410,8 +513,11 @@ const Header: React.FC<HeaderProps> = ({
 
         {/* Right Side */}
         <HStack spacing={4}>
-          {/* Quick Actions */}
-          <HStack spacing={2}>
+          {/* Quick Actions - Hide on mobile when search is focused */}
+          <HStack
+            spacing={2}
+            display={{ base: showSuggestions ? "none" : "flex", md: "flex" }}
+          >
             <Menu>
               <MenuButton
                 as={Button}
@@ -453,31 +559,127 @@ const Header: React.FC<HeaderProps> = ({
           </HStack>
 
           {/* Notifications */}
-          <IconButton
-            aria-label="Notifications"
-            icon={
-              <Box position="relative">
-                <RiBellLine size={22} />
-                {notifications > 0 && (
-                  <Badge
-                    position="absolute"
-                    top="-8px"
-                    right="-8px"
-                    borderRadius="full"
-                    bg="red.500"
-                    color="white"
-                    fontSize="10px"
-                    minW="18px"
-                    h="18px"
-                  >
-                    {notifications}
-                  </Badge>
-                )}
+          <Box position="relative">
+            <IconButton
+              aria-label="Notifications"
+              icon={
+                <Box position="relative">
+                  <RiBellLine size={22} />
+                  {notifications > 0 && (
+                    <Badge
+                      position="absolute"
+                      top="-8px"
+                      right="-8px"
+                      borderRadius="full"
+                      bg="red.500"
+                      color="white"
+                      fontSize="10px"
+                      minW="18px"
+                      h="18px"
+                    >
+                      {notifications}
+                    </Badge>
+                  )}
+                </Box>
+              }
+              variant="ghost"
+              size="md"
+              onClick={handleNotificationClick}
+            />
+
+            {/* Notifications Dropdown */}
+            {showNotifications && (
+              <Box
+                position="absolute"
+                top="100%"
+                right="0"
+                mt={2}
+                w={{ base: "300px", md: "350px" }}
+                maxW="90vw"
+                bg={dropdownBg}
+                border="1px"
+                borderColor={borderColor}
+                borderRadius="lg"
+                boxShadow="xl"
+                zIndex={9999}
+                maxH="400px"
+                overflowY="auto"
+              >
+                <VStack align="stretch" spacing={0}>
+                  <Box p={3} borderBottom="1px" borderColor={borderColor}>
+                    <Text fontSize="sm" fontWeight="semibold">
+                      Notifications (
+                      {notificationData.filter((n) => n.unread).length})
+                    </Text>
+                  </Box>
+
+                  {notificationData.map((notification) => (
+                    <MotionBox
+                      key={notification.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      whileHover={{ bg: hoverBg }}
+                      p={3}
+                      cursor="pointer"
+                      onClick={() => handleNotificationItemClick(notification)}
+                      borderBottom="1px"
+                      borderColor={borderColor}
+                      bg={notification.unread ? "blue.50" : "transparent"}
+                    >
+                      <VStack align="start" spacing={1}>
+                        <HStack justify="space-between" w="full">
+                          <Text
+                            fontSize="sm"
+                            fontWeight={
+                              notification.unread ? "semibold" : "medium"
+                            }
+                            color={
+                              notification.unread ? "blue.600" : "gray.700"
+                            }
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                            maxW="80%"
+                          >
+                            {notification.title}
+                          </Text>
+                          {notification.unread && (
+                            <Box
+                              w="8px"
+                              h="8px"
+                              borderRadius="full"
+                              bg="blue.500"
+                            />
+                          )}
+                        </HStack>
+                        <Text
+                          fontSize="xs"
+                          color="gray.600"
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap"
+                          w="full"
+                        >
+                          {notification.message}
+                        </Text>
+                        <Text fontSize="xs" color="gray.500">
+                          {notification.time}
+                        </Text>
+                      </VStack>
+                    </MotionBox>
+                  ))}
+
+                  {notificationData.length === 0 && (
+                    <Box p={4} textAlign="center">
+                      <Text fontSize="sm" color="gray.500">
+                        No notifications
+                      </Text>
+                    </Box>
+                  )}
+                </VStack>
               </Box>
-            }
-            variant="ghost"
-            size="md"
-          />
+            )}
+          </Box>
 
           {/* Profile Menu */}
           <Menu>
@@ -504,8 +706,8 @@ const Header: React.FC<HeaderProps> = ({
         </HStack>
       </Flex>
 
-      {/* Click outside to close suggestions */}
-      {showSuggestions && (
+      {/* Click outside to close suggestions and notifications */}
+      {(showSuggestions || showNotifications) && (
         <Box
           position="fixed"
           top="0"
@@ -513,7 +715,10 @@ const Header: React.FC<HeaderProps> = ({
           right="0"
           bottom="0"
           zIndex={9998}
-          onClick={() => setShowSuggestions(false)}
+          onClick={() => {
+            setShowSuggestions(false);
+            setShowNotifications(false);
+          }}
         />
       )}
     </Box>
