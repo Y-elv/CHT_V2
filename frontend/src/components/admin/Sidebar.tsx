@@ -6,6 +6,7 @@ import {
   HStack,
   Text,
   Avatar,
+  Image,
   Badge,
   Flex,
   useColorMode,
@@ -33,6 +34,7 @@ import {
 } from "react-icons/ri";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
+import logo from "../../assets/LOGO FULL.png";
 
 interface NavItem {
   icon: React.ElementType;
@@ -116,11 +118,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
       {/* Logo */}
       <Flex justify="space-between" align="center" p={2}>
         <Flex align="center" gap={2}>
-          <Avatar size="sm" bg="blue.500" name="ABC" />
+          <Image src={logo} alt="Logo" boxSize="32px" objectFit="contain" />
           <Box>
-            <Text fontWeight="bold" fontSize="lg">
-              ABC Health
-            </Text>
             <Text fontSize="xs" color="gray.500">
               Admin Panel
             </Text>
