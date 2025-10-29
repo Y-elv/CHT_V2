@@ -24,6 +24,17 @@ import ErrorPage from "./pages/ErrorPage";
 import BookingOnSmallDevice from "./pages/BookingOnSmallDevice";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
+import DoctorDashboard from "./pages/DoctorDashboard";
+import QuickActions from "./pages/doctor/QuickActions";
+import MyPatients from "./pages/doctor/MyPatients";
+import Messages from "./pages/doctor/Messages";
+import Schedule from "./pages/doctor/Schedule";
+import PatientRecords from "./pages/doctor/PatientRecords";
+import Availability from "./pages/doctor/Availability";
+import Notifications from "./pages/doctor/Notifications";
+import Analytics from "./pages/doctor/Analytics";
+import DoctorProfile from "./pages/doctor/Profile";
+import Settings from "./pages/doctor/Settings";
 
 function App() {
   return (
@@ -62,6 +73,19 @@ function App() {
           <Route path="analytics" element={<Dashboard />} />
           <Route path="settings" element={<Dashboard />} />
         </Route>
+
+        {/* Doctor Routes */}
+        <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+        <Route path="/doctor/consultations" element={<QuickActions />} />
+        <Route path="/doctor/patients" element={<MyPatients />} />
+        <Route path="/doctor/messages" element={<Messages />} />
+        <Route path="/doctor/schedule" element={<Schedule />} />
+        <Route path="/doctor/records" element={<PatientRecords />} />
+        <Route path="/doctor/availability" element={<Availability />} />
+        <Route path="/doctor/notifications" element={<Notifications />} />
+        <Route path="/doctor/analytics" element={<Analytics />} />
+        <Route path="/doctor/profile" element={<DoctorProfile />} />
+        <Route path="/doctor/settings" element={<Settings />} />
 
         <Route path="*" element={<ErrorPage />} />
       </Routes>
