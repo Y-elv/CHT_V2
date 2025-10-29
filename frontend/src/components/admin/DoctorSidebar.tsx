@@ -1,4 +1,4 @@
-// components/admin/Sidebar.tsx
+// components/admin/DoctorSidebar.tsx
 import React from "react";
 import {
   Box,
@@ -6,9 +6,9 @@ import {
   HStack,
   Text,
   Avatar,
-  Image,
   Badge,
   Flex,
+  Image,
   useColorMode,
   useColorModeValue,
   IconButton,
@@ -21,16 +21,18 @@ import {
 import {
   RiDashboardLine,
   RiStethoscopeLine,
-  RiUserLine,
   RiUserHeartLine,
   RiMessage3Line,
-  RiGamepadLine,
+  RiCalendarLine,
   RiFileTextLine,
   RiBarChartLine,
   RiSettings3Line,
   RiMoonLine,
   RiSunLine,
   RiCloseLine,
+  RiUserLine,
+  RiTimeLine,
+  RiNotificationLine,
 } from "react-icons/ri";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -44,14 +46,17 @@ interface NavItem {
   badgeColor?: string;
 }
 
-interface SidebarProps {
+interface DoctorSidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
 }
 
 const MotionBox = motion(Box);
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
+const DoctorSidebar: React.FC<DoctorSidebarProps> = ({
+  isOpen = true,
+  onClose,
+}) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const navigate = useNavigate();
   const location = useLocation();
@@ -62,45 +67,63 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
   const activeColor = useColorModeValue("blue.600", "blue.300");
 
   const navItems: NavItem[] = [
-    { icon: RiDashboardLine, label: "Dashboard", path: "/admin/dashboard" },
+    { icon: RiDashboardLine, label: "Dashboard", path: "/doctor/dashboard" },
     {
       icon: RiStethoscopeLine,
-      label: "Consultations",
-      path: "/admin/consultations",
+      label: "Quick Actions",
+      path: "/doctor/consultations",
       badge: 24,
       badgeColor: "red",
     },
     {
-      icon: RiUserLine,
-      label: "Users",
-      path: "/admin/users",
-      badge: 1247,
-      badgeColor: "blue",
-    },
-    {
       icon: RiUserHeartLine,
-      label: "Doctors",
-      path: "/admin/doctors",
-      badge: 45,
-      badgeColor: "green",
+      label: "My Patients",
+      path: "/doctor/patients",
+      badge: 42,
+      badgeColor: "blue",
     },
     {
       icon: RiMessage3Line,
       label: "Messages",
-      path: "/admin/messages",
-      badge: 156,
+      path: "/doctor/messages",
+      badge: 15,
       badgeColor: "orange",
     },
     {
-      icon: RiGamepadLine,
-      label: "Health Game",
-      path: "/admin/game",
-      badge: 892,
+      icon: RiCalendarLine,
+      label: "Schedule",
+      path: "/doctor/schedule",
+      badge: 8,
+      badgeColor: "green",
+    },
+    {
+      icon: RiFileTextLine,
+      label: "Patient Records",
+      path: "/doctor/records",
+    },
+    {
+      icon: RiTimeLine,
+      label: "Availability",
+      path: "/doctor/availability",
+    },
+    {
+      icon: RiNotificationLine,
+      label: "Notifications",
+      path: "/doctor/notifications",
+      badge: 3,
       badgeColor: "purple",
     },
-    { icon: RiFileTextLine, label: "Content", path: "/admin/content" },
-    { icon: RiBarChartLine, label: "Analytics", path: "/admin/analytics" },
-    { icon: RiSettings3Line, label: "Settings", path: "/admin/settings" },
+    {
+      icon: RiBarChartLine,
+      label: "Analytics",
+      path: "/doctor/analytics",
+    },
+    {
+      icon: RiUserLine,
+      label: "Profile",
+      path: "/doctor/profile",
+    },
+    { icon: RiSettings3Line, label: "Settings", path: "/doctor/settings" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -121,7 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
           <Image src={logo} alt="Logo" boxSize="32px" objectFit="contain" />
           <Box>
             <Text fontSize="xs" color="gray.500">
-              Admin Panel
+              Doctor Panel
             </Text>
           </Box>
         </Flex>
@@ -149,20 +172,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
 
       <Divider />
 
-      {/* Admin Profile */}
+      {/* Doctor Profile */}
       <Box
         p={3}
         borderRadius="lg"
         bg={useColorModeValue("gray.50", "gray.700")}
       >
         <HStack>
-          <Avatar size="sm" name="Admin User" />
+          <Avatar size="sm" name="Dr. Smith" />
           <Box flex="1">
             <Text fontWeight="semibold" fontSize="sm">
-              Admin User
+              Dr. Smith
             </Text>
             <Text fontSize="xs" color="gray.500">
-              Administrator
+              General Practitioner
             </Text>
           </Box>
         </HStack>
@@ -252,4 +275,4 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
   );
 };
 
-export default Sidebar;
+export default DoctorSidebar;
