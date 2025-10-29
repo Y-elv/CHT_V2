@@ -22,6 +22,8 @@ import ArticlesPage from "./pages/ArticlesPage";
 import ServicesPage from "./pages/ServicesPage";
 import ErrorPage from "./pages/ErrorPage";
 import BookingOnSmallDevice from "./pages/BookingOnSmallDevice";
+import AdminLayout from "./pages/admin/AdminLayout";
+import Dashboard from "./pages/admin/Dashboard";
 
 function App() {
   return (
@@ -46,6 +48,21 @@ function App() {
         <Route path="/our-news" element={<NewsPage />} />
         <Route path="/our-articles" element={<ArticlesPage />} />
         <Route path="/book" element={<BookingOnSmallDevice />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="consultations" element={<Dashboard />} />
+          <Route path="users" element={<Dashboard />} />
+          <Route path="doctors" element={<Dashboard />} />
+          <Route path="messages" element={<Dashboard />} />
+          <Route path="game" element={<Dashboard />} />
+          <Route path="content" element={<Dashboard />} />
+          <Route path="analytics" element={<Dashboard />} />
+          <Route path="settings" element={<Dashboard />} />
+        </Route>
+
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </div>
