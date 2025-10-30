@@ -9,6 +9,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { Suspense, lazy } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
 import axios from "../../config/axiosConfig";
@@ -18,6 +19,8 @@ import logo from "../../assets/LOGO FULL.png";
 import { CgMail } from "react-icons/cg";
 import { BiSolidLockAlt } from "react-icons/bi";
 import { useBadgeStore } from "../../zustandStore/store";
+const EdgeGlowCard = lazy(() => import("../EdgeGlowCard"));
+import { motion } from "framer-motion";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -105,83 +108,114 @@ const Login = () => {
         justifyContent="center"
         className="login-class"
       >
-        <Box
-          spacing="5px"
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          width="25vw"
-          height="70vh"
-          gap="3"
-          className="box-login"
-        >
-          <Image src={logo} alt="Logo" w="150px" h="auto" mb="-3" />
-          <div className="signin-text">SignIn</div>
-          <FormControl id="email" isRequired>
-            <InputGroup>
-              <InputLeftElement pointerEvents="none">
-                <Box
-                  as={CgMail}
-                  color="#000000"
-                  bg="#F95700FF"
-                  p="4px"
-                  borderRadius="md"
-                  fontSize="28px"
-                />
-              </InputLeftElement>
-              <Input
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </InputGroup>
-          </FormControl>
-          <FormControl id="password" isRequired>
-            <InputGroup>
-              <InputLeftElement pointerEvents="none">
-                <Box
-                  as={BiSolidLockAlt}
-                  color="#000000"
-                  bg="#F95700FF"
-                  p="4px"
-                  borderRadius="md"
-                  fontSize="28px"
-                />
-              </InputLeftElement>
-              <Input
-                type={show ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <InputRightElement width="4.5rem">
-                <Button h="1.75rem" size="sm" onClick={handleClick}>
-                  {show ? "Hide" : "show"}
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
-
-          <Link align="end" to="/forgot-password" style={{ color: "#000000" }}>
-            Forgot Password?
-          </Link>
-
-          <Button
-            onClick={submitHandler}
+        <div className="gradient-border-2 w-[39vw] h-[70vh] max-w-full">
+          <Box
+            spacing="5px"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
             width="100%"
-            colorScheme="#F95700FF"
-            color="#000000"
-            style={{ marginTop: 15 }}
-            isLoading={loading}
-            background="#F95700FF"
+            height="100%"
+            gap="3"
+            className="box-login"
           >
-            login
-          </Button>
-          <Link to="/register" mt="4" style={{ color: "#000000" }}>
-            New here! Register
-          </Link>
-        </Box>
+            {/* Replace previous circle effects with an edge glow border */}
+            <Suspense fallback={<div />}>
+              <EdgeGlowCard
+                className="w-full h-full" /* uses brand color by default */
+              >
+                <div className="box-content w-full h-full flex flex-col items-center justify-center gap-3 px-6 md:px-8 py-5 md:py-6 overflow-y-auto overscroll-contain max-w-full">
+                  <Image src={logo} alt="Logo" w="120px" h="auto" maxW="100%" />
+                  <div className="signin-text">SignIn</div>
+                  <div className="w-full max-w-[420px] mx-auto space-y-4">
+                    <FormControl id="email" isRequired>
+                      <InputGroup>
+                        <InputLeftElement pointerEvents="none">
+                          <Box
+                            as={CgMail}
+                            color="#000000"
+                            bg="#F95700FF"
+                            p="4px"
+                            borderRadius="md"
+                            fontSize="28px"
+                          />
+                        </InputLeftElement>
+                        <Input
+                          width="100%"
+                          placeholder="Email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          _placeholder={{ color: "#000000" }}
+                          color="#000000"
+                        />
+                      </InputGroup>
+                    </FormControl>
+
+                    <FormControl id="password" isRequired>
+                      <InputGroup>
+                        <InputLeftElement pointerEvents="none">
+                          <Box
+                            as={BiSolidLockAlt}
+                            color="#000000"
+                            bg="#F95700FF"
+                            p="4px"
+                            borderRadius="md"
+                            fontSize="28px"
+                          />
+                        </InputLeftElement>
+                        <Input
+                          width="100%"
+                          type={show ? "text" : "password"}
+                          placeholder="Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          _placeholder={{ color: "#000000" }}
+                          color="#000000"
+                        />
+                        <InputRightElement width="4.5rem">
+                          <Button h="1.75rem" size="sm" onClick={handleClick}>
+                            {show ? "Hide" : "show"}
+                          </Button>
+                        </InputRightElement>
+                      </InputGroup>
+                    </FormControl>
+
+                    <Link
+                      align="end"
+                      to="/forgot-password"
+                      style={{ color: "#000000" }}
+                      className="block w-full text-center"
+                    >
+                      Forgot Password?
+                    </Link>
+
+                    <Button
+                      onClick={submitHandler}
+                      width="100%"
+                      colorScheme="#F95700FF"
+                      color="#000000"
+                      style={{ marginTop: 15 }}
+                      isLoading={loading}
+                      background="#F95700FF"
+                    >
+                      login
+                    </Button>
+
+                    <Link
+                      to="/register"
+                      mt="4"
+                      style={{ color: "#000000" }}
+                      className="block w-full text-center"
+                    >
+                      New here! Register
+                    </Link>
+                  </div>
+                </div>
+              </EdgeGlowCard>
+            </Suspense>
+          </Box>
+        </div>
       </VStack>
     </div>
   );

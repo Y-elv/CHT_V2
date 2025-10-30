@@ -1,0 +1,34 @@
+/* Minimal custom CSS to render a rotating conic-gradient border only on edges */
+
+.edge-glow {
+  position: relative;
+}
+
+.edge-glow::before {
+  /* The rotating glow layer */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--edge-glow-color, #f95700) 60deg,
+    transparent 120deg,
+    transparent 360deg
+  );
+  animation: edge-glow-spin 6s linear infinite;
+  filter: blur(6px);
+
+  /* Show only a thin ring along the edges using CSS mask */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; /* Safari/Chrome */
+  mask-composite: exclude; /* Firefox */
+  padding: var(--edge-glow-thickness, 3px);
+}
+
+@keyframes edge-glow-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

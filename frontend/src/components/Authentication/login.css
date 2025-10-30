@@ -12,12 +12,42 @@
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
+  position: relative; /* enable layered background visuals */
 }
 .signin-text {
   font-size: 20px;
   color: #000000;
   font-weight: 500;
   margin-bottom: 36px;
+}
+
+/* 3D background layer */
+.three-bg {
+  display: none;
+}
+
+/* Ensure the form area sits above the 3D canvas */
+.login-class {
+  z-index: 1;
+}
+
+/* Contain 3D glow within the card */
+.box-login {
+  position: relative;
+  overflow: hidden; /* clip the 3D glow to card bounds */
+  border-radius: 12px; /* match card rounding */
+}
+
+.box-content {
+  position: relative;
+  z-index: 1; /* ensure inputs stay above canvas */
+}
+
+.card-3d {
+  position: absolute;
+  inset: -10%; /* extend slightly beyond edges for a wrap effect */
+  z-index: 0;
+  pointer-events: none;
 }
 
 @media screen and (max-width: 1000px) {
