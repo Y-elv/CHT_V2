@@ -105,7 +105,7 @@ const Signup = () => {
       console.log("data are :", data);
 
       toast({
-        description: "Registration successfully!",
+        description: "Registration successfully! Please verify your email with the OTP code.",
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -113,7 +113,7 @@ const Signup = () => {
       });
 
       setLoading(false);
-      history("/login");
+      history("/otp", { state: { email } });
     } catch (error) {
       // Debug: Log the error structure to understand the format
       console.log("Full error object:", error);
