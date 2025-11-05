@@ -14,6 +14,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Login from "./components/Authentication/login";
 import Signup from "./components/Authentication/signup";
+import OTP from "./components/Authentication/otp";
+import VerificationSuccess from "./components/Authentication/verificationSuccess";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import Hospital from "./pages/hospital/Hospital";
 import OurTeamPage from "./pages/OurTeamPage";
@@ -51,6 +53,8 @@ function App() {
         <Route path="/consultation" element={<Consultation />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Signup />} />
+        <Route path="/otp" element={<OTP />} />
+        <Route path="/verification-success" element={<VerificationSuccess />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/home" element={<LandingPage />} />
@@ -73,6 +77,7 @@ function App() {
           <Route path="analytics" element={<Dashboard />} />
           <Route path="settings" element={<Dashboard />} />
         </Route>
+        
 
         {/* Doctor Routes */}
         <Route path="/doctor/dashboard" element={<DoctorDashboard />} />

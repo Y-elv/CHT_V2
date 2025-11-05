@@ -3,13 +3,26 @@
   margin: 0;
 }
 
+/* Layout: flex column with footer push */
+.consultation-page {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+.cons-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
 .cons-middle {
-  height: 255vh;
-  background-color: #cedafa;
+  flex: 1 1 auto;
+  /* transparent to let page gradient show */
+  background-color: transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 3rem;
+  padding: 24px 12px;
 }
 .layer-small-btn {
   background-color: #2c17ae;
@@ -41,10 +54,10 @@
   color: #f95700ff;
 }
 .prof-card {
-  height: 180vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 15rem;
+  gap: 4rem;
   align-items: center;
 }
 
@@ -134,12 +147,12 @@ form {
 }
 
 .btn-kh {
-  border: 2px solid #000000;
-  color: #f95700ff;
+  border: none;
+  outline: none;
   width: 100%;
-  max-width: 200px;
-  padding: 10px 20px;
-  border-radius: 5px;
+  max-width: 220px;
+  padding: 12px 20px;
+  border-radius: 9999px;
   font-size: 1rem;
 }
 
@@ -217,27 +230,15 @@ form {
   transform: translateY(-50%) scale(1.1);
 }
 
-
+/* Mobile adjustments */
 @media screen and (max-width: 768px) {
-  .cons-middle {
-    height: 335vh;
-  }
-  .prof-card {
-    height: 250vh;
-  }
   .cons-middle h2 {
-    width: 60vw;
-    height: 10vh;
+    width: auto;
+    height: auto;
   }
 }
 
 @media screen and (max-width: 424px) {
-  .cons-middle {
-    height: 355vh;
-  }
-  .prof-card {
-    height: 250vh;
-  }
 }
 @media screen and (max-width: 415px) {
   .prof-card-up,
@@ -249,18 +250,18 @@ form {
     width: 100vw;
   }
   .cons-middle {
-    height: 555vh;
   }
   .prof-card {
-    height: 550vh;
   }
 }
 
 @media screen and (max-width: 376px) {
-  .cons-middle {
-    height: 575vh;
-  }
-  .prof-card {
-    height: 550vh;
+}
+
+/* ABOUT section scroll on small devices */
+@media screen and (max-width: 480px) {
+  .cons-about-down {
+    max-height: 40vh;
+    overflow-y: auto;
   }
 }

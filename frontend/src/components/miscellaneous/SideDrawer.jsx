@@ -8,6 +8,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerBody,
+  DrawerCloseButton,
   useToast,
   Spinner,
   Flex,
@@ -43,7 +44,7 @@ const SideDrawer = () => {
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loadingChat, setLoadingChat] = useState();
+  const [loadingChat, setLoadingChat] = useState(false);
 
   const { user, setSelectedChat, chats, setChats } = ChatState();
 
@@ -81,6 +82,7 @@ const SideDrawer = () => {
       setSearchResult(data);
       console.log("data:", data);
     } catch (error) {
+      setLoading(false);
       // Extract error message from the API response
       const errorMessage =
         error.response?.data?.message || "Failed to load the search result";
@@ -92,13 +94,12 @@ const SideDrawer = () => {
         isClosable: true,
         position: "top-left",
       });
-      return;
     }
   };
 
   const accessChat = async (userId) => {
     try {
-      setLoading(true);
+      setLoadingChat(true);
       const config = {
         headers: {
           "Content-type": "application/json",
@@ -114,9 +115,10 @@ const SideDrawer = () => {
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
-      setLoading(false);
+      setLoadingChat(false);
       onClose();
     } catch (error) {
+      setLoadingChat(false);
       // Extract error message from the API response
       const errorMessage =
         error.response?.data?.message ||

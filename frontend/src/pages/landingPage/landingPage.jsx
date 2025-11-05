@@ -1,35 +1,34 @@
 import Navbar from "../../components/navbar/navbar";
 import Footer from "../../layout/footer/footer";
-// import "./landingPage.css";
 import "./animate.css";
-import africa from "../../assets/africa.png";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "../../config/axiosConfig";
 import { useToast } from "@chakra-ui/react";
-import woman1 from "../../assets/round-woman.svg";
-import woman2 from "../../assets/round-woman2.svg";
 import Image1 from "../../assets/Background1.svg";
 import Image2 from "../../assets/Background2.svg";
 import Image3 from "../../assets/Background3.svg";
 import Kigali from "../../assets/Kigali city.jpeg";
-import star from "../../assets/Star1.svg";
 import { MdLocalPharmacy } from "react-icons/md";
 import { RiMentalHealthFill } from "react-icons/ri";
 import { MdHealthAndSafety } from "react-icons/md";
 import { useBadgeStore } from "../../zustandStore/store";
-import { motion } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
 import { FaPhoneAlt } from "react-icons/fa";
-// import HomeSlideShowComponent from "../../components/HomeSlideShowComponent";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const profile = useBadgeStore((state) => state.profile) || null;
-  const [background, setBackground] = useState(Image1);
-  let ImageArray = [Image1, Image2, Image3];
+  const ImageArray = [Image1, Image2, Image3];
   const ImageArray2 = [
     {
       url: Image1,
@@ -52,16 +51,6 @@ const LandingPage = () => {
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % ImageArray.length);
-    }, 5000);
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
-  }, [ImageArray.length]);
-
   const [formData, setFormData] = useState({
     companyName: "",
     street: "",
@@ -70,6 +59,21 @@ const LandingPage = () => {
     idea: "",
     agree: false,
   });
+
+  // Refs for 3D card effects
+  const serviceCardRefs = useRef([]);
+  const contactCardRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % ImageArray.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [ImageArray.length]);
+
+  useEffect(() => {
+    if (profile) navigate("/profile");
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -81,8 +85,6 @@ const LandingPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log("Form Data:", formData);
 
     if (
       !formData.companyName ||
@@ -139,7 +141,6 @@ const LandingPage = () => {
         agree: false,
       });
 
-      console.log("response", response);
       toast({
         description: "Form submitted successfully!",
         status: "success",
@@ -148,12 +149,8 @@ const LandingPage = () => {
         position: "bottom",
       });
     } catch (error) {
-      console.error("Request failed:", error);
-
-      // Extract error message from the API response
       const errorMessage =
         error.response?.data?.message || "Error submitting the form";
-
       toast({
         description: errorMessage,
         status: "error",
@@ -163,188 +160,298 @@ const LandingPage = () => {
       });
     }
   };
-  useEffect(() => {
-    // const user = JSON.parse(localStorage.getItem("userInfo"));
 
-    if (profile) navigate("/profile");
-  }, []);
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const blobVariants = (delay = 0) => ({
+    animate: {
+      x: [0, 100, 0],
+      y: [0, -100, 0],
+      scale: [1, 1.1, 1],
+      transition: {
+        duration: 20 + delay * 5,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+  });
+
+  // 3D card effect hook
+  const use3DCard = (ref) => {
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+    const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), {
+      stiffness: 300,
+      damping: 30,
+    });
+    const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), {
+      stiffness: 300,
+      damping: 30,
+    });
+
+    const handleMouseMove = (e) => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const mouseX = (e.clientX - centerX) / (rect.width / 2);
+      const mouseY = (e.clientY - centerY) / (rect.height / 2);
+      x.set(mouseX);
+      y.set(mouseY);
+    };
+
+    const handleMouseLeave = () => {
+      x.set(0);
+      y.set(0);
+    };
+
+    return { rotateX, rotateY, handleMouseMove, handleMouseLeave };
+  };
+
+  // Contact form card with 3D effect
+  const contactCard3D = use3DCard(contactCardRef);
 
   return (
-    <>
-      <div className="landing-sections">
-        <div className="section-1">
-          <Navbar />
-        </div>
-        {/* <HomeSlideShowComponent/> */}
-        {/* <div
-      className="hero-section flex flex-col tablet:flex-row w-full py-3 tablet:h-[100vh] bg-white p-3 tablet:p-10"
-      style={{ backgroundImage: `url(${ImageArray[currentImageIndex]})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-    > */}
-        {/* <div className="hero-content flex-col  tablet:w-[50%] p-5  tablet:p-10 tablet:pl-16 flex gap-10 items- justify-center"> */}
-        {/* <motion.h1
-      initial={{x:-1000}}
-      animate={{x:[-1000, 50, 0]}}
-      transition={{duration:1.5, delay:1}}
-      className="text-4xl tablet:text-6xl font-bold uppercase w-[80%] tablet:w-[70%] text-white">It all begins with <span className="italic text-white underline text-4xl tablet:text-6xl">yourself</span> </motion.h1>
-       */}
-        {/* <motion.p 
-           initial={{x:0}}
-           animate={{x:[-1000, 50, 0]}}
-           transition={{duration:2.5, delay:1.5}}
-      className=" tablet:w-[60%] leading-7 text-white">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Faucibus in libero risus semper habitant arcu eget. Et integer facilisi eget diam.</motion.p>
-     */}
-        {/* <motion.div
-             initial={{x:0}}
-             animate={{x:[-1000, 50, 0]}}
-             transition={{duration:2.5, delay:2}}
-    className="flex items-center gap-3 slide-in">
-    <motion.button 
-    whileHover={{scale:1.1}}
-    whileTap={{scale:0.9}}
-     className="text-sm bg-blue-400 px-3 py-3 tablet:px-4 tablet:py-3 hover:text-blue-400 hover:border hover:bg-orange-400 transition-all rounded-full  text-white" onClick={()=>{navigate("/about")}}>Read More...</motion.button>
-    <motion.button 
-       whileHover={{scale:1.1}}
-       whileTap={{scale:0.9}}
-    className="text-sm border text-white border-orange-400 px-3 py-3 tablet:px-4 tablet:py-3 hover:text-white hover:bg-orange-400 transition-all rounded-full  " onClick={()=>{navigate("/login")}}>Get Started</motion.button>
+    <div className="relative w-full overflow-x-hidden bg-gradient-to-br from-slate-50 via-orange-50/30 to-blue-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      {/* Animated background blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+        <motion.div
+          className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-[#F7941D]/20 to-orange-400/20 rounded-full blur-3xl"
+          variants={blobVariants(0)}
+          animate="animate"
+        />
+        <motion.div
+          className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-gradient-to-br from-[#2B2F92]/20 to-purple-400/20 rounded-full blur-3xl"
+          variants={blobVariants(1)}
+          animate="animate"
+        />
+        <motion.div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-[#F7941D]/10 to-[#2B2F92]/10 rounded-full blur-3xl"
+          variants={blobVariants(2)}
+          animate="animate"
+        />
+      </div>
 
-    </motion.div> */}
-        {/* </div> */}
+      {/* Navbar */}
+      <div className="relative z-50">
+        <Navbar />
+      </div>
 
-        {/* <div className=" tablet:w-[50%] pb-[15%]  relative flex my-5 tablet:my-2 items-center justify-center"> */}
-        {/* <motion.img 
-      src={star} className="slide-in tablet:flex object absolute right-10 top-[-10%]  tablet:top-[5] w-24 tablet:w-28 "/>
-      <motion.img src={star} className="slide-in fill-neutral-800 tablet:flex object w-16 tablet:w-24 absolute left-[10.5%] tablet:left-[-20%] bottom-2"/>
-
-      <motion.img 
-      animate={{y:0, scale:1}}
-      transition={{type:"tween",duration:.8}}
-        initial={{scale:0, y:0}}
-      src={woman1} alt={"woman1"} className="w-[40%] slide-in  transition-all "/>
-      <motion.img 
-            animate={{y:0, scale:1}}
-            transition={{type:"tween",duration:.8}}
-            onHoverStart={{}}
-              initial={{scale:0, y:0}}
-      src={woman2} alt={"woaman1"} className="w-[40%] slide-in mb-[-25%] tablet:mb-[-25%]  transition-all "/> */}
-
-        {/* </div> */}
-
-        {/* </div> */}
-
-        <div
-          className="hero-section flex flex-col tablet:flex-row w-full py-3 tablet:h-[100vh] bg-white p-3 tablet:p-10 relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh]"
-          style={{
-            backgroundImage: `url(${ImageArray2[currentImageIndex].url})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div
-            className="text-overlay flex flex-col justify-center items-center w-full h-full absolute top-0 left-0"
-            style={{ backgroundColor: "rgba(245, 241, 241, 0.081)" }}
+      {/* Hero Section */}
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentImageIndex}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.8 }}
+            className="absolute inset-0 z-0"
+            style={{
+              backgroundImage: `url(${ImageArray2[currentImageIndex].url})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
           >
-            <h1
-              className="text-white text-3xl tablet:text-4xl laptop:text-5xl font-bold mb-4 animate-slideInUp"
-              key={ImageArray2[currentImageIndex].title}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#2B2F92]/80 via-[#2B2F92]/70 to-[#F7941D]/60" />
+          </motion.div>
+
+          <motion.div
+            key={`content-${currentImageIndex}`}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            transition={{ duration: 0.6 }}
+            className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto"
+          >
+            <motion.h1
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
             >
               {ImageArray2[currentImageIndex].title}
-            </h1>
-            <p
-              className="text-white text-lg tablet:text-xl laptop:text-2xl mb-6 animate-slideInUp delay-150 text-center tablet:text-left max-w-[90%] tablet:max-w-[70%] laptop:max-w-[50%]"
-              key={ImageArray2[currentImageIndex].text}
+            </motion.h1>
+            <motion.p
+              className="text-lg sm:text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
             >
               {ImageArray2[currentImageIndex].text}
-            </p>
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+            >
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  const section = document.querySelector(".services-section");
+                  if (section) {
+                    section.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="px-8 py-4 bg-gradient-to-r from-[#F7941D] to-[#FFA84D] hover:from-[#FFA84D] hover:to-[#F7941D] text-white font-semibold rounded-full text-lg shadow-lg shadow-[#F7941D]/30 hover:shadow-xl hover:shadow-[#F7941D]/50 transition-all duration-300"
+              >
+                {ImageArray2[currentImageIndex].buttonText}
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Slider indicators */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-2">
+          {ImageArray2.map((_, index) => (
             <button
-              onClick={() => {
-                const section = document.querySelector(".services-section");
-                if (section) {
-                  section.scrollIntoView({ behavior: "smooth" });
-                }
-              }}
-              className="bg-black text-[#F95700FF] px-4 py-2 tablet:px-6 tablet:py-3 hover:bg-blue-600 hover:text-white transition rounded-full animate-slideInUp delay-300"
-              key={ImageArray2[currentImageIndex].buttonText}
-            >
-              {ImageArray2[currentImageIndex].buttonText}
-            </button>
-          </div>
+              key={index}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === currentImageIndex
+                  ? "w-8 bg-white"
+                  : "w-2 bg-white/50 hover:bg-white/75"
+              }`}
+            />
+          ))}
         </div>
+      </section>
 
-        <div className="services-section flex flex-col tablet:flex-col w-full tablet:h-[85vh] bg-blue-50 p-3 tablet:p-10">
-          <h2 className="title p-5 px-10 font-medium slide-in">
-            &#x2022; Our Services
-          </h2>
+      {/* Services Section */}
+      <section className="services-section relative py-20 px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={containerVariants}
+          className="max-w-7xl mx-auto"
+        >
+          <motion.h2
+            variants={itemVariants}
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-[#2B2F92] to-[#F7941D] bg-clip-text text-transparent"
+          >
+            Our Services
+          </motion.h2>
+          <motion.p
+            variants={itemVariants}
+            className="text-center text-slate-600 dark:text-slate-300 mb-12 text-lg"
+          >
+            Comprehensive healthcare solutions for your well-being
+          </motion.p>
 
-          <div className="flex flex-wrap gap-3 items-center p-5 tablet:p-10 tablet:px-20 w-full">
-            <motion.div
-              initial={{ x: 0, opacity: 0 }}
-              transition={{ duration: 0.5, delay: 1 }}
-              whileInView={{ x: [-200, 10, 0], opacity: 1 }}
-              className="card slide-in border border-gray-400 w-full tablet:w-[30%] flex flex-col justify-start items-start p-5 gap-3"
-            >
-              <div className="bg-[#FCDFBC] p-3 rounded-full">
-                <MdLocalPharmacy className="text-orange-500 text-xl" />
-              </div>
-
-              <p className="font-medium">Pharmacy</p>
-              <p className="text-sm">
-                Access essential medications and expert advice to support your
-                health, ensuring you receive the care you need.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ y: 0, opacity: 0 }}
-              transition={{ duration: 0.5, delay: 1 }}
-              whileInView={{ y: [70, 10, 0], opacity: 1 }}
-              className="card slide-in border border-gray-400 w-full tablet:w-[30%]  flex flex-col justify-start items-start p-5 gap-3"
-            >
-              <div className="bg-[#B4FFB7] p-3 rounded-full">
-                <RiMentalHealthFill className="text-green-500 text-xl" />
-              </div>
-
-              <p className="font-medium">Mental Support</p>
-              <p className="text-sm">
-                We offer resources and guidance to help you achieve mental
-                wellness, fostering resilience and emotional balance.
-              </p>
-            </motion.div>
-            <motion.div
-              initial={{ x: 0, opacity: 0 }}
-              transition={{ duration: 0.5, delay: 0.9 }}
-              whileInView={{ x: [200, 10, 0], opacity: 1 }}
-              className="card slide-in border border-gray-400 w-full tablet:w-[30%]  flex flex-col justify-start items-start p-5 gap-3"
-            >
-              <div className="bg-[#FFB4B4] p-3 rounded-full">
-                <MdHealthAndSafety className="text-red-500 text-xl" />
-              </div>
-
-              <p className="font-medium">Health Care</p>
-              <p className="text-sm">
-                In FunHealth, we provide personalized care to support your
-                overall well-being, helping you achieve balance in mind and
-                body.
-              </p>
-            </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            {[
+              {
+                icon: MdLocalPharmacy,
+                title: "Pharmacy",
+                description:
+                  "Access essential medications and expert advice to support your health, ensuring you receive the care you need.",
+                gradient: "from-[#F7941D] to-[#FFA84D]",
+              },
+              {
+                icon: RiMentalHealthFill,
+                title: "Mental Support",
+                description:
+                  "We offer resources and guidance to help you achieve mental wellness, fostering resilience and emotional balance.",
+                gradient: "from-[#2B2F92] to-[#1e2266]",
+              },
+              {
+                icon: MdHealthAndSafety,
+                title: "Health Care",
+                description:
+                  "In FunHealth, we provide personalized care to support your overall well-being, helping you achieve balance in mind and body.",
+                gradient: "from-[#F7941D] via-[#FFA84D] to-[#2B2F92]",
+              },
+            ].map((service, index) => {
+              const card3D = use3DCard(serviceCardRefs[index]);
+              return (
+                <motion.div
+                  key={index}
+                  ref={(el) => (serviceCardRefs.current[index] = el)}
+                  variants={itemVariants}
+                  onMouseMove={card3D.handleMouseMove}
+                  onMouseLeave={card3D.handleMouseLeave}
+                  style={{
+                    rotateX: card3D.rotateX,
+                    rotateY: card3D.rotateY,
+                    transformStyle: "preserve-3d",
+                  }}
+                  whileHover={{ y: -10 }}
+                  className={`relative bg-gradient-to-br ${service.gradient} backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/30`}
+                >
+                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 via-transparent to-white/10 opacity-50 blur-xl -z-10" />
+                  <div
+                    className={`w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6`}
+                  >
+                    <service.icon className="text-3xl text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4 text-white">
+                    {service.title}
+                  </h3>
+                  <p className="text-white/90 leading-relaxed">
+                    {service.description}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
+      </section>
 
-        <div className="about-section flex flex-col tablet:flex-col w-full h-auto tablet:h-[70vh]  bg-white p-3 tablet:p-10">
-          <h2 className="title p-5 px-10 font-medium slide-in">
-            &#x2022; About Us
-          </h2>
+      {/* About Section */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={containerVariants}
+          className="max-w-5xl mx-auto"
+        >
+          <motion.h2
+            variants={itemVariants}
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-[#2B2F92] to-[#F7941D] bg-clip-text text-transparent"
+          >
+            About Us
+          </motion.h2>
 
-          <div className="content flex flex-col w-[85%] tablet:w-[70%] px-3 tablet:px-10 mx-auto">
-            <p className="text-sm slide-in">
+          <motion.div
+            variants={itemVariants}
+            className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl p-8 sm:p-12 shadow-xl border border-white/20 dark:border-slate-700/50 mt-12"
+          >
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#F7941D]/10 via-transparent to-[#2B2F92]/10 opacity-50 blur-xl -z-10" />
+            <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-base sm:text-lg">
               Kundwa Health is youth-led organization working with young people
               to decentralize health information and service they need to lead
-              healthier lives through digital health means.it was founded in
-              Gatsibo district by three young health activits,who were driven by
-              the passion of tackling sexual & reproductive health and mental
+              healthier lives through digital health means. it was founded in
+              Gatsibo district by three young health activits, who were driven
+              by the passion of tackling sexual & reproductive health and mental
               health issues through supporting adolescents and young people to
               have access to life-saving information and services on sexual and
-              reproductive health,mental health and youth empowerment through
-              mentorship.Kundwa means “loved” it is name we choose for our
+              reproductive health, mental health and youth empowerment through
+              mentorship. Kundwa means "loved" it is name we choose for our
               organization which reflects how young people should be loved and
               cared for as the future of the nation. our intervention goal is to
               provide young people with different health tools including
@@ -352,193 +459,315 @@ const LandingPage = () => {
               while promoting the usage of digital health means.
             </p>
 
-            <div className="p-5 ">
-              {/* <h2 className="title  font-medium">Goals achieved</h2> */}
-              <div className="flex flex-wrap items-start m-2 my-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10">
+              {[
+                { number: "35+", label: "People Helped" },
+                { number: "10+", label: "Services Provided" },
+                { number: "15+", label: "Facilities Partnered with" },
+              ].map((stat, index) => (
                 <motion.div
-                  initial={{ y: 0, opacity: 0 }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                  whileInView={{ y: [70, 10, 0], opacity: 1 }}
-                  className=" border slide-in  rounded flex p-3 gap-3 items-center"
+                  key={index}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  className="bg-gradient-to-br from-[#F7941D]/10 to-[#2B2F92]/10 rounded-2xl p-6 border border-[#F7941D]/20 dark:border-[#2B2F92]/20"
                 >
-                  <p className="text-2xl text-green-400">35+</p>
-                  <p>People Helped</p>
+                  <p className="text-4xl font-bold bg-gradient-to-r from-[#F7941D] to-[#2B2F92] bg-clip-text text-transparent mb-2">
+                    {stat.number}
+                  </p>
+                  <p className="text-slate-600 dark:text-slate-300">
+                    {stat.label}
+                  </p>
                 </motion.div>
-
-                <motion.div
-                  initial={{ y: 0, opacity: 0 }}
-                  transition={{ duration: 0.5, delay: 0.75 }}
-                  whileInView={{ y: [70, 10, 0], opacity: 1 }}
-                  className=" border slide-in rounded flex p-3 gap-3 items-center"
-                >
-                  <p className="text-2xl text-green-400">10+</p>
-                  <p>Services Provided</p>
-                </motion.div>
-                <motion.div
-                  initial={{ y: 0, opacity: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                  whileInView={{ y: [70, 10, 0], opacity: 1 }}
-                  className=" border slide-in rounded flex p-3 gap-3 items-center"
-                >
-                  <p className="text-2xl text-green-400">15+</p>
-                  <p>Facilities Partened with</p>
-                </motion.div>
-              </div>
+              ))}
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
+      </section>
 
-        <div
-          className="relative flex flex-col tablet:flex-row tablet:h-[110vh] mb-5"
+      {/* Contact Section */}
+      <section className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 min-h-[90vh] flex items-center overflow-hidden">
+        {/* Background with parallax effect */}
+        <motion.div
+          className="absolute inset-0 z-0"
           style={{
             backgroundImage: `url(${Kigali})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
+          animate={{
+            scale: [1, 1.05, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         >
-          {/* Dark overlay */}
-          <div className="absolute inset-0 bg-black opacity-80"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#2B2F92]/85 via-[#2B2F92]/80 to-[#F7941D]/75" />
+          {/* Subtle depth overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+        </motion.div>
 
-          {/* Centered text overlay */}
-          <div className="relative flex flex-col w-full text-white z-10">
-            {/* Top center alignment for h1 and p */}
-            <div className="flex flex-col justify-start items-center w-full text-center pt-10">
-              <h1 className="text-3xl tablet:text-5xl font-bold">
-                Get in touch
-              </h1>
-              <p className="text-lg tablet:text-2xl mt-2">
-                Chat with Professionals in Mental, Sexual, Dating
-              </p>
-            </div>
+        {/* Floating particles for depth */}
+        <div className="absolute inset-0 z-5 overflow-hidden pointer-events-none">
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-white/20 rounded-full"
+              style={{
+                left: `${20 + i * 15}%`,
+                top: `${30 + i * 10}%`,
+              }}
+              animate={{
+                y: [0, -30, 0],
+                opacity: [0.2, 0.5, 0.2],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 4 + i * 0.5,
+                repeat: Infinity,
+                delay: i * 0.3,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </div>
 
-            {/* Left and right sections below the title */}
-            <div className="flex flex-col tablet:flex-row justify-between w-full h-full mt-10 px-10">
-              {/* Left section - hidden on small devices */}
-              <div className="contact-left hidden tablet:flex flex-col h-[300px] tablet:h-[450px] p-5 mr-5 space-y-10">
-                {/* Address */}
-                <div className="material flex flex-row items-center space-x-6">
-                  <div className="w-16 h-16 rounded-full bg-white flex justify-center items-center mr-2">
-                    <IoLocationSharp className="text-2xl text-black" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold">Address</h2>
-                    <p className="text-sm">
-                      Gatsibo District Eastern province Rwanda
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={containerVariants}
+          className="relative z-10 max-w-7xl mx-auto w-full"
+        >
+          {/* Header */}
+          <motion.div
+            variants={itemVariants}
+            className="text-center mb-12 sm:mb-16"
+          >
+            <motion.h2
+              variants={itemVariants}
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white drop-shadow-lg"
+            >
+              Get in Touch
+            </motion.h2>
+            <motion.p
+              variants={itemVariants}
+              className="text-base sm:text-lg md:text-xl text-white/95 max-w-2xl mx-auto leading-relaxed"
+            >
+              Chat with Professionals in Mental, Sexual, Dating
+            </motion.p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+            {/* Contact Info */}
+            <motion.div
+              variants={itemVariants}
+              className="space-y-5 sm:space-y-6 order-2 lg:order-1"
+            >
+              {[
+                {
+                  icon: IoLocationSharp,
+                  title: "Address",
+                  text: "Gatsibo District Eastern province Rwanda",
+                  delay: 0.1,
+                },
+                {
+                  icon: FaPhoneAlt,
+                  title: "Phone",
+                  text: "+250789287267",
+                  delay: 0.2,
+                },
+                {
+                  icon: MdEmail,
+                  title: "Email",
+                  text: "info@kundwahealth.org",
+                  delay: 0.3,
+                },
+              ].map((contact, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  whileHover={{ x: 8, scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="flex items-center gap-4 bg-white/15 backdrop-blur-lg rounded-2xl p-5 sm:p-6 border border-white/25 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#F7941D] to-[#FFA84D] rounded-full flex items-center justify-center flex-shrink-0 shadow-lg"
+                  >
+                    <contact.icon className="text-xl sm:text-2xl text-white" />
+                  </motion.div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-white font-semibold text-base sm:text-lg mb-1">
+                      {contact.title}
+                    </h3>
+                    <p className="text-white/90 text-sm sm:text-base break-words">
+                      {contact.text}
                     </p>
                   </div>
-                </div>
-                {/* Phone */}
-                <div className="material flex flex-row items-center space-x-6">
-                  <div className="w-16 h-16 rounded-full bg-white flex justify-center items-center mr-2">
-                    <FaPhoneAlt className="text-2xl text-black" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold">Phone</h2>
-                    <p className="text-sm">+250789287267</p>
-                  </div>
-                </div>
-                {/* Email */}
-                <div className="material flex flex-row items-center space-x-6">
-                  <div className="w-16 h-16 rounded-full bg-white flex justify-center items-center mr-2">
-                    <MdEmail className="text-2xl text-black" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold">Email</h2>
-                    <p className="text-sm">info@kundwahealth.org</p>
-                  </div>
-                </div>
-              </div>
+                </motion.div>
+              ))}
+            </motion.div>
 
-              {/* Right section */}
-              <div className="contact-right flex-1 h-[200px] tablet:h-[450px] p-5 ml-5 bg-white">
-                <div
-                  className="input-contact p-4 tablet:p-10 w-full"
-                  style={{
-                    position: "relative",
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "auto",
-                  }}
+            {/* Contact Form - Centered and Contained */}
+            <motion.div
+              ref={contactCardRef}
+              variants={itemVariants}
+              onMouseMove={contactCard3D.handleMouseMove}
+              onMouseLeave={contactCard3D.handleMouseLeave}
+              style={{
+                rotateX: contactCard3D.rotateX,
+                rotateY: contactCard3D.rotateY,
+                transformStyle: "preserve-3d",
+              }}
+              className="relative bg-white dark:bg-slate-800 backdrop-blur-xl rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl border border-white/30 dark:border-slate-700/50 order-1 lg:order-2 w-full min-h-[700px] sm:min-h-[750px] lg:min-h-[800px] flex items-center justify-center"
+            >
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#F7941D]/5 via-transparent to-[#2B2F92]/5 opacity-60 blur-2xl -z-10" />
+
+              {/* Inner shadow for depth */}
+              <div className="absolute inset-0 rounded-3xl shadow-inner pointer-events-none" />
+
+              {/* Form Container with proper boundaries - Centered */}
+              <div className="relative z-10 w-full flex flex-col items-center justify-center">
+                <motion.h3
+                  initial={{ opacity: 0, y: -10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center text-slate-800 dark:text-slate-100 bg-gradient-to-r from-[#2B2F92] to-[#F7941D] bg-clip-text text-transparent"
                 >
-                  <form
-                    onSubmit={handleSubmit}
-                    className="get-in-touch slide-in w-full"
-                  >
-                    <input
-                      type="text"
-                      className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-white outline-none mb-2"
-                      style={{ borderBottom: "1px solid #737B7D" }}
-                      placeholder="Company Name"
-                      name="companyName"
-                      value={formData.companyName}
-                      onChange={handleChange}
-                    />
-                    <input
-                      type="text"
-                      className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
-                      style={{ borderBottom: "1px solid #737B7D" }}
-                      placeholder="Street"
-                      name="street"
-                      value={formData.street}
-                      onChange={handleChange}
-                    />
-                    <input
-                      type="text"
-                      className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2 text-black"
-                      style={{ borderBottom: "1px solid #737B7D" }}
-                      placeholder="Contact Phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                    <input
-                      type="text"
-                      className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
-                      style={{ borderBottom: "1px solid #737B7D" }}
-                      placeholder="E-mail"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                    <input
-                      type="text"
-                      className="border-none border-b border-[#737B7D] w-full tablet:w-[60%] p-2 text-base bg-transparent outline-none mb-2"
-                      style={{ borderBottom: "1px solid #737B7D" }}
-                      placeholder="Let's talk about your idea"
-                      name="idea"
-                      value={formData.idea}
-                      onChange={handleChange}
-                    />
+                  Send us a Message
+                </motion.h3>
 
-                    <label className="flex items-center mb-4 text-black text-xs tablet:text-sm">
-                      <input
-                        type="checkbox"
-                        className="checkbox mr-2"
-                        name="agree"
-                        checked={formData.agree}
-                        onChange={handleChange}
-                      />
-                      Agree and Continue
-                    </label>
+                <form
+                  onSubmit={handleSubmit}
+                  className="w-full max-w-md flex flex-col items-center"
+                >
+                  <div className="w-full space-y-5">
+                    {[
+                      {
+                        name: "companyName",
+                        placeholder: "Company Name",
+                        type: "text",
+                      },
+                      { name: "street", placeholder: "Street", type: "text" },
+                      {
+                        name: "phone",
+                        placeholder: "Contact Phone",
+                        type: "tel",
+                      },
+                      { name: "email", placeholder: "E-mail", type: "email" },
+                      {
+                        name: "idea",
+                        placeholder: "Let's talk about your idea",
+                        type: "text",
+                      },
+                    ].map((field, index) => (
+                      <motion.div
+                        key={field.name}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
+                        className="w-full"
+                      >
+                        <motion.input
+                          whileFocus={{ scale: 1.01, x: 2 }}
+                          type={field.type}
+                          name={field.name}
+                          value={formData[field.name]}
+                          onChange={handleChange}
+                          placeholder={field.placeholder}
+                          className="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700/50 focus:border-[#F7941D] dark:focus:border-[#F7941D] focus:ring-4 focus:ring-[#F7941D]/10 dark:focus:ring-[#F7941D]/10 outline-none transition-all duration-300 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm sm:text-base shadow-sm hover:shadow-md"
+                        />
+                      </motion.div>
+                    ))}
 
-                    <button
-                      className="w-full tablet:w-[60%] bg-[#4635AB] hover:bg-indigo-900 text-white rounded py-2 tablet:py-3 px-4 tablet:px-5 transition duration-300"
-                      type="submit"
+                    {/* Checkbox - Properly Aligned Inside white background */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.8, duration: 0.5 }}
+                      className="w-full"
                     >
-                      Submit
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                      <label className="flex items-center gap-3 text-slate-700 dark:text-slate-300 cursor-pointer group">
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="flex-shrink-0"
+                        >
+                          <input
+                            type="checkbox"
+                            name="agree"
+                            checked={formData.agree}
+                            onChange={handleChange}
+                            className="w-5 h-5 rounded border-2 border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-[#F7941D]/30 focus:border-[#F7941D] accent-[#F7941D] cursor-pointer transition-all duration-200"
+                          />
+                        </motion.div>
+                        <span className="text-sm sm:text-base font-medium group-hover:text-[#2B2F92] dark:group-hover:text-[#F7941D] transition-colors duration-200">
+                          Agree and Continue
+                        </span>
+                      </label>
+                    </motion.div>
 
-        <div className="section-5">
-          <Footer />
-        </div>
+                    {/* Submit Button - Immediately Below Checkbox, Inside Container */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-50px" }}
+                      transition={{ delay: 0.9, duration: 0.6 }}
+                      className="w-full"
+                    >
+                      <motion.button
+                        type="submit"
+                        whileHover={{
+                          scale: 1.03,
+                          y: -4,
+                          boxShadow:
+                            "0 20px 25px -5px rgba(247, 148, 29, 0.4), 0 10px 10px -5px rgba(247, 148, 29, 0.2)",
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full py-4 bg-gradient-to-r from-[#2B2F92] via-[#2B2F92] to-[#F7941D] hover:from-[#F7941D] hover:via-[#FFA84D] hover:to-[#2B2F92] text-white font-bold rounded-xl text-base sm:text-lg shadow-xl shadow-[#2B2F92]/40 hover:shadow-2xl hover:shadow-[#F7941D]/50 transition-all duration-300 relative overflow-hidden group border-2 border-transparent hover:border-[#F7941D]/30"
+                      >
+                        <span className="relative z-10 flex items-center justify-center gap-2">
+                          Submit
+                          <motion.span
+                            animate={{ x: [0, 4, 0] }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                            className="text-xl"
+                          >
+                            →
+                          </motion.span>
+                        </span>
+                        {/* Glowing background on hover */}
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-[#F7941D] to-[#FFA84D] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"
+                          initial={false}
+                        />
+                        {/* 3D glow effect */}
+                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#F7941D]/20 to-[#2B2F92]/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-300 -z-10" />
+                      </motion.button>
+                    </motion.div>
+                  </div>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Footer */}
+      <div className="relative z-10">
+        <Footer />
       </div>
-    </>
+    </div>
   );
 };
 
