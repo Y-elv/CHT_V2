@@ -66,6 +66,7 @@ function App() {
           <Route path="analytics" element={<Dashboard />} />
           <Route path="settings" element={<Dashboard />} />
         </Route>
+        
 
         <Route path="*" element={<ErrorPage />} />
       </Routes>

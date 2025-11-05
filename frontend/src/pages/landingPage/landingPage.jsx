@@ -13,7 +13,13 @@ import { MdLocalPharmacy } from "react-icons/md";
 import { RiMentalHealthFill } from "react-icons/ri";
 import { MdHealthAndSafety } from "react-icons/md";
 import { useBadgeStore } from "../../zustandStore/store";
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
 import { FaPhoneAlt } from "react-icons/fa";
@@ -363,24 +369,21 @@ const LandingPage = () => {
                 title: "Pharmacy",
                 description:
                   "Access essential medications and expert advice to support your health, ensuring you receive the care you need.",
-                color: "from-orange-400 to-orange-600",
-                bgColor: "bg-orange-100 dark:bg-orange-900/20",
+                gradient: "from-[#F7941D] to-[#FFA84D]",
               },
               {
                 icon: RiMentalHealthFill,
                 title: "Mental Support",
                 description:
                   "We offer resources and guidance to help you achieve mental wellness, fostering resilience and emotional balance.",
-                color: "from-blue-400 to-blue-600",
-                bgColor: "bg-blue-100 dark:bg-blue-900/20",
+                gradient: "from-[#2B2F92] to-[#1e2266]",
               },
               {
                 icon: MdHealthAndSafety,
                 title: "Health Care",
                 description:
                   "In FunHealth, we provide personalized care to support your overall well-being, helping you achieve balance in mind and body.",
-                color: "from-purple-400 to-purple-600",
-                bgColor: "bg-purple-100 dark:bg-purple-900/20",
+                gradient: "from-[#F7941D] via-[#FFA84D] to-[#2B2F92]",
               },
             ].map((service, index) => {
               const card3D = use3DCard(serviceCardRefs[index]);
@@ -397,16 +400,18 @@ const LandingPage = () => {
                     transformStyle: "preserve-3d",
                   }}
                   whileHover={{ y: -10 }}
-                  className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/20 dark:border-slate-700/50"
+                  className={`relative bg-gradient-to-br ${service.gradient} backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/30`}
                 >
-                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#F7941D]/10 via-transparent to-[#2B2F92]/10 opacity-50 blur-xl -z-10" />
-                  <div className={`w-16 h-16 ${service.bgColor} rounded-2xl flex items-center justify-center mb-6`}>
-                    <service.icon className={`text-3xl bg-gradient-to-r ${service.color} bg-clip-text text-transparent`} />
+                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/20 via-transparent to-white/10 opacity-50 blur-xl -z-10" />
+                  <div
+                    className={`w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6`}
+                  >
+                    <service.icon className="text-3xl text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100">
+                  <h3 className="text-2xl font-bold mb-4 text-white">
                     {service.title}
                   </h3>
-                  <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p className="text-white/90 leading-relaxed">
                     {service.description}
                   </p>
                 </motion.div>
@@ -438,16 +443,20 @@ const LandingPage = () => {
           >
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#F7941D]/10 via-transparent to-[#2B2F92]/10 opacity-50 blur-xl -z-10" />
             <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-base sm:text-lg">
-              Kundwa Health is youth-led organization working with young people to decentralize health
-              information and service they need to lead healthier lives through digital health means.
-              it was founded in Gatsibo district by three young health activits, who were driven by the
-              passion of tackling sexual & reproductive health and mental health issues through supporting
-              adolescents and young people to have access to life-saving information and services on sexual
-              and reproductive health, mental health and youth empowerment through mentorship. Kundwa means
-              "loved" it is name we choose for our organization which reflects how young people should be
-              loved and cared for as the future of the nation. our intervention goal is to provide young
-              people with different health tools including information and services they need in a fun and
-              interactive way while promoting the usage of digital health means.
+              Kundwa Health is youth-led organization working with young people
+              to decentralize health information and service they need to lead
+              healthier lives through digital health means. it was founded in
+              Gatsibo district by three young health activits, who were driven
+              by the passion of tackling sexual & reproductive health and mental
+              health issues through supporting adolescents and young people to
+              have access to life-saving information and services on sexual and
+              reproductive health, mental health and youth empowerment through
+              mentorship. Kundwa means "loved" it is name we choose for our
+              organization which reflects how young people should be loved and
+              cared for as the future of the nation. our intervention goal is to
+              provide young people with different health tools including
+              information and services they need in a fun and interactive way
+              while promoting the usage of digital health means.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10">
@@ -465,7 +474,9 @@ const LandingPage = () => {
                   <p className="text-4xl font-bold bg-gradient-to-r from-[#F7941D] to-[#2B2F92] bg-clip-text text-transparent mb-2">
                     {stat.number}
                   </p>
-                  <p className="text-slate-600 dark:text-slate-300">{stat.label}</p>
+                  <p className="text-slate-600 dark:text-slate-300">
+                    {stat.label}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -614,10 +625,10 @@ const LandingPage = () => {
             >
               {/* Subtle glow effect */}
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#F7941D]/5 via-transparent to-[#2B2F92]/5 opacity-60 blur-2xl -z-10" />
-              
+
               {/* Inner shadow for depth */}
               <div className="absolute inset-0 rounded-3xl shadow-inner pointer-events-none" />
-              
+
               {/* Form Container with proper boundaries - Centered */}
               <div className="relative z-10 w-full flex flex-col items-center justify-center">
                 <motion.h3
@@ -630,14 +641,29 @@ const LandingPage = () => {
                   Send us a Message
                 </motion.h3>
 
-                <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col items-center">
+                <form
+                  onSubmit={handleSubmit}
+                  className="w-full max-w-md flex flex-col items-center"
+                >
                   <div className="w-full space-y-5">
                     {[
-                      { name: "companyName", placeholder: "Company Name", type: "text" },
+                      {
+                        name: "companyName",
+                        placeholder: "Company Name",
+                        type: "text",
+                      },
                       { name: "street", placeholder: "Street", type: "text" },
-                      { name: "phone", placeholder: "Contact Phone", type: "tel" },
+                      {
+                        name: "phone",
+                        placeholder: "Contact Phone",
+                        type: "tel",
+                      },
                       { name: "email", placeholder: "E-mail", type: "email" },
-                      { name: "idea", placeholder: "Let's talk about your idea", type: "text" },
+                      {
+                        name: "idea",
+                        placeholder: "Let's talk about your idea",
+                        type: "text",
+                      },
                     ].map((field, index) => (
                       <motion.div
                         key={field.name}
@@ -697,10 +723,11 @@ const LandingPage = () => {
                     >
                       <motion.button
                         type="submit"
-                        whileHover={{ 
-                          scale: 1.03, 
+                        whileHover={{
+                          scale: 1.03,
                           y: -4,
-                          boxShadow: "0 20px 25px -5px rgba(247, 148, 29, 0.4), 0 10px 10px -5px rgba(247, 148, 29, 0.2)"
+                          boxShadow:
+                            "0 20px 25px -5px rgba(247, 148, 29, 0.4), 0 10px 10px -5px rgba(247, 148, 29, 0.2)",
                         }}
                         whileTap={{ scale: 0.98 }}
                         className="w-full py-4 bg-gradient-to-r from-[#2B2F92] via-[#2B2F92] to-[#F7941D] hover:from-[#F7941D] hover:via-[#FFA84D] hover:to-[#2B2F92] text-white font-bold rounded-xl text-base sm:text-lg shadow-xl shadow-[#2B2F92]/40 hover:shadow-2xl hover:shadow-[#F7941D]/50 transition-all duration-300 relative overflow-hidden group border-2 border-transparent hover:border-[#F7941D]/30"
@@ -709,7 +736,11 @@ const LandingPage = () => {
                           Submit
                           <motion.span
                             animate={{ x: [0, 4, 0] }}
-                            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
                             className="text-xl"
                           >
                             →

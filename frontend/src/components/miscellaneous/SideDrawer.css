@@ -1,4 +1,41 @@
 .icon-text{
-   
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
+.icon-text i {
+    font-size: 1.2rem;
+}
+
+/* Ensure drawer content is visible on all screen sizes */
+[data-chakra-drawer] {
+    z-index: 1400 !important;
+}
+
+/* Ensure drawer body content is scrollable and visible */
+[data-chakra-drawer-body] {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 480px) {
+    .icon-text i {
+        font-size: 1rem;
+    }
+    
+    /* Full screen drawer on mobile */
+    [data-chakra-drawer-content] {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        width: 100% !important;
+    }
+    
+    [data-chakra-drawer-body] {
+        height: calc(100vh - 80px) !important;
+        min-height: calc(100vh - 80px) !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
 }

@@ -1,4 +1,4 @@
-/* NewsCard.css - Prevent white overlay on hover */
+/* TeamCard.css - Prevent white overlay on hover */
 
 /* Remove any pseudo-elements that might add white background */
 .details::before,
@@ -12,12 +12,12 @@
 }
 
 /* Ensure image container never gets white background */
-.details [class*="w-full"] {
+.details [class*="mt-[-"] {
   background: transparent !important;
   background-color: transparent !important;
 }
 
-.details [class*="w-full"] * {
+.details [class*="mt-[-"] * {
   background: transparent !important;
   background-color: transparent !important;
 }
@@ -30,7 +30,7 @@
 
 /* Ensure image wrapper stays transparent */
 .details img,
-.details div[class*="rounded"] {
+.details div[class*="rounded-full"] {
   background: transparent !important;
   background-color: transparent !important;
 }
@@ -50,3 +50,8 @@
   background-color: transparent !important;
   background: transparent !important;
 }
+
+
+
+
+
