@@ -1,32 +1,30 @@
 import "./profile.css";
-import logo from "../../assets/LOGO FULL.png";
 import { Link, useLocation } from "react-router-dom";
 import { ChatState } from "../../components/Context/chatProvider";
-import { useContext, useState, useEffect } from "react";
-import { Dropdown, Space, Menu } from "antd";
-import { useToast } from "@chakra-ui/react";
-import UserNavbar from "../../layout/userNavbar/userNavbar";
+import { useState, useEffect } from "react";
+import { useToast, Avatar, Box } from "@chakra-ui/react";
+import Navbar from "../../components/navbar/navbar";
 import {
   IoChatboxOutline,
   IoLogOut,
   IoNewspaperOutline,
+  IoSettingsOutline,
 } from "react-icons/io5";
 import { RiGamepadLine } from "react-icons/ri";
-import { MdMiscellaneousServices } from "react-icons/md";
 import { useBadgeStore } from "../../zustandStore/store";
-import consultation from "../../assets/consultation.png";
 import { FaUserMd } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const Profile = () => {
   const { user, logoutHandler } = ChatState();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [myUser, setMyUser] = useState(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const profile = useBadgeStore((state) => state.profile) || null;
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const [pic, setPic] = useState();
+  const location = useLocation();
 
   console.log("Zustand profile: ", profile);
 
@@ -136,7 +134,6 @@ const Profile = () => {
     } catch (error) {
       console.error("Error:", error);
 
-      // Extract error message from the API response
       const errorMessage =
         error.response?.data?.message ||
         "An error occurred while uploading the image.";
@@ -158,205 +155,316 @@ const Profile = () => {
     setSelectedImage(file);
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+  const displayUser = profile || user || myUser;
+  const userName = displayUser?.name || "User";
+  const userPic = displayUser?.pic || "";
 
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const items = [
-    {
-      key: "1",
-      label: <Link to="/hospital">Hospital</Link>,
-    },
-    {
-      key: "2",
-      label: <Link to="/services">Health Center</Link>,
-    },
-    {
-      key: "3",
-      label: <Link to="/pharmacy">Pharmacy</Link>,
-    },
+  const sidebarItems = [
+    { to: "/consultation", label: "Consultation", icon: FaUserMd },
+    { to: "/chats", label: "Chats", icon: IoChatboxOutline },
+    { to: "/game", label: "Game", icon: RiGamepadLine },
+    { to: "/news", label: "News", icon: IoNewspaperOutline },
+    { to: "/profile", label: "Settings", icon: IoSettingsOutline },
+    { label: "Sign Out", icon: IoLogOut, isLogout: true },
   ];
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <>
-      {isMobile ? (
-        <>
-          <UserNavbar />
-          <div className="profile-right">
-            <div className="welcome-text">Welcome to FH D</div>
-            <div className="user-box-container">
-              <div className="user-box">
-                <div className="profile-image-container">
-                  <div>
-                    {/* {user && ( */}
-                    <>
-                      {console.log("User profile picture:", myUser?.pic)}
-                      <img
-                        src={selectedImage ? selectedImage : myUser?.pic}
-                        onClick={handleImageClick}
-                      />
-                    </>
-                    {/* )} */}
+      <Navbar />
+      <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 overflow-hidden">
+        <div className="flex h-[calc(100vh-80px)] overflow-hidden pb-0">
+          {/* Sidebar - Hidden on mobile, visible on lg+ */}
+          <aside className="hidden lg:flex w-64 bg-white dark:bg-slate-800 shadow-lg border-r border-slate-200 dark:border-slate-700 flex-shrink-0 h-[calc(100vh-80px)] overflow-y-auto">
+            <div className="w-full h-full flex flex-col p-6">
+              {/* Navigation Links */}
+              <nav className="flex-1 space-y-2 pt-4">
+                {sidebarItems.map((item, index) => {
+                  const Icon = item.icon;
+                  const isActiveLink = !item.isLogout && isActive(item.to);
 
-                    {isPopupOpen && (
-                      <div className="popup">
-                        <input type="file" onChange={handleImageUpload} />
-                        <button onClick={() => postDetails(selectedImage)}>
-                          Upload
-                        </button>
-                        <span style={{ margin: "0 4px" }}></span>
-                        <button onClick={handlePopupClose}>Close</button>
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    {/* {profile && ( */}
-                    <div className="username-sec">Welcome {profile?.name}</div>
-                    {/* )} */}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      ) : (
-        <div className="profile-sec">
-          <div className="profile-left">
-            <div className="profile-contents">
-              <div className="logo">
-                <img src={logo} className="h-20 " />
-              </div>
-              <div className="content-menu my-5 flex flex-col items-start">
-                <Link
-                  to="/consultation"
-                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-[#F95700FF]"
-                  style={{ textDecoration: "none" }}
-                >
-                  <FaUserMd className="text-2xl" />
-                  <p>Consultation</p>
-                </Link>
-                <Link
-                  to="/chats"
-                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-[#F95700FF]"
-                  style={{ textDecoration: "none" }}
-                >
-                  {/* <img src={chat} className="icons" /> */}
-                  <IoChatboxOutline className="text-2xl" />
-                  <p>Chats</p>
-                </Link>
-                <Link
-                  to="/game"
-                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-[#F95700FF]"
-                  style={{ textDecoration: "none" }}
-                >
-                  <RiGamepadLine className="text-2xl" />
-                  <p>Game</p>
-                </Link>
-                {/* <Link
-                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
-                  to="/services"
-                  style={{ textDecoration: "none" }}
-                >
-                  <MdMiscellaneousServices className="text-2xl" />
-                 
-                  <>
-                    <Dropdown
-                    overlay={
-                      <Menu>
-                        {items.map((item) => (
-                          <Menu.Item key={item.key} icon={item.icon}>
-                            {item.label}
-                          </Menu.Item>
-                        ))}
-                      </Menu>
-                    }
-                    >
-                      <a
-                        onClick={(e) => e.preventDefault()}
-                        className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-white"
-                        style={{ textDecoration: "none" }}
+                  if (item.isLogout) {
+                    return (
+                      <motion.button
+                        key={item.label}
+                        whileHover={{ x: 4 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          if (logoutHandler) {
+                            logoutHandler();
+                          }
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 text-slate-700 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
                       >
-                        <Space>
-                          <p>Services</p>
-                        </Space>
-                      </a>
-                    </Dropdown>
-                  </>
-                </Link> */}
+                        <Icon className="text-2xl" />
+                        <span>{item.label}</span>
+                      </motion.button>
+                    );
+                  }
 
-                <Link
-                  to="/news"
-                  className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-[#F95700FF]"
-                  style={{ textDecoration: "none" }}
-                >
-                  <IoNewspaperOutline className="text-2xl" />
-                  <p> News</p>
-                </Link>
-                {profile && (
-                  <Link
-                    onClick={() => logoutHandler()}
-                    to="/login"
-                    className="iconn flex items-center justify-center gap-3 p-2 px-3 rounded hover:bg-[#F95700FF]"
-                    style={{ textDecoration: "none" }}
-                  >
-                    <IoLogOut className="text-2xl" />
-                    <p className="text-xs">Sign Out</p>
-                  </Link>
-                )}
-              </div>
+                  return (
+                    <Link
+                      key={item.label}
+                      to={item.to}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+                        isActiveLink
+                          ? "bg-gradient-to-r from-[#F7941D] to-[#FFA84D] text-white shadow-lg"
+                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-[#F7941D] dark:hover:text-[#F7941D]"
+                      }`}
+                    >
+                      <Icon className="text-2xl" />
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
             </div>
-          </div>
-          <div className="profile-right">
-            <div className="welcome-text">Welcome to FH D</div>
-            <div className="user-box-container">
-              <div className="user-box">
-                <div className="profile-image-container ">
-                  <div>
-                    {profile && (
-                      <>
-                        {console.log("User profile picture:", profile?.pic)}
-                        <img
-                          src={selectedImage ? selectedImage : profile?.pic}
-                          onClick={handleImageClick}
-                          className="object-cover w-32 h-32 rounded-full"
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 overflow-y-auto pb-0">
+            <div className="max-w-7xl mx-auto p-6 lg:p-8 pb-0">
+              {/* Welcome Section */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-8"
+              >
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="relative">
+                    <Avatar
+                      src={selectedImage ? URL.createObjectURL(selectedImage) : userPic}
+                      name={userName}
+                      size="xl"
+                      border="4px solid"
+                      borderColor="#F7941D"
+                      boxShadow="0 4px 12px rgba(247, 148, 29, 0.3)"
+                      className="cursor-pointer"
+                      onClick={handleImageClick}
+                    />
+                    <div className="absolute -bottom-1 -right-1 bg-[#F7941D] text-white rounded-full p-1.5 cursor-pointer hover:bg-[#FFA84D] transition-colors">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
                         />
-                      </>
-                    )}
-
-                    {isPopupOpen && (
-                      <div className="popup">
-                        <input type="file" onChange={handleImageUpload} />
-                        <button onClick={() => postDetails(selectedImage)}>
-                          Upload
-                        </button>
-                        <span style={{ margin: "0 4px" }}></span>
-                        <button onClick={handlePopupClose}>Close</button>
-                      </div>
-                    )}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                    </div>
                   </div>
-
                   <div>
-                    {profile && (
-                      <div className="username-sec">
-                        Welcome {profile?.name}
-                      </div>
-                    )}
+                    <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">
+                      Welcome {userName}
+                    </h1>
+                    <p className="text-slate-600 dark:text-slate-400 mt-1">
+                      Manage your profile and preferences
+                    </p>
                   </div>
                 </div>
+
+                {/* Image Upload Popup */}
+                {isPopupOpen && (
+                  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl"
+                    >
+                      <h3 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-100">
+                        Change Profile Picture
+                      </h3>
+                      <input
+                        type="file"
+                        onChange={handleImageUpload}
+                        accept="image/jpeg,image/png"
+                        className="mb-4 w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg"
+                      />
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => postDetails(selectedImage)}
+                          disabled={!selectedImage || loading}
+                          className="flex-1 px-4 py-2 bg-gradient-to-r from-[#F7941D] to-[#FFA84D] hover:from-[#FFA84D] hover:to-[#F7941D] text-white font-semibold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {loading ? "Uploading..." : "Upload"}
+                        </button>
+                        <button
+                          onClick={handlePopupClose}
+                          className="flex-1 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 font-semibold rounded-lg transition-all duration-300"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Dashboard Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {/* User Information Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6"
+                >
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                    <FaUserMd className="text-[#F7941D]" />
+                    User Information
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        Email
+                      </p>
+                      <p className="text-slate-800 dark:text-slate-100 font-medium">
+                        {displayUser?.email || "Not provided"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        Name
+                      </p>
+                      <p className="text-slate-800 dark:text-slate-100 font-medium">
+                        {userName}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleImageClick}
+                      className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-[#F7941D] to-[#FFA84D] hover:from-[#FFA84D] hover:to-[#F7941D] text-white font-semibold rounded-lg transition-all duration-300"
+                    >
+                      Edit Profile
+                    </button>
+                  </div>
+                </motion.div>
+
+                {/* Recent Activity Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6"
+                >
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                    <IoChatboxOutline className="text-[#2B2F92]" />
+                    Recent Activity
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                      <p className="mb-1">Last consultation: 2 days ago</p>
+                      <p className="mb-1">Active chats: 3</p>
+                      <p>Games played: 12</p>
+                    </div>
+                    <Link
+                      to="/chats"
+                      className="block mt-4 text-sm text-[#2B2F92] dark:text-[#F7941D] hover:text-[#F7941D] dark:hover:text-[#FFA84D] font-medium transition-colors"
+                    >
+                      View All Activity →
+                    </Link>
+                  </div>
+                </motion.div>
+
+                {/* Profile Statistics Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6"
+                >
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                    <IoSettingsOutline className="text-[#F7941D]" />
+                    Statistics
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600 dark:text-slate-400">
+                        Consultations
+                      </span>
+                      <span className="text-lg font-bold text-[#F7941D]">5</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600 dark:text-slate-400">
+                        Messages
+                      </span>
+                      <span className="text-lg font-bold text-[#2B2F92]">23</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600 dark:text-slate-400">
+                        Games
+                      </span>
+                      <span className="text-lg font-bold text-[#F7941D]">12</span>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
+
+              {/* Quick Actions */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6"
+              >
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">
+                  Quick Actions
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <Link
+                    to="/consultation"
+                    className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-[#F7941D]/10 to-[#FFA84D]/10 hover:from-[#F7941D]/20 hover:to-[#FFA84D]/20 transition-all duration-300 border border-[#F7941D]/20"
+                  >
+                    <FaUserMd className="text-3xl text-[#F7941D] mb-2" />
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      Consultation
+                    </span>
+                  </Link>
+                  <Link
+                    to="/chats"
+                    className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-[#2B2F92]/10 to-[#1e2266]/10 hover:from-[#2B2F92]/20 hover:to-[#1e2266]/20 transition-all duration-300 border border-[#2B2F92]/20"
+                  >
+                    <IoChatboxOutline className="text-3xl text-[#2B2F92] mb-2" />
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      Chats
+                    </span>
+                  </Link>
+                  <Link
+                    to="/game"
+                    className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-[#F7941D]/10 to-[#FFA84D]/10 hover:from-[#F7941D]/20 hover:to-[#FFA84D]/20 transition-all duration-300 border border-[#F7941D]/20"
+                  >
+                    <RiGamepadLine className="text-3xl text-[#F7941D] mb-2" />
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      Game
+                    </span>
+                  </Link>
+                  <Link
+                    to="/news"
+                    className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-[#2B2F92]/10 to-[#1e2266]/10 hover:from-[#2B2F92]/20 hover:to-[#1e2266]/20 transition-all duration-300 border border-[#2B2F92]/20"
+                  >
+                    <IoNewspaperOutline className="text-3xl text-[#2B2F92] mb-2" />
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      News
+                    </span>
+                  </Link>
+                </div>
+              </motion.div>
+
             </div>
-          </div>
+          </main>
         </div>
-      )}
+      </div>
     </>
   );
 };

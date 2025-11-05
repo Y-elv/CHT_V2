@@ -7,7 +7,7 @@ Modal.setAppElement("#root");
 import CardProf from "./cardProf";
 import logo from "../../assets/LOGOJUST.png";
 import Calendar from "../../components/calendar/calendar";
-import UserNavbar from "../../layout/userNavbar/userNavbar";
+import Navbar from "../../components/navbar/navbar";
 import layer1 from "../../assets/Layer_1.png";
 import layer2 from "../../assets/Layer_2.png";
 import layer3 from "../../assets/layer_3.png";
@@ -24,6 +24,7 @@ import kenny from "../../assets/kenny.png";
 import karenera from "../../assets/karenera.png";
 import submit from "../../assets/submit.png";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 const Consultation = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,8 +43,8 @@ const Consultation = () => {
 
     if (screenWidth <= 600) {
       console.log("Small device detected, navigating to /try-page");
-       navigate("/book");
-      document.body.style.overflow = "hidden"; 
+      navigate("/book");
+      document.body.style.overflow = "hidden";
       // setIsModalOpen2(true); // You can uncomment this if needed
     } else {
       console.log("Larger device detected, opening modal");
@@ -92,57 +93,207 @@ const Consultation = () => {
     setIsModalOpen2(false);
   };
 
+  // Animations matching OurTeamPage style
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  };
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50, scale: 0.98 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { type: "spring", stiffness: 120, damping: 18 },
+    },
+  };
+  const titleVariants = {
+    hidden: { opacity: 0, y: -30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 120, damping: 20 },
+    },
+  };
+
   return (
     <>
-      <div className="consultation-page">
-        <div className="cons-container">
-          <UserNavbar />
-          <div className="cons-middle">
-            <h2>MEET THE TEAM</h2>
+      <div
+        className="consultation-page bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800"
+        style={{
+          overflowX: "hidden",
+        }}
+      >
+        <div className="cons-container" style={{ overflowX: "hidden" }}>
+          <Navbar />
+          <div className="cons-middle" style={{ paddingBottom: 72 }}>
+            <motion.h2
+              variants={titleVariants}
+              initial="hidden"
+              animate="visible"
+              style={{
+                textAlign: "center",
+                marginTop: 10,
+                marginBottom: 20,
+                fontWeight: 700,
+                background:
+                  "linear-gradient(135deg, #F7941D 0%, #FFA84D 50%, #2B2F92 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              MEET THE TEAM
+            </motion.h2>
 
             <Container fluid className="prof-card">
-              <Row className="prof-card-up d-flex flex-wrap justify-content-center">
-                <Col xs={6} md={3}>
-                  <CardProf imgName={luke} />
+              <Row className="prof-card-up d-flex flex-wrap justify-content-center g-5 gy-5 gx-5">
+                <Col xs={12} sm={6} md={4}>
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
+                    <CardProf imgName={luke} />
+                  </motion.div>
                 </Col>
-                <Col xs={6} md={3}>
-                  <CardProf imgName={flores} />
+                <Col xs={12} sm={6} md={4}>
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                  >
+                    <CardProf imgName={flores} />
+                  </motion.div>
                 </Col>
-                <Col xs={6} md={3}>
-                  <CardProf imgName={juanita} />
+                <Col xs={12} sm={6} md={4}>
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                  >
+                    <CardProf imgName={juanita} />
+                  </motion.div>
                 </Col>
-                <Col xs={6} md={3}>
-                  <CardProf imgName={cooper} />
+                <Col xs={12} sm={6} md={4}>
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                  >
+                    <CardProf imgName={cooper} />
+                  </motion.div>
                 </Col>
               </Row>
 
-              <Row className="prof-card-down d-flex flex-wrap">
-                <Col xs={6} md={3}>
-                  <CardProf imgName={alex} className="img-fluid" />
+              <Row className="prof-card-down d-flex flex-wrap g-5 gy-5 gx-5">
+                <Col xs={12} sm={6} md={4}>
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
+                    <CardProf imgName={alex} className="img-fluid" />
+                  </motion.div>
                 </Col>
-                <Col xs={6} md={3} className="mb-3 mb-md-0">
-                  <CardProf imgName={marvin} />
+                <Col xs={12} sm={6} md={4} className="mb-3 mb-md-0">
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
+                    <CardProf imgName={marvin} />
+                  </motion.div>
                 </Col>
-                <Col xs={6} md={3}>
-                  <CardProf imgName={kenny} />
+                <Col xs={12} sm={6} md={4}>
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
+                    <CardProf imgName={kenny} />
+                  </motion.div>
                 </Col>
-                <Col xs={6} md={3}>
-                  <CardProf imgName={karenera} />
+                <Col xs={12} sm={6} md={4}>
+                  <motion.div
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
+                    <CardProf imgName={karenera} />
+                  </motion.div>
                 </Col>
               </Row>
             </Container>
             <div className="kh-rooms">
-              <button className="btn-kh" onClick={showModal}>
+              <motion.button
+                whileHover={{
+                  scale: 1.05,
+                  y: -2,
+                  boxShadow: "0 10px 25px rgba(247,148,29,0.35)",
+                }}
+                whileTap={{ scale: 0.98 }}
+                className="btn-kh"
+                onClick={showModal}
+                style={{
+                  background:
+                    "linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)",
+                  color: "white",
+                  borderRadius: 9999,
+                  border: "none",
+                  outline: "none",
+                }}
+              >
                 talk to us
-              </button>
+              </motion.button>
             </div>
             <div className="cons-about">
-              <div className="cons-about-up">
+              <div
+                className="cons-about-up"
+                style={{ display: "flex", alignItems: "center", gap: 12 }}
+              >
                 <img src={logo} />
-                <h3>ABOUT</h3>
+                <h3
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    fontWeight: 800,
+                  }}
+                >
+                  ABOUT
+                </h3>
               </div>
-              <div className="cons-about-down">
-                <p>
+              <motion.div
+                className="cons-about-down"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(247,148,29,0.08) 0%, rgba(43,47,146,0.08) 100%)",
+                  border: "1px solid rgba(43,47,146,0.15)",
+                  borderRadius: 16,
+                  padding: 16,
+                  marginBottom: 48,
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                }}
+              >
+                <p style={{ color: "#334155", lineHeight: 1.7 }}>
                   Kundwa Health is youth-led organization working with young
                   people to decentralize health information and service they
                   need to lead healthier lives through digital health means.it
@@ -160,7 +311,7 @@ const Consultation = () => {
                   fun and interactive way while promoting the usage of digital
                   health means.
                 </p>
-              </div>
+              </motion.div>
             </div>
           </div>
           <Footer className="footer" />
@@ -175,11 +326,12 @@ const Consultation = () => {
               onRequestClose={closeModal}
               style={{
                 overlay: {
-                  backgroundColor: "grey",
+                  backgroundColor: "rgba(0,0,0,0.4)",
                 },
                 content: {
                   color: "black",
-                  backgroundColor: "#B8C2D7",
+                  background:
+                    "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,247,238,0.98) 40%, rgba(238,240,255,0.98) 100%)",
                   height: "85vh",
                   width: "60vw",
                   display: "flex",
@@ -542,11 +694,12 @@ const Consultation = () => {
             onRequestClose={closeCalendar}
             style={{
               overlay: {
-                backgroundColor: "grey",
+                backgroundColor: "rgba(0,0,0,0.4)",
               },
               content: {
                 color: "black",
-                backgroundColor: "#B8C2D7",
+                background:
+                  "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,247,238,0.98) 40%, rgba(238,240,255,0.98) 100%)",
                 height: "87vh",
                 width: window.innerWidth <= 600 ? "80vw" : "65vw",
                 display: "flex",

@@ -14,7 +14,7 @@ import mila from "../../assets/Mila .jpg";
 import ServicesCard from '../../components/ServicesCard';
 const Pharmacy = () => {
   return (
-    <div className="bg-blue-100 min-h-[100vh] w-[100vw]">
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 min-h-[100vh] w-full overflow-x-hidden">
       <UserNavbar active="ourTeam" />
 
       <div className="content p-10 w-full min-h-[100vh] ">
