@@ -158,7 +158,7 @@ const Consultation = () => {
                     whileInView="visible"
                     viewport={{ once: true }}
                   >
-                    <CardProf imgName={luke} />
+                  <CardProf imgName={luke} />
                   </motion.div>
                 </Col>
                 <Col xs={12} sm={6} md={4}>
@@ -168,7 +168,7 @@ const Consultation = () => {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
                   >
-                    <CardProf imgName={flores} />
+                  <CardProf imgName={flores} />
                   </motion.div>
                 </Col>
                 <Col xs={12} sm={6} md={4}>
@@ -178,7 +178,7 @@ const Consultation = () => {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
                   >
-                    <CardProf imgName={juanita} />
+                  <CardProf imgName={juanita} />
                   </motion.div>
                 </Col>
                 <Col xs={12} sm={6} md={4}>
@@ -188,7 +188,7 @@ const Consultation = () => {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
                   >
-                    <CardProf imgName={cooper} />
+                  <CardProf imgName={cooper} />
                   </motion.div>
                 </Col>
               </Row>
@@ -201,7 +201,7 @@ const Consultation = () => {
                     whileInView="visible"
                     viewport={{ once: true }}
                   >
-                    <CardProf imgName={alex} className="img-fluid" />
+                  <CardProf imgName={alex} className="img-fluid" />
                   </motion.div>
                 </Col>
                 <Col xs={12} sm={6} md={4} className="mb-3 mb-md-0">
@@ -211,7 +211,7 @@ const Consultation = () => {
                     whileInView="visible"
                     viewport={{ once: true }}
                   >
-                    <CardProf imgName={marvin} />
+                  <CardProf imgName={marvin} />
                   </motion.div>
                 </Col>
                 <Col xs={12} sm={6} md={4}>
@@ -221,7 +221,7 @@ const Consultation = () => {
                     whileInView="visible"
                     viewport={{ once: true }}
                   >
-                    <CardProf imgName={kenny} />
+                  <CardProf imgName={kenny} />
                   </motion.div>
                 </Col>
                 <Col xs={12} sm={6} md={4}>
@@ -231,7 +231,7 @@ const Consultation = () => {
                     whileInView="visible"
                     viewport={{ once: true }}
                   >
-                    <CardProf imgName={karenera} />
+                  <CardProf imgName={karenera} />
                   </motion.div>
                 </Col>
               </Row>

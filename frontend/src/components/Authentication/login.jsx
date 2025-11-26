@@ -19,6 +19,7 @@ import logo from "../../assets/LOGO FULL.png";
 import { CgMail } from "react-icons/cg";
 import { BiSolidLockAlt } from "react-icons/bi";
 import { useBadgeStore } from "../../zustandStore/store";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const Login = () => {
   const setProfile = useBadgeStore((state) => state.setProfile);
   const profile = useBadgeStore((state) => state.profile);
   const setIsLoggedIn = useBadgeStore((state) => state.setIsLoggedIn);
+  const { login: authLogin } = useAuth();
   const handleClick = () => SetShow(!show);
 
   // 3D card rotation effects
@@ -97,13 +99,36 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      
+      // Update global auth state (also stores in localStorage)
+      authLogin(data);
       setLoading(false);
       setIsLoggedIn(true);
       setProfile(data);
-      // navigate("/profile", {state:{data:data}})
-      navigate("/profile");
-      // history("/profile");
+
+      // Role-based redirect
+      const role = data.role;
+      const doctorStatus = data.doctorStatus;
+
+      if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (role === "doctor" && doctorStatus === "approved") {
+        navigate("/doctor/dashboard");
+      } else if (role === "doctor" && doctorStatus !== "approved") {
+        toast({
+          description: "Your doctor account is pending approval. Please contact admin.",
+          status: "warning",
+          duration: 7000,
+          isClosable: true,
+          position: "bottom",
+        });
+        // Don't navigate, stay on login page
+      } else if (role === "patient") {
+        navigate("/profile");
+      } else {
+        // Fallback to profile for unknown roles
+        navigate("/profile");
+      }
     } catch (error) {
       console.log("Login error:", error);
       console.log("Error response:", error.response);

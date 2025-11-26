@@ -49,7 +49,7 @@ const axiosInstance = axios.create({
   },
 });
 
-// Request interceptor - validate URLs and add security headers
+// Request interceptor - validate URLs, add security headers, and inject auth token
 axiosInstance.interceptors.request.use(
   (config) => {
     // Validate URL if it's a full URL
@@ -65,6 +65,17 @@ axiosInstance.interceptors.request.use(
     ) {
       console.warn("Blocked insecure HTTP request in production");
       throw new Error("Insecure HTTP requests are not allowed in production");
+    }
+
+    // Add Authorization header if token exists
+    try {
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      if (userInfo && userInfo.token) {
+        config.headers.Authorization = `Bearer ${userInfo.token}`;
+      }
+    } catch (error) {
+      // If no token or error parsing, continue without auth header
+      console.warn("No auth token available");
     }
 
     // Add CSRF token if available
@@ -83,7 +94,7 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor - handle errors securely
+// Response interceptor - handle errors securely and token expiration
 axiosInstance.interceptors.response.use(
   (response) => {
     // Don't expose sensitive headers in client
@@ -93,6 +104,20 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
+    // Handle 401 Unauthorized - token expired or invalid
+    if (error.response?.status === 401) {
+      // Clear auth data and redirect to login
+      localStorage.removeItem("userInfo");
+      // Only redirect if not already on login page
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+      return Promise.reject({
+        message: "Session expired. Please login again.",
+        status: 401,
+      });
+    }
+
     // Sanitize error messages to prevent information leakage
     if (error.response) {
       // Server responded with error status

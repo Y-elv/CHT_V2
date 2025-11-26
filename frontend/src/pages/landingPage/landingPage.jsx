@@ -357,7 +357,7 @@ const LandingPage = () => {
           </motion.h2>
           <motion.p
             variants={itemVariants}
-            className="text-center text-slate-600 dark:text-slate-300 mb-12 text-lg"
+            className="text-center mb-12 text-xl sm:text-2xl font-semibold bg-gradient-to-r from-[#2B2F92] via-[#F7941D] to-[#2B2F92] bg-clip-text text-transparent"
           >
             Comprehensive healthcare solutions for your well-being
           </motion.p>

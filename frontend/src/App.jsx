@@ -26,6 +26,7 @@ import ErrorPage from "./pages/ErrorPage";
 import BookingOnSmallDevice from "./pages/BookingOnSmallDevice";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
+import DoctorsPage from "./pages/admin/Doctors";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import QuickActions from "./pages/doctor/QuickActions";
 import MyPatients from "./pages/doctor/MyPatients";
@@ -37,60 +38,214 @@ import Notifications from "./pages/doctor/Notifications";
 import Analytics from "./pages/doctor/Analytics";
 import DoctorProfile from "./pages/doctor/Profile";
 import Settings from "./pages/doctor/Settings";
+import {
+  AdminProtectedRoute,
+  DoctorProtectedRoute,
+  ProtectedRoute,
+} from "./components/ProtectedRoute";
 
 function App() {
   return (
     <div>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/chats" element={<Chatpages />} />
-        <Route path="/services" element={<ServicePage />} />
-        <Route path="/pharmacy" element={<Pharmacy />} />
-        <Route path="/hospital" element={<Hospital />} />
-        <Route path="/game" element={<Game />} />
-        <Route path="/news" element={<News />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/consultation" element={<Consultation />} />
+        <Route path="/home" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Signup />} />
         <Route path="/otp" element={<OTP />} />
         <Route path="/verification-success" element={<VerificationSuccess />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/home" element={<LandingPage />} />
         <Route path="/our-teamm" element={<OurTeamPage />} />
         <Route path="/our-services" element={<ServicesPage />} />
         <Route path="/our-news" element={<NewsPage />} />
         <Route path="/our-articles" element={<ArticlesPage />} />
-        <Route path="/book" element={<BookingOnSmallDevice />} />
+        <Route path="/consultation" element={<Consultation />} />
 
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLayout />}>
+        {/* Protected Public Routes */}
+        <Route
+          path="/chats"
+          element={
+            <ProtectedRoute>
+              <Chatpages />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/services"
+          element={
+            <ProtectedRoute>
+              <ServicePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pharmacy"
+          element={
+            <ProtectedRoute>
+              <Pharmacy />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hospital"
+          element={
+            <ProtectedRoute>
+              <Hospital />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/game"
+          element={
+            <ProtectedRoute>
+              <Game />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/news"
+          element={
+            <ProtectedRoute>
+              <News />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/menu"
+          element={
+            <ProtectedRoute>
+              <Menu />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/book"
+          element={
+            <ProtectedRoute>
+              <BookingOnSmallDevice />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin Routes - Protected */}
+        <Route
+          path="/admin"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout />
+            </AdminProtectedRoute>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="consultations" element={<Dashboard />} />
           <Route path="users" element={<Dashboard />} />
-          <Route path="doctors" element={<Dashboard />} />
+          <Route path="doctors" element={<DoctorsPage />} />
           <Route path="messages" element={<Dashboard />} />
           <Route path="game" element={<Dashboard />} />
           <Route path="content" element={<Dashboard />} />
           <Route path="analytics" element={<Dashboard />} />
           <Route path="settings" element={<Dashboard />} />
         </Route>
-        
 
-        {/* Doctor Routes */}
-        <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-        <Route path="/doctor/consultations" element={<QuickActions />} />
-        <Route path="/doctor/patients" element={<MyPatients />} />
-        <Route path="/doctor/messages" element={<Messages />} />
-        <Route path="/doctor/schedule" element={<Schedule />} />
-        <Route path="/doctor/records" element={<PatientRecords />} />
-        <Route path="/doctor/availability" element={<Availability />} />
-        <Route path="/doctor/notifications" element={<Notifications />} />
-        <Route path="/doctor/analytics" element={<Analytics />} />
-        <Route path="/doctor/profile" element={<DoctorProfile />} />
-        <Route path="/doctor/settings" element={<Settings />} />
+        {/* Doctor Routes - Protected */}
+        <Route
+          path="/doctor/dashboard"
+          element={
+            <DoctorProtectedRoute>
+              <DoctorDashboard />
+            </DoctorProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/consultations"
+          element={
+            <DoctorProtectedRoute>
+              <QuickActions />
+            </DoctorProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/patients"
+          element={
+            <DoctorProtectedRoute>
+              <MyPatients />
+            </DoctorProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/messages"
+          element={
+            <DoctorProtectedRoute>
+              <Messages />
+            </DoctorProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/schedule"
+          element={
+            <DoctorProtectedRoute>
+              <Schedule />
+            </DoctorProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/records"
+          element={
+            <DoctorProtectedRoute>
+              <PatientRecords />
+            </DoctorProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/availability"
+          element={
+            <DoctorProtectedRoute>
+              <Availability />
+            </DoctorProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/notifications"
+          element={
+            <DoctorProtectedRoute>
+              <Notifications />
+            </DoctorProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/analytics"
+          element={
+            <DoctorProtectedRoute>
+              <Analytics />
+            </DoctorProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/profile"
+          element={
+            <DoctorProtectedRoute>
+              <DoctorProfile />
+            </DoctorProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/settings"
+          element={
+            <DoctorProtectedRoute>
+              <Settings />
+            </DoctorProtectedRoute>
+          }
+        />
 
         <Route path="*" element={<ErrorPage />} />
       </Routes>
