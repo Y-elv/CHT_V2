@@ -86,6 +86,16 @@ axiosInstance.interceptors.request.use(
       config.headers["X-CSRF-Token"] = csrfToken;
     }
 
+    // Add Authorization token from localStorage if available
+    try {
+      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      if (userInfo && userInfo.token && !config.headers["Authorization"]) {
+        config.headers["Authorization"] = `Bearer ${userInfo.token}`;
+      }
+    } catch (error) {
+      // Silently fail if no token available
+    }
+
     return config;
   },
   (error) => {

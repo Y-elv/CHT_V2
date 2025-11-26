@@ -1,6 +1,6 @@
 import "./navbar.css";
 import logo from "../../assets/LOGO FULL.png";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   IoClose,
   IoNotificationsOutline,
@@ -17,76 +17,93 @@ import {
   MenuItem,
   Avatar,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import useNotificationStore from "../../zustandStore/notificationStore";
 
 const Navbar = ({ active }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const location = useLocation();
   const notificationRef = useRef(null);
+  const navigate = useNavigate();
+  const toast = useToast();
 
   // Get ChatState (ChatProvider wraps the app, so this should always work)
   const chatContext = ChatState();
   const { user = null, chats = [], logoutHandler } = chatContext || {};
 
-  // Calculate unread messages count
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState([]);
+  // Notification Store
+  const {
+    notifications,
+    unreadCount,
+    loading: notificationsLoading,
+    fetchNotifications,
+    fetchUnreadCount,
+    markAsRead,
+    refresh,
+  } = useNotificationStore();
 
+  // Auto-fetch notifications on mount and when user is available
   useEffect(() => {
-    // Calculate unread messages from chats
-    if (chats && Array.isArray(chats)) {
-      const unread = chats.reduce((count, chat) => {
-        // Assuming chat has a property for unread messages
-        // Adjust based on your actual chat structure
-        return count + (chat.unreadCount || 0);
-      }, 0);
-      setUnreadCount(unread);
-
-      // Generate notifications from chats
-      const chatNotifications = chats
-        .filter((chat) => chat.unreadCount > 0)
-        .map((chat) => ({
-          id: chat._id || chat.id,
-          title: "New Message",
-          message: chat.latestMessage?.content || "You have a new message",
-          time: chat.updatedAt
-            ? new Date(chat.updatedAt).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : "Just now",
-          type: "message",
-          unread: chat.unreadCount > 0,
-          chatId: chat._id || chat.id,
-        }))
-        .slice(0, 5); // Show only 5 most recent
-      setNotifications(chatNotifications);
-    } else {
-      // Demo notifications for demonstration
-      const demoNotifications = [
-        {
-          id: "1",
-          title: "Welcome!",
-          message: "Thank you for joining Kundwa Health",
-          time: "2 hours ago",
-          type: "system",
-          unread: true,
-        },
-        {
-          id: "2",
-          title: "New Service Available",
-          message: "Check out our new mental health support service",
-          time: "5 hours ago",
-          type: "service",
-          unread: true,
-        },
-      ];
-      setNotifications(demoNotifications);
-      setUnreadCount(demoNotifications.filter((n) => n.unread).length);
+    if (user) {
+      // Fetch notifications and unread count on component mount
+      refresh().catch((error) => {
+        console.error("Failed to fetch notifications:", error);
+      });
     }
-  }, [chats]);
+  }, [user]); // Only fetch when user is available
+
+  // Format notification time
+  const formatNotificationTime = (dateString) => {
+    if (!dateString) return "Just now";
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return "Just now";
+      if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+      if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+      if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+      return date.toLocaleDateString();
+    } catch (error) {
+      return "Just now";
+    }
+  };
+
+  // Handle notification click
+  const handleNotificationClick = async (notification) => {
+    const notificationId = notification._id || notification.id;
+    // Support both read and isRead properties
+    const isUnread = notification.read === false || 
+                     notification.isRead === false || 
+                     (!notification.read && notification.isRead === undefined);
+
+    // Mark as read if unread
+    if (isUnread && notificationId) {
+      try {
+        await markAsRead(notificationId);
+      } catch (error) {
+        console.error("Failed to mark notification as read:", error);
+      }
+    }
+
+    // Navigate if link is provided
+    if (notification.link) {
+      navigate(notification.link);
+      setShowNotifications(false);
+    } else if (notification.type === "message" || notification.chatId) {
+      navigate("/chats");
+      setShowNotifications(false);
+    } else {
+      setShowNotifications(false);
+    }
+  };
 
   // Close notification popup when clicking outside
   useEffect(() => {
@@ -108,7 +125,8 @@ const Navbar = ({ active }) => {
     };
   }, [showNotifications]);
 
-  const displayCount = unreadCount > 9 ? "9+" : unreadCount;
+  // Display count with "9+" logic
+  const displayCount = unreadCount > 9 ? "9+" : unreadCount > 0 ? unreadCount : null;
 
   const menuVariants = {
     closed: {
@@ -240,7 +258,7 @@ const Navbar = ({ active }) => {
                 className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200"
               >
                 <IoNotificationsOutline className="text-2xl text-slate-700 dark:text-slate-300" />
-                {unreadCount > 0 && (
+                {displayCount !== null && (
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
@@ -273,69 +291,79 @@ const Navbar = ({ active }) => {
                       )}
                     </div>
 
-                    <div className="max-h-96 overflow-y-auto">
-                      {notifications.length > 0 ? (
-                        notifications.map((notification, index) => (
-                          <motion.div
-                            key={notification.id}
-                            custom={index}
-                            initial="hidden"
-                            animate="visible"
-                            variants={itemVariants}
-                            whileHover={{
-                              x: 4,
-                              backgroundColor: "rgba(247, 148, 29, 0.05)",
-                            }}
-                            className={`p-4 border-b border-slate-100 dark:border-slate-700 cursor-pointer transition-colors duration-200 ${
-                              notification.unread
-                                ? "bg-blue-50/50 dark:bg-blue-900/20"
-                                : "bg-white dark:bg-slate-800"
-                            }`}
-                            onClick={() => {
-                              if (notification.chatId) {
-                                // Navigate to chat
-                                window.location.href = `/chats`;
-                              }
-                              setShowNotifications(false);
-                            }}
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className="flex-shrink-0 mt-1">
-                                {notification.type === "message" ? (
-                                  <IoChatbubbleOutline className="text-xl text-[#2B2F92] dark:text-[#F7941D]" />
-                                ) : (
-                                  <IoNotificationsOutline className="text-xl text-[#F7941D]" />
-                                )}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-start justify-between gap-2 mb-1">
-                                  <h4
-                                    className={`text-sm font-semibold ${
-                                      notification.unread
-                                        ? "text-[#2B2F92] dark:text-[#F7941D]"
-                                        : "text-slate-700 dark:text-slate-300"
-                                    }`}
-                                  >
-                                    {notification.title}
-                                  </h4>
-                                  {notification.unread && (
-                                    <motion.div
-                                      initial={{ scale: 0 }}
-                                      animate={{ scale: 1 }}
-                                      className="w-2 h-2 rounded-full bg-gradient-to-r from-[#F7941D] to-[#FFA84D] flex-shrink-0 mt-1.5"
-                                    />
+                    <div className="max-h-[360px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
+                      {notificationsLoading && notifications.length === 0 ? (
+                        <div className="p-8 text-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F7941D] mx-auto mb-3"></div>
+                          <p className="text-slate-500 dark:text-slate-400 text-sm">
+                            Loading notifications...
+                          </p>
+                        </div>
+                      ) : notifications.length > 0 ? (
+                        notifications.map((notification, index) => {
+                          // Support both read and isRead properties
+                          const isUnread = notification.read === false || 
+                                          notification.isRead === false || 
+                                          (!notification.read && notification.isRead === undefined);
+                          return (
+                            <motion.div
+                              key={notification._id || notification.id || index}
+                              custom={index}
+                              initial="hidden"
+                              animate="visible"
+                              variants={itemVariants}
+                              whileHover={{
+                                x: 4,
+                                backgroundColor: "rgba(247, 148, 29, 0.08)",
+                              }}
+                              className={`p-4 border-b border-slate-100 dark:border-slate-700 cursor-pointer transition-all duration-200 ${
+                                isUnread
+                                  ? "bg-blue-50/50 dark:bg-blue-900/20 border-l-4 border-l-[#F7941D]"
+                                  : "bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                              }`}
+                              onClick={() => handleNotificationClick(notification)}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="flex-shrink-0 mt-1">
+                                  {notification.type === "message" ||
+                                  notification.type === "chat" ? (
+                                    <IoChatbubbleOutline className="text-xl text-[#2B2F92] dark:text-[#F7941D]" />
+                                  ) : (
+                                    <IoNotificationsOutline className="text-xl text-[#F7941D]" />
                                   )}
                                 </div>
-                                <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-1">
-                                  {notification.message}
-                                </p>
-                                <p className="text-xs text-slate-500 dark:text-slate-500">
-                                  {notification.time}
-                                </p>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-start justify-between gap-2 mb-1">
+                                    <h4
+                                      className={`text-sm font-semibold ${
+                                        isUnread
+                                          ? "text-[#2B2F92] dark:text-[#F7941D]"
+                                          : "text-slate-700 dark:text-slate-300"
+                                      }`}
+                                    >
+                                      {notification.title || "Notification"}
+                                    </h4>
+                                    {isUnread && (
+                                      <motion.div
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        className="w-2 h-2 rounded-full bg-gradient-to-r from-[#F7941D] to-[#FFA84D] flex-shrink-0 mt-1.5"
+                                      />
+                                    )}
+                                  </div>
+                                  <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-1">
+                                    {notification.message || notification.content || ""}
+                                  </p>
+                                  <p className="text-xs text-slate-500 dark:text-slate-500">
+                                    {formatNotificationTime(
+                                      notification.createdAt || notification.created_at || notification.time
+                                    )}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                          </motion.div>
-                        ))
+                            </motion.div>
+                          );
+                        })
                       ) : (
                         <div className="p-8 text-center">
                           <IoNotificationsOutline className="text-4xl text-slate-300 dark:text-slate-600 mx-auto mb-3" />
@@ -348,13 +376,18 @@ const Navbar = ({ active }) => {
 
                     {notifications.length > 0 && (
                       <div className="p-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
-                        <Link
-                          to="/chats"
-                          onClick={() => setShowNotifications(false)}
-                          className="block text-center text-sm font-medium text-[#2B2F92] dark:text-[#F7941D] hover:text-[#F7941D] dark:hover:text-[#FFA84D] transition-colors duration-200"
+                        <button
+                          onClick={async () => {
+                            try {
+                              await refresh();
+                            } catch (error) {
+                              console.error("Failed to refresh notifications:", error);
+                            }
+                          }}
+                          className="block w-full text-center text-sm font-medium text-[#2B2F92] dark:text-[#F7941D] hover:text-[#F7941D] dark:hover:text-[#FFA84D] transition-colors duration-200"
                         >
-                          View All Messages
-                        </Link>
+                          Refresh Notifications
+                        </button>
                       </div>
                     )}
                   </motion.div>

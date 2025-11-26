@@ -1,5 +1,5 @@
 // components/admin/Header.tsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -36,6 +36,7 @@ import {
 } from "react-icons/ri";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import useNotificationStore from "../../zustandStore/notificationStore";
 import { useAuth } from "../../contexts/AuthContext";
 
 const MotionBox = motion(Box);
@@ -184,13 +185,121 @@ const Header: React.FC<HeaderProps> = ({
   onSendMessage,
   onToggleSidebar,
 }) => {
-  const [notifications] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
 
+  // Notification Store
+  const {
+    notifications,
+    unreadCount,
+    loading: notificationsLoading,
+    fetchNotifications,
+    fetchUnreadCount,
+    markAsRead,
+    refresh,
+  } = useNotificationStore();
+
+  // Get auth user (with error handling)
+  let user, logout;
+  try {
+    const auth = useAuth();
+    user = auth.user;
+    logout = auth.logout;
+  } catch (error) {
+    console.warn("AuthContext not available:", error);
+    // Fallback to localStorage
+    try {
+      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
+      user = userInfo;
+    } catch (e) {
+      console.error("Failed to get user from localStorage:", e);
+    }
+  }
+
+  // Log notifications state changes
+  useEffect(() => {
+    console.log("📊 Notification State Update:");
+    console.log("  - Notifications:", notifications);
+    console.log("  - Notifications Count:", notifications?.length || 0);
+    console.log("  - Unread Count:", unreadCount);
+    console.log("  - Loading:", notificationsLoading);
+  }, [notifications, unreadCount, notificationsLoading]);
+
+  // Auto-fetch notifications on mount
+  useEffect(() => {
+    console.log("🔔 Header: Auto-fetching notifications...");
+    console.log("👤 Authenticated User:", user);
+    console.log("👤 User Token:", user?.token ? "✅ Present" : "❌ Missing");
+
+    if (user && user.token) {
+      refresh()
+        .then(() => {
+          console.log("✅ Notifications fetched successfully");
+        })
+        .catch((error) => {
+          console.error("❌ Failed to fetch notifications:", error);
+          console.error(
+            "Error details:",
+            error.response?.data || error.message
+          );
+        });
+    } else {
+      console.warn(
+        "⚠️ No authenticated user found, skipping notification fetch"
+      );
+    }
+  }, [refresh, user]);
+
+  // Format notification time
+  const formatNotificationTime = (dateString: string) => {
+    if (!dateString) return "Just now";
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return "Just now";
+      if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+      if (diffHours < 24)
+        return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+      if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+      return date.toLocaleDateString();
+    } catch (error) {
+      return "Just now";
+    }
+  };
+
+  // Handle notification click
+  const handleNotificationItemClick = async (notification: any) => {
+    const notificationId = notification._id || notification.id;
+    // Support both read and isRead properties
+    const isUnread =
+      notification.read === false ||
+      notification.isRead === false ||
+      (!notification.read && notification.isRead === undefined);
+
+    // Mark as read if unread
+    if (isUnread && notificationId) {
+      try {
+        await markAsRead(notificationId);
+      } catch (error) {
+        console.error("Failed to mark notification as read:", error);
+      }
+    }
+
+    // Navigate if link is provided
+    if (notification.link) {
+      navigate(notification.link);
+      setShowNotifications(false);
+    } else {
+      setShowNotifications(false);
+    }
+  };
   // Get user initials (first two letters of name)
   const getUserInitials = (name: string) => {
     if (!name) return "U";
@@ -203,7 +312,12 @@ const Header: React.FC<HeaderProps> = ({
 
   // Handle logout
   const handleLogout = () => {
-    logout();
+    if (logout) {
+      logout();
+    } else {
+      // Fallback logout
+      localStorage.removeItem("userInfo");
+    }
     navigate("/login");
   };
 
@@ -273,12 +387,6 @@ const Header: React.FC<HeaderProps> = ({
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
     setShowSuggestions(false); // Close search suggestions when opening notifications
-  };
-
-  const handleNotificationItemClick = (notification: any) => {
-    // Handle notification click - could navigate to relevant page
-    console.log("Notification clicked:", notification);
-    setShowNotifications(false);
   };
 
   return (
@@ -583,7 +691,7 @@ const Header: React.FC<HeaderProps> = ({
               icon={
                 <Box position="relative">
                   <RiBellLine size={22} />
-                  {notifications > 0 && (
+                  {unreadCount > 0 && (
                     <Badge
                       position="absolute"
                       top="-8px"
@@ -594,8 +702,11 @@ const Header: React.FC<HeaderProps> = ({
                       fontSize="10px"
                       minW="18px"
                       h="18px"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
                     >
-                      {notifications}
+                      {unreadCount > 9 ? "9+" : unreadCount}
                     </Badge>
                   )}
                 </Box>
@@ -620,74 +731,143 @@ const Header: React.FC<HeaderProps> = ({
                 borderRadius="lg"
                 boxShadow="xl"
                 zIndex={9999}
-                maxH="400px"
+                maxH="360px"
                 overflowY="auto"
+                css={{
+                  "&::-webkit-scrollbar": {
+                    width: "6px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    background: "transparent",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#CBD5E0",
+                    borderRadius: "3px",
+                  },
+                  "&::-webkit-scrollbar-thumb:hover": {
+                    background: "#A0AEC0",
+                  },
+                }}
               >
                 <VStack align="stretch" spacing={0}>
                   <Box p={3} borderBottom="1px" borderColor={borderColor}>
                     <Text fontSize="sm" fontWeight="semibold">
-                      Notifications (
-                      {notificationData.filter((n) => n.unread).length})
+                      Notifications ({unreadCount} unread)
                     </Text>
                   </Box>
 
-                  {notificationData.map((notification) => (
-                    <MotionBox
-                      key={notification.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      whileHover={{ bg: hoverBg }}
-                      p={3}
-                      cursor="pointer"
-                      onClick={() => handleNotificationItemClick(notification)}
-                      borderBottom="1px"
-                      borderColor={borderColor}
-                      bg={notification.unread ? "blue.50" : "transparent"}
-                    >
-                      <VStack align="start" spacing={1}>
-                        <HStack justify="space-between" w="full">
-                          <Text
-                            fontSize="sm"
-                            fontWeight={
-                              notification.unread ? "semibold" : "medium"
-                            }
-                            color={
-                              notification.unread ? "blue.600" : "gray.700"
-                            }
-                            overflow="hidden"
-                            textOverflow="ellipsis"
-                            whiteSpace="nowrap"
-                            maxW="80%"
-                          >
-                            {notification.title}
-                          </Text>
-                          {notification.unread && (
-                            <Box
-                              w="8px"
-                              h="8px"
-                              borderRadius="full"
-                              bg="blue.500"
-                            />
-                          )}
-                        </HStack>
-                        <Text
-                          fontSize="xs"
-                          color="gray.600"
-                          overflow="hidden"
-                          textOverflow="ellipsis"
-                          whiteSpace="nowrap"
-                          w="full"
+                  {(() => {
+                    console.log("🎨 Rendering notification dropdown:");
+                    console.log("  - Loading:", notificationsLoading);
+                    console.log("  - Notifications array:", notifications);
+                    console.log(
+                      "  - Notifications type:",
+                      Array.isArray(notifications)
+                        ? "Array"
+                        : typeof notifications
+                    );
+                    console.log(
+                      "  - Notifications length:",
+                      notifications?.length || 0
+                    );
+                    if (notifications && notifications.length > 0) {
+                      console.log("  - First notification:", notifications[0]);
+                      console.log(
+                        "  - First notification keys:",
+                        Object.keys(notifications[0] || {})
+                      );
+                      console.log(
+                        "  - First notification.isRead:",
+                        notifications[0]?.isRead
+                      );
+                      console.log(
+                        "  - First notification.read:",
+                        notifications[0]?.read
+                      );
+                    }
+                    return null;
+                  })()}
+                  {notificationsLoading && notifications.length === 0 ? (
+                    <Box p={4} textAlign="center">
+                      <Text fontSize="sm" color="gray.500">
+                        Loading notifications...
+                      </Text>
+                    </Box>
+                  ) : notifications &&
+                    Array.isArray(notifications) &&
+                    notifications.length > 0 ? (
+                    notifications.map((notification) => {
+                      // Support both read and isRead properties
+                      const isUnread =
+                        notification.read === false ||
+                        notification.isRead === false ||
+                        (!notification.read &&
+                          notification.isRead === undefined);
+                      return (
+                        <MotionBox
+                          key={notification._id || notification.id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          whileHover={{ bg: hoverBg }}
+                          p={3}
+                          cursor="pointer"
+                          onClick={() =>
+                            handleNotificationItemClick(notification)
+                          }
+                          borderBottom="1px"
+                          borderColor={borderColor}
+                          bg={isUnread ? "blue.50" : "transparent"}
+                          borderLeft={isUnread ? "4px solid" : "none"}
+                          borderLeftColor={
+                            isUnread ? "blue.500" : "transparent"
+                          }
                         >
-                          {notification.message}
-                        </Text>
-                        <Text fontSize="xs" color="gray.500">
-                          {notification.time}
-                        </Text>
-                      </VStack>
-                    </MotionBox>
-                  ))}
-
-                  {notificationData.length === 0 && (
+                          <VStack align="start" spacing={1}>
+                            <HStack justify="space-between" w="full">
+                              <Text
+                                fontSize="sm"
+                                fontWeight={isUnread ? "semibold" : "medium"}
+                                color={isUnread ? "blue.600" : "gray.700"}
+                                overflow="hidden"
+                                textOverflow="ellipsis"
+                                whiteSpace="nowrap"
+                                maxW="80%"
+                              >
+                                {notification.title || "Notification"}
+                              </Text>
+                              {isUnread && (
+                                <Box
+                                  w="8px"
+                                  h="8px"
+                                  borderRadius="full"
+                                  bg="blue.500"
+                                />
+                              )}
+                            </HStack>
+                            <Text
+                              fontSize="xs"
+                              color="gray.600"
+                              overflow="hidden"
+                              textOverflow="ellipsis"
+                              whiteSpace="nowrap"
+                              w="full"
+                            >
+                              {notification.message ||
+                                notification.content ||
+                                ""}
+                            </Text>
+                            <Text fontSize="xs" color="gray.500">
+                              {formatNotificationTime(
+                                notification.createdAt ||
+                                  notification.created_at ||
+                                  notification.time
+                              )}
+                            </Text>
+                          </VStack>
+                        </MotionBox>
+                      );
+                    })
+                  ) : (
                     <Box p={4} textAlign="center">
                       <Text fontSize="sm" color="gray.500">
                         No notifications
