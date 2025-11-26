@@ -15,6 +15,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Login from "./components/Authentication/login";
 import Signup from "./components/Authentication/signup";
+import DoctorRegister from "./components/Authentication/doctorRegister";
 import OTP from "./components/Authentication/otp";
 import VerificationSuccess from "./components/Authentication/verificationSuccess";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
@@ -57,6 +58,7 @@ function App() {
         <Route path="/home" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Signup />} />
+        <Route path="/doctor/register" element={<DoctorRegister />} />
         <Route path="/otp" element={<OTP />} />
         <Route path="/verification-success" element={<VerificationSuccess />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

@@ -12,26 +12,48 @@ const ChatProvider = ({ children }) => {
   const setIsLoggedIn = useBadgeStore((state) => state.setIsLoggedIn);
   const setProfile = useBadgeStore((state) => state.setProfile);
 
- useEffect(() => {
+  // Listen for localStorage changes to update user state immediately after login
+  useEffect(() => {
     console.log("ChatProvider useEffect triggered");
-   const fetchData = async () => {
-     try {
-       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-      
+    const fetchData = async () => {
+      try {
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        
+        if (!userInfo) {
+          setUser(null);
+        } else {
+          setUser(userInfo);
+          setProfile(userInfo);
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error("Error parsing user information", error);
+        setUser(null);
+      }
+    };
 
-       if (!userInfo) {
-         navigate("/home");
-       } else {
-         setUser(userInfo);
-       }
-     } catch (error) {
-       console.error("Error parsing user information", error);
-       
-     }
-   };
-
-   fetchData(); 
- }, []);
+    fetchData();
+    
+    // Listen for storage events (when localStorage changes in other tabs/windows)
+    const handleStorageChange = (e) => {
+      if (e.key === "userInfo") {
+        fetchData();
+      }
+    };
+    
+    // Listen for custom event when user logs in (same tab)
+    const handleUserUpdate = () => {
+      fetchData();
+    };
+    
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("userLoggedIn", handleUserUpdate);
+    
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("userLoggedIn", handleUserUpdate);
+    };
+  }, [setProfile, setIsLoggedIn]);
 
   const updateUser = (newUser) => {
     setUser(newUser);

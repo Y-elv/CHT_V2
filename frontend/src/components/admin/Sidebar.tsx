@@ -117,7 +117,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, onClose }) => {
     <VStack spacing={4} p={4} align="stretch">
       {/* Logo */}
       <Flex justify="space-between" align="center" p={2}>
-        <Flex align="center" gap={2}>
+        <Flex
+          align="center"
+          gap={2}
+          cursor="pointer"
+          onClick={() => navigate("/admin/dashboard")}
+          _hover={{ opacity: 0.8 }}
+        >
           <Image src={logo} alt="Logo" boxSize="32px" objectFit="contain" />
           <Box>
             <Text fontSize="xs" color="gray.500">
