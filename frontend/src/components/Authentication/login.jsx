@@ -105,6 +105,9 @@ const Login = () => {
       setLoading(false);
       setIsLoggedIn(true);
       setProfile(data);
+      
+      // Dispatch custom event to notify ChatProvider of login
+      window.dispatchEvent(new Event("userLoggedIn"));
 
       // Role-based redirect
       const role = data.role;
@@ -127,7 +130,7 @@ const Login = () => {
         navigate("/profile");
       } else {
         // Fallback to profile for unknown roles
-        navigate("/profile");
+      navigate("/profile");
       }
     } catch (error) {
       console.log("Login error:", error);

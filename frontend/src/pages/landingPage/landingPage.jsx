@@ -1,7 +1,7 @@
 import Navbar from "../../components/navbar/navbar";
 import Footer from "../../layout/footer/footer";
 import "./animate.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import axios from "../../config/axiosConfig";
 import { useToast } from "@chakra-ui/react";
@@ -482,6 +482,54 @@ const LandingPage = () => {
             </div>
           </motion.div>
         </motion.div>
+      </section>
+
+      {/* Join as Doctor Section */}
+      <section className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-3xl p-8 sm:p-12 border border-white/20 dark:border-slate-700/50 shadow-2xl"
+          >
+            <motion.h2
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-[#2B2F92] to-[#F7941D] bg-clip-text text-transparent"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
+              Are You a Healthcare Professional?
+            </motion.h2>
+            <motion.p
+              className="text-lg sm:text-xl text-slate-700 dark:text-slate-300 mb-8 max-w-2xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+            >
+              Join our platform and help provide quality healthcare services to patients. 
+              Register as a doctor and start making a difference today.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link
+                to="/doctor/register"
+                className="inline-block px-8 py-4 bg-gradient-to-r from-[#2B2F92] to-[#1e2266] hover:from-[#1e2266] hover:to-[#2B2F92] text-white font-semibold rounded-full text-lg shadow-lg shadow-[#2B2F92]/30 hover:shadow-xl hover:shadow-[#2B2F92]/40 transition-all duration-300"
+              >
+                Join as Doctor
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
       </section>
 
       {/* Contact Section */}

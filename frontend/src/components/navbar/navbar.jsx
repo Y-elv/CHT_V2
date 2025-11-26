@@ -10,6 +10,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChatState } from "../Context/chatProvider";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   Menu,
   MenuButton,
@@ -32,7 +33,21 @@ const Navbar = ({ active }) => {
 
   // Get ChatState (ChatProvider wraps the app, so this should always work)
   const chatContext = ChatState();
-  const { user = null, chats = [], logoutHandler } = chatContext || {};
+  const { user: chatUser = null, chats = [], logoutHandler: chatLogoutHandler } = chatContext || {};
+  
+  // Get AuthContext for immediate user state updates
+  const { user: authUser, logout: authLogout, isAuthenticated } = useAuth();
+  
+  // Use authUser if available, otherwise fall back to chatUser
+  const user = authUser || chatUser;
+  const logoutHandler = () => {
+    if (authLogout) authLogout();
+    if (chatLogoutHandler) chatLogoutHandler();
+  };
+  
+  // Check if we're on home page and user is not authenticated
+  const isHomePage = location.pathname === "/home" || location.pathname === "/";
+  const shouldShowNotifications = user && !isHomePage;
 
   // Notification Store
   const {
@@ -47,13 +62,13 @@ const Navbar = ({ active }) => {
 
   // Auto-fetch notifications on mount and when user is available
   useEffect(() => {
-    if (user) {
+    if (user && shouldShowNotifications) {
       // Fetch notifications and unread count on component mount
       refresh().catch((error) => {
         console.error("Failed to fetch notifications:", error);
       });
     }
-  }, [user]); // Only fetch when user is available
+  }, [user, shouldShowNotifications]); // Only fetch when user is available and not on home page
 
   // Format notification time
   const formatNotificationTime = (dateString) => {
@@ -244,13 +259,14 @@ const Navbar = ({ active }) => {
 
           {/* Right Side Actions */}
           <div className="hidden tablet:flex items-center gap-4">
-            {/* Notification Icon */}
-            <motion.div
-              ref={notificationRef}
-              className="relative"
-              initial={false}
-              animate={showNotifications ? "visible" : "hidden"}
-            >
+            {/* Notification Icon - Only show for authenticated users and not on home page */}
+            {shouldShowNotifications && (
+              <motion.div
+                ref={notificationRef}
+                className="relative"
+                initial={false}
+                animate={showNotifications ? "visible" : "hidden"}
+              >
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -394,6 +410,7 @@ const Navbar = ({ active }) => {
                 )}
               </AnimatePresence>
             </motion.div>
+            )}
 
             {/* User Profile or Login & Signup Buttons */}
             {user ? (
