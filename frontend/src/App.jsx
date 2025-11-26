@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { useNotificationListener } from "./hooks/useNotificationListener";
 
 import "./App.css";
 import Chatpages from "./pages/Chatpages";
@@ -45,6 +46,9 @@ import {
 } from "./components/ProtectedRoute";
 
 function App() {
+  // Initialize notification listener (auto-fetch and toast alerts)
+  useNotificationListener();
+
   return (
     <div>
       <Routes>
