@@ -36,6 +36,7 @@ import {
 } from "react-icons/ri";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const MotionBox = motion(Box);
 
@@ -188,6 +189,23 @@ const Header: React.FC<HeaderProps> = ({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  // Get user initials (first two letters of name)
+  const getUserInitials = (name: string) => {
+    if (!name) return "U";
+    const words = name.trim().split(/\s+/);
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
@@ -691,14 +709,24 @@ const Header: React.FC<HeaderProps> = ({
               minW={0}
               h="auto"
             >
-              <Avatar size="sm" name="Admin User" bg="blue.500" />
+              <Avatar
+                size="sm"
+                name={user?.name || "User"}
+                src={user?.pic || undefined}
+                bg="blue.500"
+                getInitials={getUserInitials}
+              />
             </MenuButton>
             <MenuList>
               <MenuItem icon={<RiUserLine />}>
-                <Text>Admin User</Text>
+                <Text>{user?.name || "User"}</Text>
               </MenuItem>
               <MenuItem icon={<RiSettingsLine />}>Settings</MenuItem>
-              <MenuItem icon={<RiLogoutBoxLine />} color="red.500">
+              <MenuItem
+                icon={<RiLogoutBoxLine />}
+                color="red.500"
+                onClick={handleLogout}
+              >
                 Logout
               </MenuItem>
             </MenuList>
