@@ -45,6 +45,7 @@ import {
   DoctorProtectedRoute,
   ProtectedRoute,
 } from "./components/ProtectedRoute";
+import QuickAssist from "./components/QuickAssist/QuickAssist";
 
 function App() {
   // Initialize notification listener (auto-fetch and toast alerts)
@@ -52,6 +53,9 @@ function App() {
 
   return (
     <div>
+      {/* Quick Assist - Available on all pages */}
+      <QuickAssist />
+      
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
