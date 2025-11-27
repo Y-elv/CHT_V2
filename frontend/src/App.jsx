@@ -11,6 +11,7 @@ import News from "./pages/news/news";
 import Menu from "./pages/menu/menu";
 import Consultation from "./pages/consultation/consultation";
 import Profile from "./pages/profile/profile";
+import Appointments from "./pages/profile/Appointments";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Login from "./components/Authentication/login";
@@ -134,6 +135,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/appointments"
+          element={
+            <ProtectedRoute>
+              <Appointments />
             </ProtectedRoute>
           }
         />
