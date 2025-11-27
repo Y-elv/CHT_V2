@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Box,
   Button,
@@ -19,6 +20,11 @@ import { RiQuestionAnswerLine, RiSendPlaneFill, RiCloseLine } from "react-icons/
 import { askQuestion } from "../../services/quickAssistService";
 
 const QuickAssist = () => {
+  const location = useLocation();
+  
+  // Hide on login, register, and forgot-password pages
+  const hiddenPaths = ['/login', '/register', '/forgot-password'];
+  const shouldHide = hiddenPaths.includes(location.pathname);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]);
@@ -163,6 +169,11 @@ const QuickAssist = () => {
     setMessages([]);
     setError(null);
   };
+
+  // Don't render on login, register, or forgot-password pages
+  if (shouldHide) {
+    return null;
+  }
 
   return (
     <>
