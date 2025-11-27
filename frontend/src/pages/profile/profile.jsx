@@ -10,7 +10,7 @@ import {
   IoNewspaperOutline,
   IoSettingsOutline,
 } from "react-icons/io5";
-import { RiGamepadLine } from "react-icons/ri";
+import { RiGamepadLine, RiCalendarEventLine } from "react-icons/ri";
 import { useBadgeStore } from "../../zustandStore/store";
 import { FaUserMd } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -165,6 +165,7 @@ const Profile = () => {
     { to: "/game", label: "Game", icon: RiGamepadLine },
     { to: "/news", label: "News", icon: IoNewspaperOutline },
     { to: "/profile", label: "Settings", icon: IoSettingsOutline },
+    { to: "/profile/appointments", label: "Appointments", icon: RiCalendarEventLine },
     { label: "Sign Out", icon: IoLogOut, isLogout: true },
   ];
 
@@ -421,7 +422,7 @@ const Profile = () => {
                 <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">
                   Quick Actions
                 </h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                   <Link
                     to="/consultation"
                     className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-[#F7941D]/10 to-[#FFA84D]/10 hover:from-[#F7941D]/20 hover:to-[#FFA84D]/20 transition-all duration-300 border border-[#F7941D]/20"
@@ -456,6 +457,15 @@ const Profile = () => {
                     <IoNewspaperOutline className="text-3xl text-[#2B2F92] mb-2" />
                     <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                       News
+                    </span>
+                  </Link>
+                  <Link
+                    to="/profile/appointments"
+                    className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-[#F7941D]/10 to-[#FFA84D]/10 hover:from-[#F7941D]/20 hover:to-[#FFA84D]/20 transition-all duration-300 border border-[#F7941D]/20"
+                  >
+                    <RiCalendarEventLine className="text-3xl text-[#F7941D] mb-2" />
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      Appointments
                     </span>
                   </Link>
                 </div>
