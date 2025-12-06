@@ -68,10 +68,20 @@ axiosInstance.interceptors.request.use(
     }
 
     // Add Authorization header if token exists
+    // Try new format first (cht_token), then fallback to old format (userInfo)
     try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-      if (userInfo && userInfo.token) {
-        config.headers.Authorization = `Bearer ${userInfo.token}`;
+      let token = localStorage.getItem("cht_token");
+      
+      if (!token) {
+        // Fallback to old format
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        if (userInfo && userInfo.token) {
+          token = userInfo.token;
+        }
+      }
+      
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (error) {
       // If no token or error parsing, continue without auth header
@@ -86,15 +96,7 @@ axiosInstance.interceptors.request.use(
       config.headers["X-CSRF-Token"] = csrfToken;
     }
 
-    // Add Authorization token from localStorage if available
-    try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-      if (userInfo && userInfo.token && !config.headers["Authorization"]) {
-        config.headers["Authorization"] = `Bearer ${userInfo.token}`;
-      }
-    } catch (error) {
-      // Silently fail if no token available
-    }
+    // Add Authorization token from localStorage if available (duplicate check removed - handled above)
 
     return config;
   },

@@ -8,7 +8,7 @@ import {
   Box,
   Image,
 } from "@chakra-ui/react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
 import axios from "../../config/axiosConfig";
@@ -18,6 +18,7 @@ import "./login.css";
 import logo from "../../assets/LOGO FULL.png";
 import { CgMail } from "react-icons/cg";
 import { BiSolidLockAlt } from "react-icons/bi";
+import { FcGoogle } from "react-icons/fc";
 import { useBadgeStore } from "../../zustandStore/store";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -25,6 +26,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [show, SetShow] = useState(false);
   const [loading, setLoading] = useState();
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const toast = useToast();
@@ -63,6 +65,23 @@ const Login = () => {
     y.set(0);
   };
 
+
+  // Handle Google login button click
+  const handleGoogleLogin = () => {
+    setGoogleLoading(true);
+    
+    // Determine the redirect URL based on environment
+    const isDevelopment = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    const redirectUrl = isDevelopment
+      ? `${window.location.origin}/auth-verification`
+      : "https://funhealth.netlify.app/auth-verification";
+    
+    // Redirect to backend Google OAuth endpoint with redirect_url parameter
+    const googleAuthUrl = `https://chtv2-bn.onrender.com/auth/google?redirect_url=${encodeURIComponent(redirectUrl)}`;
+    
+    window.location.href = googleAuthUrl;
+  };
+
   const submitHandler = async () => {
     setLoading(true);
     if (!email || !password) {
@@ -92,46 +111,18 @@ const Login = () => {
       );
       console.log("Data received from login endpoint:", data);
 
-      toast({
-        description: "Login successfully!",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
-      
-      // Update global auth state (also stores in localStorage)
-      authLogin(data);
       setLoading(false);
-      setIsLoggedIn(true);
-      setProfile(data);
       
-      // Dispatch custom event to notify ChatProvider of login
-      window.dispatchEvent(new Event("userLoggedIn"));
-
-      // Role-based redirect
-      const role = data.role;
-      const doctorStatus = data.doctorStatus;
-
-      if (role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (role === "doctor" && doctorStatus === "approved") {
-        navigate("/doctor/dashboard");
-      } else if (role === "doctor" && doctorStatus !== "approved") {
-        toast({
-          description: "Your doctor account is pending approval. Please contact admin.",
-          status: "warning",
-          duration: 7000,
-          isClosable: true,
-          position: "bottom",
-        });
-        // Don't navigate, stay on login page
-      } else if (role === "patient") {
-        navigate("/profile");
-      } else {
-        // Fallback to profile for unknown roles
-      navigate("/profile");
-      }
+      // Redirect to auth-verification page with token and user data
+      const token = data.token;
+      const userData = JSON.stringify(data);
+      
+      // Encode user data for URL
+      const encodedUser = encodeURIComponent(userData);
+      const encodedMessage = encodeURIComponent(data.message || "Login successful");
+      
+      // Navigate to auth-verification page
+      navigate(`/auth-verification?token=${token}&user=${encodedUser}&message=${encodedMessage}`);
     } catch (error) {
       console.log("Login error:", error);
       console.log("Error response:", error.response);
@@ -377,6 +368,58 @@ const Login = () => {
                   }}
                 >
                   {loading ? "Signing in..." : "Sign In"}
+                </Button>
+              </motion.div>
+            </motion.div>
+
+            {/* Divider */}
+            <motion.div variants={itemVariants}>
+              <div className="relative flex items-center justify-center my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-300 dark:border-slate-600"></div>
+                </div>
+                <div className="relative bg-white dark:bg-slate-800 px-4">
+                  <span className="text-sm text-slate-500 dark:text-slate-400">or</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Google Login Button */}
+            <motion.div variants={itemVariants}>
+              <motion.div
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Button
+                  onClick={handleGoogleLogin}
+                  width="100%"
+                  isLoading={googleLoading}
+                  className="h-12 rounded-xl bg-white dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 text-slate-700 dark:text-slate-200 font-semibold text-base shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-3"
+                  _hover={{
+                    bg: "gray.50",
+                    borderColor: "gray.400",
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                  }}
+                  _dark={{
+                    _hover: {
+                      bg: "slate.600",
+                      borderColor: "slate.500",
+                    },
+                  }}
+                  _loading={{
+                    opacity: 0.7,
+                  }}
+                >
+                  {googleLoading ? (
+                    "Connecting to Google..."
+                  ) : (
+                    <>
+                      <FcGoogle className="text-2xl" />
+                      <span>Continue with Google</span>
+                    </>
+                  )}
                 </Button>
               </motion.div>
             </motion.div>
