@@ -40,6 +40,21 @@ const Navbar = ({ active }) => {
   
   // Use authUser if available, otherwise fall back to chatUser
   const user = authUser || chatUser;
+  
+  // Debug logging
+  useEffect(() => {
+    console.log("🔍 Navbar: User state check");
+    console.log("   - authUser:", authUser);
+    console.log("   - chatUser:", chatUser);
+    console.log("   - Final user:", user);
+    if (user) {
+      console.log("   - User.name:", user.name);
+      console.log("   - User.email:", user.email);
+      console.log("   - User.pic:", user.pic);
+      console.log("   - User.role:", user.role);
+    }
+  }, [authUser, chatUser, user]);
+  
   const logoutHandler = () => {
     if (authLogout) authLogout();
     if (chatLogoutHandler) chatLogoutHandler();
