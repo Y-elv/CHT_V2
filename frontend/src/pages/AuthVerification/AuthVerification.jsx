@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Box, Spinner, Text, VStack, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Spinner,
+  Text,
+  VStack,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { useAuth } from "../../contexts/AuthContext";
 import { useBadgeStore } from "../../zustandStore/store";
 import { useToast } from "@chakra-ui/react";
-import axios from "../../config/axiosConfig";
+import { jwtDecode } from "jwt-decode";
+import { extractUserFromToken } from "../../utils/tokenUtils";
 import logo from "../../assets/LOGO FULL.png";
 import { Image } from "@chakra-ui/react";
 
@@ -26,11 +33,16 @@ const AuthVerification = () => {
   useEffect(() => {
     const processAuthCallback = async () => {
       try {
-        // Get all URL parameters
+        // Get token and user data from URL parameters
         const token = searchParams.get("token");
         const userParam = searchParams.get("user");
         const messageParam = searchParams.get("message");
         const error = searchParams.get("error");
+
+        console.log("🔍 AuthVerification: URL Parameters");
+        console.log("   - Token:", !!token);
+        console.log("   - User param:", !!userParam);
+        console.log("   - Message:", messageParam);
 
         // Handle error case
         if (error) {
@@ -45,7 +57,6 @@ const AuthVerification = () => {
             position: "bottom",
           });
 
-          // Redirect to login after 3 seconds
           setTimeout(() => {
             navigate("/login");
           }, 3000);
@@ -71,120 +82,239 @@ const AuthVerification = () => {
           return;
         }
 
-        // Parse user data
-        let userData = null;
-        
+        // Save token to localStorage as "token"
+        localStorage.setItem("token", token);
+        console.log("✅ Token saved to localStorage as 'token'");
+
+        // Decode token to extract user information
+        let decoded;
+        try {
+          decoded = jwtDecode(token).id;
+          console.log("🔓 JWT Token Decoded Successfully:");
+          console.log(
+            "   Full decoded token:",
+            JSON.stringify(decoded, null, 2)
+          );
+          console.log("   All keys in decoded token:", Object.keys(decoded));
+
+          // Log all possible paths to user data
+          console.log("   - decoded.email:", decoded.email);
+          console.log("   - decoded.role:", decoded.role);
+          console.log("   - decoded.user:", decoded.user);
+          console.log("   - decoded.user?.name:", decoded.user?.name);
+          console.log("   - decoded.user?.pic:", decoded.user?.pic);
+          console.log("   - decoded.user?._id:", decoded.user?._id);
+          console.log("   - decoded.id?.user:", decoded.id?.user);
+          console.log("   - decoded.id?.user?.name:", decoded.id?.user?.name);
+          console.log("   - decoded.doctorStatus:", decoded.doctorStatus);
+          console.log(
+            "   - decoded.user?.doctorStatus:",
+            decoded.user?.doctorStatus
+          );
+        } catch (decodeError) {
+          console.error("❌ Error decoding token:", decodeError);
+          setStatus("error");
+          setMessage("Invalid token. Please try logging in again.");
+          toast({
+            title: "Authentication Error",
+            description: "Invalid token format.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom",
+          });
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+
+        // Extract user information - prioritize URL param, then token
+        let userInfo = {
+          token: token,
+        };
+
+        // First, try to get user data from URL parameter (most reliable)
         if (userParam) {
+          console.log("📦 Parsing user data from URL parameter...");
           try {
-            // Try to parse as JSON (handle both encoded and raw)
             let parsedUser = userParam;
-            
-            // Check if it's URL encoded
+            // Handle URL encoding
             if (userParam.includes("%")) {
               parsedUser = decodeURIComponent(userParam);
             }
-            
+
             // Try to parse as JSON
+            let urlUserData;
             try {
-              userData = JSON.parse(parsedUser);
-            } catch (e) {
-              // If parsing fails, try treating it as a string that might be double-encoded
+              urlUserData = JSON.parse(parsedUser);
+            } catch (e1) {
+              // Try double decode
               try {
-                userData = JSON.parse(decodeURIComponent(parsedUser));
+                urlUserData = JSON.parse(decodeURIComponent(parsedUser));
               } catch (e2) {
-                // If still fails, try one more decode
-                try {
-                  userData = JSON.parse(decodeURIComponent(decodeURIComponent(parsedUser)));
-                } catch (e3) {
-                  // If still fails, create a basic user object
-                  console.warn("Could not parse user data as JSON, creating basic object");
-                  userData = { email: parsedUser };
-                }
+                // Try one more time
+                urlUserData = JSON.parse(
+                  decodeURIComponent(decodeURIComponent(parsedUser))
+                );
               }
             }
+
+            console.log("✅ User data from URL param:", urlUserData);
+
+            // Extract user data - handle both flat and nested structures
+            if (urlUserData.user && typeof urlUserData.user === "object") {
+              // Nested structure: { user: { name, email, ... } }
+              userInfo = {
+                ...userInfo,
+                email: urlUserData.user.email || urlUserData.email,
+                role: urlUserData.user.role || urlUserData.role,
+                name: urlUserData.user.name,
+                pic: urlUserData.user.pic,
+                _id: urlUserData.user._id,
+                doctorStatus: urlUserData.user.doctorStatus,
+              };
+            } else {
+              // Flat structure: { email, role, name, ... }
+              userInfo = {
+                ...userInfo,
+                email: urlUserData.email,
+                role: urlUserData.role,
+                name: urlUserData.name,
+                pic: urlUserData.pic,
+                _id: urlUserData._id,
+                doctorStatus: urlUserData.doctorStatus,
+              };
+            }
           } catch (parseError) {
-            console.error("Error parsing user data:", parseError);
-            // Create minimal user object
-            userData = {};
-          }
-        } else {
-          // If no user param, try to fetch user profile from backend using token
-          try {
-            const config = {
-              headers: {
-                "Content-type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            };
-            
-            const { data } = await axios.get(
-              "https://chtv2-bn.onrender.com/api/v2/user/profile",
-              config
-            );
-            userData = data;
-          } catch (fetchError) {
-            console.error("Error fetching user profile:", fetchError);
-            // Continue with minimal user data
-            userData = {};
+            console.error("❌ Error parsing user param:", parseError);
           }
         }
 
-        // Normalize user data structure
-        // Handle different response structures:
-        // 1. Direct user object from login: { token, email, role, ... }
-        // 2. Nested structure from OAuth: { message, token, user: { email, role, user: {...} } }
-        
-        // If userData already has token and role, it's likely from regular login
-        let normalizedUser;
-        
-        if (userData.token && userData.role) {
-          // Direct login response structure
-          normalizedUser = {
-            ...userData,
-            token: token, // Use token from URL params
-          };
-        } else {
-          // OAuth response structure - extract nested user
-          const userInfo = userData?.user?.user || userData?.user || userData;
-          
-          normalizedUser = {
-            token: token,
-            email: userData?.email || userInfo?.email,
-            role: userData?.role || userInfo?.role,
-            doctorStatus: userInfo?.doctorStatus,
-            name: userInfo?.name,
-            pic: userInfo?.pic,
-            _id: userInfo?._id,
+        // If we still don't have user data, try to extract from decoded token
+        if ((!userInfo.email || !userInfo.role) && decoded) {
+          console.log(
+            "⚠️ Missing user data from URL, trying to extract from token..."
+          );
+          // Handle different possible token structures:
+          // 1. decoded.email, decoded.role, decoded.user.name, decoded.user.pic, decoded.user._id
+          // 2. decoded.id.user (nested structure)
+          // 3. decoded.email, decoded.role, decoded.name, decoded.pic, decoded._id (flat structure)
+
+          userInfo = {
             ...userInfo,
+            email:
+              userInfo.email ||
+              decoded.email ||
+              decoded.id?.user?.email ||
+              decoded.user?.email,
+            role:
+              userInfo.role ||
+              decoded.role ||
+              decoded.id?.user?.role ||
+              decoded.user?.role,
+            name:
+              userInfo.name ||
+              decoded.user?.name ||
+              decoded.id?.user?.name ||
+              decoded.name,
+            pic:
+              userInfo.pic ||
+              decoded.user?.pic ||
+              decoded.id?.user?.pic ||
+              decoded.pic,
+            _id:
+              userInfo._id ||
+              decoded.user?._id ||
+              decoded.id?.user?._id ||
+              decoded._id ||
+              decoded.id?.user?.id,
+            doctorStatus:
+              userInfo.doctorStatus ||
+              decoded.user?.doctorStatus ||
+              decoded.id?.user?.doctorStatus ||
+              decoded.doctorStatus,
           };
         }
 
-        // Store in localStorage using the requested format
+        console.log("👤 Final Extracted User Info:");
+        console.log("   - Email:", userInfo.email);
+        console.log("   - Role:", userInfo.role);
+        console.log("   - Name:", userInfo.name);
+        console.log("   - Pic:", userInfo.pic);
+        console.log("   - ID:", userInfo._id);
+        console.log("   - DoctorStatus:", userInfo.doctorStatus);
+
+        // Create normalized user object for storage
+        const normalizedUser = {
+          ...userInfo,
+          // Ensure all required fields are present
+          email: userInfo.email,
+          role: userInfo.role,
+          name: userInfo.name,
+          pic: userInfo.pic,
+          _id: userInfo._id,
+        };
+
+        console.log("📦 Normalized User Object:", normalizedUser);
+
+        // Validate that we have at least email and role
+        if (!normalizedUser.email || !normalizedUser.role) {
+          console.error("❌ Missing required fields (email or role)");
+          setStatus("error");
+          setMessage(
+            "Unable to extract user information from token. Please try logging in again."
+          );
+          toast({
+            title: "Authentication Error",
+            description: "Missing user information in token.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom",
+          });
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+          return;
+        }
+
+        // Store in localStorage (multiple formats for compatibility)
         try {
+          // Store token as "token" (primary)
+          localStorage.setItem("token", token);
+          console.log("💾 Stored token in localStorage");
+
           // Store user object
           localStorage.setItem("cht_user", JSON.stringify(normalizedUser));
-          
-          // Store token separately
+          console.log("💾 Stored cht_user in localStorage");
+
+          // Store token separately (for backward compatibility)
           localStorage.setItem("cht_token", token);
-          
+
           // Also store in userInfo for backward compatibility
           localStorage.setItem("userInfo", JSON.stringify(normalizedUser));
+          console.log("💾 Stored userInfo in localStorage");
         } catch (storageError) {
-          console.error("Error storing authentication data:", storageError);
+          console.error("❌ Error storing authentication data:", storageError);
           throw new Error("Failed to save authentication data");
         }
 
-        // Update auth context and global state
+        // Update auth context and global state (Zustand)
+        console.log("🔄 Updating auth context and global state...");
         authLogin(normalizedUser);
         setProfile(normalizedUser);
         setIsLoggedIn(true);
-        
+        console.log("✅ Auth state updated successfully");
+
         // Dispatch custom event to notify other components
         window.dispatchEvent(new Event("userLoggedIn"));
+        console.log("📢 Dispatched 'userLoggedIn' event");
 
         setStatus("success");
-        setMessage(messageParam || "Authentication successful! Redirecting...");
+        setMessage("Authentication successful! Redirecting...");
 
+        // Show only one toast for login success
         toast({
           title: "Login Successful",
           description: "Welcome back!",
@@ -198,36 +328,49 @@ const AuthVerification = () => {
         const role = normalizedUser.role;
         const doctorStatus = normalizedUser.doctorStatus;
 
+        console.log("🧭 Determining redirect path:");
+        console.log("   - User Role:", role);
+        console.log("   - Doctor Status:", doctorStatus);
+
         let redirectPath = "/profile"; // Default
 
         if (role === "admin") {
           redirectPath = "/admin/dashboard";
-        } else if (role === "doctor" && doctorStatus === "approved") {
-          redirectPath = "/doctor/dashboard";
-        } else if (role === "doctor" && doctorStatus !== "approved") {
-          toast({
-            title: "Account Pending",
-            description: "Your doctor account is pending approval. Please contact admin.",
-            status: "warning",
-            duration: 7000,
-            isClosable: true,
-            position: "bottom",
-          });
-          redirectPath = "/profile";
+          console.log("   ✅ Redirecting to: /admin/dashboard (Admin)");
+        } else if (role === "doctor") {
+          if (doctorStatus === "approved") {
+            redirectPath = "/doctor/dashboard";
+            console.log(
+              "   ✅ Redirecting to: /doctor/dashboard (Approved Doctor)"
+            );
+          } else {
+            redirectPath = "/profile";
+            console.log(
+              "   ⚠️ Redirecting to: /profile (Doctor pending approval)"
+            );
+          }
         } else if (role === "patient") {
           redirectPath = "/profile";
+          console.log("   ✅ Redirecting to: /profile (Patient)");
+        } else {
+          console.log("   ⚠️ Unknown role, defaulting to: /profile");
         }
+
+        console.log("🚀 Final redirect path:", redirectPath);
 
         // Redirect after a short delay
         setTimeout(() => {
+          console.log("📍 Navigating to:", redirectPath);
           navigate(redirectPath);
         }, 1500);
-
       } catch (error) {
         console.error("Error processing authentication:", error);
         setStatus("error");
-        setMessage(error.message || "An error occurred during authentication. Please try again.");
-        
+        setMessage(
+          error.message ||
+            "An error occurred during authentication. Please try again."
+        );
+
         toast({
           title: "Authentication Error",
           description: error.message || "Please try logging in again.",
@@ -414,11 +557,7 @@ const AuthVerification = () => {
                 >
                   {message}
                 </Text>
-                <Text
-                  fontSize="sm"
-                  color="gray.500"
-                  textAlign="center"
-                >
+                <Text fontSize="sm" color="gray.500" textAlign="center">
                   Redirecting to login page...
                 </Text>
               </>
@@ -431,4 +570,3 @@ const AuthVerification = () => {
 };
 
 export default AuthVerification;
-

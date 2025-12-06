@@ -68,13 +68,17 @@ axiosInstance.interceptors.request.use(
     }
 
     // Add Authorization header if token exists
-    // Try new format first (cht_token), then fallback to old format (userInfo)
+    // Try "token" first (primary), then cht_token, then userInfo
     try {
-      let token = localStorage.getItem("cht_token");
+      let token = localStorage.getItem("token");
+      
+      if (!token) {
+        token = localStorage.getItem("cht_token");
+      }
       
       if (!token) {
         // Fallback to old format
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
         if (userInfo && userInfo.token) {
           token = userInfo.token;
         }

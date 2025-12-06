@@ -89,7 +89,7 @@ export const PatientProtectedRoute = ({ children }) => {
 
 // General Protected Route (any authenticated user)
 export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -102,8 +102,33 @@ export const ProtectedRoute = ({ children }) => {
     );
   }
 
-  if (!isAuthenticated()) {
+  // Check if user info exists in localStorage (don't redirect if it does)
+  const hasUserInfo = () => {
+    try {
+      const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
+      const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
+      return !!(token || userInfo);
+    } catch {
+      return false;
+    }
+  };
+
+  // Only redirect to login if user is not authenticated AND no user info exists
+  if (!isAuthenticated() && !hasUserInfo()) {
     return <Navigate to="/login" replace />;
+  }
+
+  // If user info exists but not authenticated, wait a bit for auth context to update
+  if (!isAuthenticated() && hasUserInfo() && !loading) {
+    // Give auth context time to restore session
+    return (
+      <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
+        <VStack spacing={4}>
+          <Spinner size="xl" color="blue.500" thickness="4px" />
+          <Text color="gray.600">Restoring session...</Text>
+        </VStack>
+      </Box>
+    );
   }
 
   return children;
