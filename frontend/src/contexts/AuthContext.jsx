@@ -15,6 +15,26 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const restoreSession = () => {
       try {
+        // Try new format first (cht_user and cht_token)
+        const chtUser = localStorage.getItem("cht_user");
+        const chtToken = localStorage.getItem("cht_token");
+        
+        if (chtUser && chtToken) {
+          try {
+            const userInfo = JSON.parse(chtUser);
+            userInfo.token = chtToken; // Ensure token is in user object
+            setUser(userInfo);
+            setToken(chtToken);
+            setProfile(userInfo);
+            setIsLoggedIn(true);
+            setLoading(false);
+            return;
+          } catch (e) {
+            console.error("Error parsing cht_user:", e);
+          }
+        }
+        
+        // Fallback to old format (userInfo)
         const userInfo = JSON.parse(localStorage.getItem("userInfo"));
         if (userInfo && userInfo.token) {
           setUser(userInfo);
@@ -24,7 +44,10 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Error restoring session:", error);
+        // Clean up corrupted data
         localStorage.removeItem("userInfo");
+        localStorage.removeItem("cht_user");
+        localStorage.removeItem("cht_token");
       } finally {
         setLoading(false);
       }
@@ -35,7 +58,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = (userData) => {
     try {
-      // Store in localStorage
+      // Store in both formats for compatibility
+      // New format: cht_user and cht_token
+      if (userData.token) {
+        localStorage.setItem("cht_user", JSON.stringify(userData));
+        localStorage.setItem("cht_token", userData.token);
+      }
+      
+      // Old format: userInfo (for backward compatibility)
       localStorage.setItem("userInfo", JSON.stringify(userData));
       
       // Update state
@@ -52,7 +82,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Remove all auth-related data
     localStorage.removeItem("userInfo");
+    localStorage.removeItem("cht_user");
+    localStorage.removeItem("cht_token");
     setUser(null);
     setToken(null);
     clearProfile();

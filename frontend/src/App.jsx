@@ -20,6 +20,7 @@ import DoctorRegister from "./components/Authentication/doctorRegister";
 import OTP from "./components/Authentication/otp";
 import VerificationSuccess from "./components/Authentication/verificationSuccess";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+import AuthVerification from "./pages/AuthVerification/AuthVerification";
 import Hospital from "./pages/hospital/Hospital";
 import OurTeamPage from "./pages/OurTeamPage";
 import NewsPage from "./pages/NewsPage";
@@ -67,6 +68,7 @@ function App() {
         <Route path="/otp" element={<OTP />} />
         <Route path="/verification-success" element={<VerificationSuccess />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth-verification" element={<AuthVerification />} />
         <Route path="/our-teamm" element={<OurTeamPage />} />
         <Route path="/our-services" element={<ServicesPage />} />
         <Route path="/our-news" element={<NewsPage />} />

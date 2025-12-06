@@ -17,7 +17,29 @@ const ChatProvider = ({ children }) => {
     console.log("ChatProvider useEffect triggered");
     const fetchData = async () => {
       try {
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        // Try new format first (cht_user)
+        let userInfo = null;
+        const chtUser = localStorage.getItem("cht_user");
+        
+        if (chtUser) {
+          try {
+            userInfo = JSON.parse(chtUser);
+          } catch (e) {
+            console.error("Error parsing cht_user:", e);
+          }
+        }
+        
+        // Fallback to old format (userInfo)
+        if (!userInfo) {
+          const userInfoStr = localStorage.getItem("userInfo");
+          if (userInfoStr) {
+            try {
+              userInfo = JSON.parse(userInfoStr);
+            } catch (e) {
+              console.error("Error parsing userInfo:", e);
+            }
+          }
+        }
         
         if (!userInfo) {
           setUser(null);
@@ -36,7 +58,7 @@ const ChatProvider = ({ children }) => {
     
     // Listen for storage events (when localStorage changes in other tabs/windows)
     const handleStorageChange = (e) => {
-      if (e.key === "userInfo") {
+      if (e.key === "userInfo" || e.key === "cht_user" || e.key === "cht_token") {
         fetchData();
       }
     };
@@ -61,10 +83,13 @@ const ChatProvider = ({ children }) => {
 
 
     const logoutHandler = () => {
+      // Remove all auth-related data
       localStorage.removeItem("userInfo");
+      localStorage.removeItem("cht_user");
+      localStorage.removeItem("cht_token");
       setUser(null);
-      setProfile(null)
-      setIsLoggedIn(false)
+      setProfile(null);
+      setIsLoggedIn(false);
       navigate("/login");
     };
 
