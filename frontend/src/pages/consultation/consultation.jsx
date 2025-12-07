@@ -1325,6 +1325,7 @@ const Consultation = () => {
                 district={selectedDistrict}
                 serviceName={selectedService}
                 doctorEmail={selectedDoctorData?.email || ""}
+                doctorId={selectedDoctorData?._id || ""}
               />
             </motion.div>
           </Modal>

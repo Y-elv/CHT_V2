@@ -637,6 +637,7 @@ const BookingOnSmallDevice = () => {
             district={selectedDistrict}
             serviceName={selectedService}
             doctorEmail={selectedDoctorData?.email || ""}
+            doctorId={selectedDoctorData?._id || ""}
             onBookingSuccess={() => {
               // Close calendar modal after successful booking
               setTimeout(() => {

@@ -13,11 +13,15 @@ const CalendarInput = ({
   district,
   serviceName,
   doctorEmail,
+  doctorId,
   onBookingSuccess,
 }) => {
   const toast = useToast();
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedTime, setSelectedTime] = useState("");
+  const [appointmentType, setAppointmentType] = useState("video");
+  const [reason, setReason] = useState("");
+  const [notes, setNotes] = useState("");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isConfirm, setIsConfirm] = useState(false);
   const [showNextButton, setShowNextButton] = useState(false);
@@ -93,6 +97,16 @@ const CalendarInput = ({
     });
   };
 
+  // Convert 24-hour time format (HH:mm) to 12-hour format (h:mm AM/PM)
+  const formatTimeTo12Hour = (time24) => {
+    if (!time24) return "";
+    const [hours, minutes] = time24.split(":");
+    const hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minutes} ${ampm}`;
+  };
+
   const handleConfirm = async (event) => {
     if (event && event.preventDefault) {
       event.preventDefault();
@@ -110,24 +124,51 @@ const CalendarInput = ({
       return;
     }
 
+    if (!reason || reason.trim() === "") {
+      toast({
+        title: "Reason Required",
+        description: "Please provide a reason for your visit.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    if (!doctorId) {
+      toast({
+        title: "Doctor ID Required",
+        description: "Doctor information is missing. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     const formattedSelectedDays = formatSelectedDays();
+    const formattedTime = formatTimeTo12Hour(selectedTime);
 
     console.log("📅 [Calendar] Booking submission started:");
     console.log("   Selected dates:", formattedSelectedDays);
-    console.log("   Selected time:", selectedTime);
+    console.log("   Selected time (24h):", selectedTime);
+    console.log("   Selected time (12h):", formattedTime);
+    console.log("   Doctor ID:", doctorId);
     console.log("   Doctor:", professionalName);
-    console.log("   Doctor email:", doctorEmail);
-    console.log("   District:", district);
-    console.log("   Service:", serviceName);
+    console.log("   Appointment Type:", appointmentType);
+    console.log("   Reason:", reason);
+    console.log("   Notes:", notes);
 
     const requestBody = {
-      ProfessionalName: professionalName,
+      doctorId: doctorId,
       date: formattedSelectedDays[0],
-      time: selectedTime,
-      district: district,
-      serviceName: serviceName,
-      doctorEmail: doctorEmail,
+      time: formattedTime,
+      appointmentType: appointmentType,
+      reason: reason.trim(),
+      notes: notes.trim() || "",
     };
 
     try {
@@ -153,7 +194,7 @@ const CalendarInput = ({
       }
 
       const response = await axios.post(
-        "https://chtv2-bn.onrender.com/api/v2/user/booking",
+        "https://chtv2-bn.onrender.com/api/appointment/book",
         requestBody,
         {
           headers: {
@@ -170,13 +211,17 @@ const CalendarInput = ({
       if (response.status >= 200 && response.status < 300) {
         setSelectedDays([]);
         setSelectedTime("");
+        setAppointmentType("video");
+        setReason("");
+        setNotes("");
         setShowNextButton(false);
         setIsConfirm(true);
 
         toast({
           title: "Booking Successful!",
           description:
-            "Your appointment request has been sent. Check your email for confirmation.",
+            response.data?.message ||
+            "Your appointment has been booked successfully. Check your email for confirmation.",
           status: "success",
           duration: 5000,
           isClosable: true,
@@ -429,6 +474,160 @@ const CalendarInput = ({
               }}
             />
           </motion.div>
+
+          {/* Appointment Type */}
+          {selectedDays.length > 0 && selectedTime && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+              style={{ marginTop: "0", width: "100%" }}
+            >
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  color: "#334155",
+                  marginBottom: "12px",
+                }}
+              >
+                Appointment Type:
+              </label>
+              <select
+                value={appointmentType}
+                onChange={(e) => setAppointmentType(e.target.value)}
+                required
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  borderRadius: "12px",
+                  border: "2px solid #e2e8f0",
+                  fontSize: "16px",
+                  backgroundColor: "#f8fafc",
+                  color: "#1e293b",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  outline: "none",
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#F7941D";
+                  e.target.style.backgroundColor = "#fff";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(247,148,29,0.1)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "#e2e8f0";
+                  e.target.style.backgroundColor = "#f8fafc";
+                  e.target.style.boxShadow = "none";
+                }}
+              >
+                <option value="video">Video Consultation</option>
+                <option value="chat">Chat Consultation</option>
+                <option value="in-person">In-Person Visit</option>
+              </select>
+            </motion.div>
+          )}
+
+          {/* Reason */}
+          {selectedDays.length > 0 && selectedTime && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              style={{ marginTop: "0", width: "100%" }}
+            >
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  color: "#334155",
+                  marginBottom: "12px",
+                }}
+              >
+                Reason for Visit:
+              </label>
+              <input
+                type="text"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="e.g., Routine checkup, Follow-up, Consultation"
+                required
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  borderRadius: "12px",
+                  border: "2px solid #e2e8f0",
+                  fontSize: "16px",
+                  backgroundColor: "#f8fafc",
+                  color: "#1e293b",
+                  transition: "all 0.3s ease",
+                  outline: "none",
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#F7941D";
+                  e.target.style.backgroundColor = "#fff";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(247,148,29,0.1)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "#e2e8f0";
+                  e.target.style.backgroundColor = "#f8fafc";
+                  e.target.style.boxShadow = "none";
+                }}
+              />
+            </motion.div>
+          )}
+
+          {/* Notes */}
+          {selectedDays.length > 0 && selectedTime && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+              style={{ marginTop: "0", width: "100%" }}
+            >
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  color: "#334155",
+                  marginBottom: "12px",
+                }}
+              >
+                Additional Notes (Optional):
+              </label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Any additional information you'd like to share..."
+                rows={3}
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  borderRadius: "12px",
+                  border: "2px solid #e2e8f0",
+                  fontSize: "16px",
+                  backgroundColor: "#f8fafc",
+                  color: "#1e293b",
+                  fontFamily: "inherit",
+                  resize: "vertical",
+                  transition: "all 0.3s ease",
+                  outline: "none",
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#F7941D";
+                  e.target.style.backgroundColor = "#fff";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(247,148,29,0.1)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "#e2e8f0";
+                  e.target.style.backgroundColor = "#f8fafc";
+                  e.target.style.boxShadow = "none";
+                }}
+              />
+            </motion.div>
+          )}
 
           {showNextButton && (
             <motion.div
