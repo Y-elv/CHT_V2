@@ -136,21 +136,30 @@ axiosInstance.interceptors.response.use(
 
     // Sanitize error messages to prevent information leakage
     if (error.response) {
+      // For 400 errors, preserve more details for validation errors
+      const isValidationError = error.response.status === 400;
+      const errorData = error.response.data || {};
+      
       // Server responded with error status
       const sanitizedError = {
         ...error,
         response: {
           ...error.response,
-          // Only keep necessary data, don't leak stack traces
-          data: {
-            message: error.response.data?.message || "An error occurred",
+          // Keep more details for validation errors, sanitize others
+          data: isValidationError ? {
+            message: errorData.message || errorData.error || "Validation error occurred",
+            status: error.response.status,
+            errors: errorData.errors, // Preserve validation errors array if present
+            details: errorData.details, // Preserve additional details if present
+          } : {
+            message: errorData.message || errorData.error || "An error occurred",
             status: error.response.status,
           },
         },
       };
 
-      // Log full error only on client side (not in production)
-      if (process.env.NODE_ENV !== "production") {
+      // Log full error for debugging (always log in development)
+      if (process.env.NODE_ENV !== "production" || isValidationError) {
         console.error("API Error:", error.response);
       }
 

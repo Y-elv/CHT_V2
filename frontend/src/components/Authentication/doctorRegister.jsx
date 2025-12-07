@@ -10,6 +10,9 @@ import {
   Textarea,
   NumberInput,
   NumberInputField,
+  Text,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import React, { useState, useRef } from "react";
 import { Button } from "@chakra-ui/button";
@@ -24,6 +27,7 @@ import { BiSolidLockAlt } from "react-icons/bi";
 import { BsFillPersonFill } from "react-icons/bs";
 import { FaUserMd, FaHospital, FaCertificate, FaDollarSign } from "react-icons/fa";
 import { MdWork, MdDescription } from "react-icons/md";
+import { uploadImageToCloudinary } from "../../utils/imageUpload";
 
 const DoctorRegister = () => {
   const [show, SetShow] = useState(false);
@@ -31,6 +35,9 @@ const DoctorRegister = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [pic, setPic] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [specialty, setSpecialty] = useState("");
   const [bio, setBio] = useState("");
   const [certificateUrl, setCertificateUrl] = useState("");
@@ -43,6 +50,86 @@ const DoctorRegister = () => {
   const history = useNavigate();
 
   const handleClick = () => SetShow(!show);
+
+  // Handle image file selection
+  const handleImageSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Upload image to Cloudinary
+  const handleImageUpload = async () => {
+    console.log("🖼️ [Image Upload] Starting image upload process...");
+    
+    if (!selectedImage) {
+      console.warn("⚠️ [Image Upload] No image selected!");
+      toast({
+        description: "Please select an image first!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    console.log("📁 [Image Upload] Image file details:", {
+      name: selectedImage.name,
+      type: selectedImage.type,
+      size: `${(selectedImage.size / 1024).toFixed(2)} KB`,
+    });
+
+    console.log("🌐 [Image Upload] Checking network connectivity...");
+    setUploadingImage(true);
+    
+    try {
+      console.log("☁️ [Image Upload] Calling uploadImageToCloudinary function...");
+      const imageUrl = await uploadImageToCloudinary(selectedImage);
+      
+      console.log("✅ [Image Upload] Image uploaded successfully!");
+      console.log("🔗 [Image Upload] Cloudinary URL received:", imageUrl);
+      
+      setPic(imageUrl);
+      console.log("💾 [Image Upload] Image URL saved to state (pic):", imageUrl);
+      
+      toast({
+        description: "Image uploaded successfully!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+    } catch (error) {
+      console.error("❌ [Image Upload] Error occurred during upload:");
+      console.error("   Error object:", error);
+      console.error("   Error message:", error.message);
+      console.error("   Error stack:", error.stack);
+      
+      // Check for network errors
+      if (error.message.includes("fetch") || error.message.includes("network") || error.message.includes("Failed to fetch")) {
+        console.error("🌐 [Image Upload] Network error detected - check internet connection");
+      }
+      
+      toast({
+        description: error.message || "Failed to upload image. Please check your internet connection and try again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    } finally {
+      console.log("🏁 [Image Upload] Upload process completed");
+      setUploadingImage(false);
+    }
+  };
 
   // 3D card rotation effects
   const cardRef = useRef(null);
@@ -74,11 +161,79 @@ const DoctorRegister = () => {
   };
 
   const submitHandler = async () => {
+    console.log("🚀 [Registration] Starting registration process...");
+    console.log("📋 [Registration] Form data:", {
+      name,
+      email,
+      password: "***",
+      specialty,
+      bio: bio.substring(0, 50) + "...",
+      certificateUrl,
+      licenseNumber,
+      yearsOfExperience,
+      hospital,
+      consultationFee,
+      pic: pic ? "✅ Image URL set" : "❌ No image",
+      selectedImage: selectedImage ? "✅ Image selected" : "❌ No image",
+    });
+    
     setLoading(true);
     
+    // If image is selected but not uploaded, upload it first
+    if (selectedImage && !pic) {
+      console.log("📤 [Registration] Image selected but not uploaded. Uploading now...");
+      try {
+        setUploadingImage(true);
+        console.log("☁️ [Registration] Uploading image to Cloudinary...");
+        const imageUrl = await uploadImageToCloudinary(selectedImage);
+        console.log("✅ [Registration] Image uploaded successfully:", imageUrl);
+        setPic(imageUrl);
+        console.log("💾 [Registration] Image URL saved to state");
+        setUploadingImage(false);
+      } catch (error) {
+        console.error("❌ [Registration] Image upload failed:");
+        console.error("   Error:", error);
+        console.error("   Error message:", error.message);
+        
+        // Check for network errors
+        if (error.message.includes("fetch") || error.message.includes("network") || error.message.includes("Failed to fetch")) {
+          console.error("🌐 [Registration] Network error detected during image upload");
+        }
+        
+        toast({
+          description: error.message || "Failed to upload image. Please check your internet connection and try again.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+        setLoading(false);
+        setUploadingImage(false);
+        return;
+      }
+    } else if (pic) {
+      console.log("✅ [Registration] Image already uploaded:", pic);
+    } else {
+      console.log("ℹ️ [Registration] No image selected, using default avatar");
+    }
+    
     // Validation
+    console.log("✔️ [Registration] Validating form fields...");
     if (!name || !email || !password || !specialty || !bio || !certificateUrl || 
         !licenseNumber || !yearsOfExperience || !hospital || !consultationFee) {
+      console.warn("⚠️ [Registration] Validation failed - missing required fields");
+      console.warn("   Missing fields:", {
+        name: !name,
+        email: !email,
+        password: !password,
+        specialty: !specialty,
+        bio: !bio,
+        certificateUrl: !certificateUrl,
+        licenseNumber: !licenseNumber,
+        yearsOfExperience: !yearsOfExperience,
+        hospital: !hospital,
+        consultationFee: !consultationFee,
+      });
       toast({
         description: "Please fill all required fields!",
         status: "warning",
@@ -89,9 +244,12 @@ const DoctorRegister = () => {
       setLoading(false);
       return;
     }
+    console.log("✅ [Registration] All required fields validated");
 
+    console.log("🔐 [Registration] Validating password format...");
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
+      console.warn("⚠️ [Registration] Password validation failed");
       toast({
         description: "Password must be at least 8 characters with uppercase, lowercase, number, and special character",
         status: "warning",
@@ -102,8 +260,11 @@ const DoctorRegister = () => {
       setLoading(false);
       return;
     }
+    console.log("✅ [Registration] Password format validated");
 
+    console.log("🔢 [Registration] Validating numeric fields...");
     if (isNaN(yearsOfExperience) || parseInt(yearsOfExperience) < 0) {
+      console.warn("⚠️ [Registration] Invalid years of experience:", yearsOfExperience);
       toast({
         description: "Years of experience must be a valid number",
         status: "warning",
@@ -116,6 +277,7 @@ const DoctorRegister = () => {
     }
 
     if (isNaN(consultationFee) || parseFloat(consultationFee) < 0) {
+      console.warn("⚠️ [Registration] Invalid consultation fee:", consultationFee);
       toast({
         description: "Consultation fee must be a valid number",
         status: "warning",
@@ -126,59 +288,178 @@ const DoctorRegister = () => {
       setLoading(false);
       return;
     }
+    console.log("✅ [Registration] Numeric fields validated");
 
     try {
+      console.log("🌐 [Registration] Checking network connectivity...");
+      console.log("📡 [Registration] Preparing API request...");
+      
       const config = {
         headers: {
           "Content-type": "application/json",
         },
+        timeout: 60000, // 60 seconds timeout for registration (longer for image processing)
       };
+      console.log("📋 [Registration] Request headers:", config.headers);
+      console.log("⏱️ [Registration] Request timeout set to:", config.timeout, "ms");
+
+      // Prepare registration data with Cloudinary URL
+      const registrationData = {
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+        pic: pic || "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+        specialty: specialty.trim(),
+        bio: bio.trim(),
+        certificateUrl: certificateUrl.trim(),
+        licenseNumber: licenseNumber.trim(),
+        yearsOfExperience: parseInt(yearsOfExperience),
+        hospital: hospital.trim(),
+        consultationFee: parseFloat(consultationFee),
+      };
+
+      // Validate data types before sending
+      console.log("📤 [Registration] Sending registration request to API...");
+      console.log("   URL: https://chtv2-bn.onrender.com/api/doctor/register");
+      console.log("   Method: POST");
+      console.log("   Data:", {
+        ...registrationData,
+        password: "***", // Don't log password
+      });
+      console.log("   Pic URL:", registrationData.pic);
+      console.log("   Data types check:");
+      console.log("     - yearsOfExperience:", typeof registrationData.yearsOfExperience, registrationData.yearsOfExperience);
+      console.log("     - consultationFee:", typeof registrationData.consultationFee, registrationData.consultationFee);
+      console.log("     - All strings trimmed:", Object.keys(registrationData).filter(k => k !== 'password' && k !== 'pic').every(k => typeof registrationData[k] === 'string' ? registrationData[k] === registrationData[k].trim() : true));
+
+      const requestStartTime = Date.now();
+      console.log("⏱️ [Registration] Request start time:", new Date().toISOString());
 
       const { data } = await axios.post(
         "https://chtv2-bn.onrender.com/api/doctor/register",
-        {
-          name,
-          email,
-          password,
-          pic: pic || "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
-          specialty,
-          bio,
-          certificateUrl,
-          licenseNumber,
-          yearsOfExperience: parseInt(yearsOfExperience),
-          hospital,
-          consultationFee: parseFloat(consultationFee),
-        },
+        registrationData,
         config
       );
 
-      console.log("Doctor registration data:", data);
+      const requestEndTime = Date.now();
+      const requestDuration = requestEndTime - requestStartTime;
+      console.log("⏱️ [Registration] Request completed in", requestDuration, "ms");
+      console.log("✅ [Registration] API response received successfully");
+      console.log("📦 [Registration] Response data:", data);
+
+      // Show success toast with API message
+      console.log("🎉 [Registration] Registration successful!");
+      console.log("📝 [Registration] Success message:", data.message);
+      
+      toast({
+        title: "Registration Successful!",
+        description: data.message || "Doctor registration successful! Your account is pending admin approval. You will be notified once approved.",
+        status: "success",
+        duration: 8000,
+        isClosable: true,
+        position: "bottom",
+      });
+
+      setLoading(false);
+      console.log("🔄 [Registration] Redirecting to login page in 2 seconds...");
+      
+      // Redirect to login after a short delay
+      setTimeout(() => {
+        console.log("➡️ [Registration] Navigating to /login");
+        history("/login");
+      }, 2000);
+    } catch (error) {
+      const requestEndTime = Date.now();
+      console.error("❌ [Registration] Error occurred during registration");
+      console.error("   Error type:", error.constructor.name);
+      console.error("   Error message:", error.message);
+      console.error("   Error code:", error.code);
+      console.error("   Error stack:", error.stack);
+      
+      // Network error detection
+      if (error.message === "Network Error" || 
+          error.message.includes("Network") || 
+          error.message.includes("network") ||
+          error.message.includes("Failed to fetch") ||
+          error.message.includes("fetch") ||
+          error.code === "ERR_NETWORK" ||
+          error.code === "ECONNABORTED") {
+        console.error("🌐 [Registration] NETWORK ERROR DETECTED:");
+        console.error("   - This usually means:");
+        console.error("     1. No internet connection");
+        console.error("     2. Server is down or unreachable");
+        console.error("     3. CORS issue");
+        console.error("     4. Firewall blocking the request");
+        console.error("   - Check your internet connection");
+        console.error("   - Verify the API endpoint is accessible");
+      }
+      
+      // Timeout error
+      if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
+        console.error("⏱️ [Registration] REQUEST TIMEOUT:");
+        console.error("   - The request took too long to complete");
+        console.error("   - Server might be slow or overloaded");
+      }
+      
+      // HTTP error responses
+      if (error.response) {
+        console.error("📡 [Registration] HTTP Error Response:");
+        console.error("   Status:", error.response.status);
+        console.error("   Status Text:", error.response.statusText);
+        console.error("   Headers:", error.response.headers);
+        console.error("   Data:", error.response.data);
+        
+        // Log validation errors if present
+        if (error.response.data?.errors) {
+          console.error("   Validation Errors:", error.response.data.errors);
+        }
+        if (error.response.data?.details) {
+          console.error("   Error Details:", error.response.data.details);
+        }
+      } else if (error.request) {
+        console.error("📡 [Registration] Request was made but no response received:");
+        console.error("   Request:", error.request);
+        console.error("   - This usually indicates a network issue");
+      }
+      
+      // Extract error message from API response with more details
+      let errorMessage = "An error occurred during registration. Please check your internet connection and try again.";
+      
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        // Try multiple fields for error message
+        errorMessage = errorData.message || 
+                      errorData.error || 
+                      errorData.details ||
+                      error.message;
+        
+        // Add validation errors if present
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          const validationErrors = errorData.errors.map(e => e.message || e).join(", ");
+          errorMessage = `${errorMessage} ${validationErrors ? `(${validationErrors})` : ""}`;
+        } else if (errorData.errors && typeof errorData.errors === 'object') {
+          const validationErrors = Object.entries(errorData.errors)
+            .map(([field, msg]) => `${field}: ${msg}`)
+            .join(", ");
+          errorMessage = `${errorMessage} ${validationErrors ? `(${validationErrors})` : ""}`;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      console.error("💬 [Registration] Error message to display:", errorMessage);
 
       toast({
-        description: data.message || "Doctor registration successful! Your account is pending admin approval.",
-        status: "success",
+        title: "Registration Failed",
+        description: errorMessage,
+        status: "error",
         duration: 7000,
         isClosable: true,
         position: "bottom",
       });
-
+      
       setLoading(false);
-      history("/login");
-    } catch (error) {
-      console.log("Registration error:", error);
-      console.log("Error response:", error.response);
-      console.log("Error response data:", error.response?.data);
-
-      const errorMessage = error.response?.data?.message || "An error occurred during registration";
-
-      toast({
-        description: errorMessage,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
-      setLoading(false);
+      console.log("🏁 [Registration] Registration process ended with error");
     }
   };
 
@@ -453,7 +734,7 @@ const DoctorRegister = () => {
                     <NumberInputField
                       placeholder="Years of Experience"
                       onChange={(e) => setYearsOfExperience(e.target.value)}
-                      className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                      className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                     />
                   </NumberInput>
                 </InputGroup>
@@ -474,7 +755,7 @@ const DoctorRegister = () => {
                     placeholder="Hospital/Clinic Name"
                     onChange={(e) => setHospital(e.target.value)}
                     value={hospital}
-                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                    className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                   />
                 </InputGroup>
               </FormControl>
@@ -494,16 +775,39 @@ const DoctorRegister = () => {
                     <NumberInputField
                       placeholder="Consultation Fee"
                       onChange={(e) => setConsultationFee(e.target.value)}
-                      className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                      className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                     />
                   </NumberInput>
                 </InputGroup>
               </FormControl>
             </motion.div>
 
-            {/* Profile Picture URL (Optional) */}
+            {/* Profile Picture Upload (Optional) */}
             <motion.div variants={itemVariants}>
               <FormControl id="pic">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Profile Picture (Optional)
+                </label>
+                
+                {/* Image Preview */}
+                {(imagePreview || pic) && (
+                  <div className="mb-3 flex items-center gap-4">
+                    <Image
+                      src={imagePreview || pic}
+                      alt="Profile preview"
+                      className="w-20 h-20 rounded-full object-cover border-2 border-blue-500"
+                    />
+                    {pic && (
+                      <div className="flex-1">
+                        <p className="text-xs text-green-600 dark:text-green-400 font-medium">
+                          ✓ Image uploaded successfully
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* File Input */}
                 <InputGroup className="group">
                   <InputLeftElement pointerEvents="none" className="pl-3">
                     <Box
@@ -512,12 +816,33 @@ const DoctorRegister = () => {
                     />
                   </InputLeftElement>
                   <Input
-                    placeholder="Profile Picture URL (Optional)"
-                    onChange={(e) => setPic(e.target.value)}
-                    value={pic}
-                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    onChange={handleImageSelect}
+                    className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300"
                   />
                 </InputGroup>
+                
+                {/* Upload Button */}
+                {selectedImage && !pic && (
+                  <Button
+                    size="sm"
+                    colorScheme="blue"
+                    onClick={handleImageUpload}
+                    isLoading={uploadingImage}
+                    loadingText="Uploading..."
+                    className="mt-2 w-full flex items-center justify-center gap-2"
+                  >
+                    {uploadingImage ? (
+                      <>
+                        <Spinner size="sm" />
+                        <span>Uploading...</span>
+                      </>
+                    ) : (
+                      "Upload Image"
+                    )}
+                  </Button>
+                )}
               </FormControl>
             </motion.div>
 
@@ -528,13 +853,24 @@ const DoctorRegister = () => {
                 width="100%"
                 style={{
                   marginTop: 15,
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background: loading 
+                    ? "linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)" 
+                    : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                 }}
                 onClick={submitHandler}
                 isLoading={loading}
-                className="h-12 rounded-xl font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                loadingText="Registering..."
+                disabled={loading || uploadingImage}
+                className="h-12 rounded-xl font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Register as Doctor
+                {loading ? (
+                  <>
+                    <Spinner size="sm" color="white" />
+                    <span>Registering...</span>
+                  </>
+                ) : (
+                  "Register as Doctor"
+                )}
               </Button>
             </motion.div>
 
