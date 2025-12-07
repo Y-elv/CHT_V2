@@ -88,12 +88,27 @@
 
 .select {
   outline: none;
-  width: 70%;
+  width: 100%;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  background-color: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 16px;
+  height: 48px;
+  transition: all 0.3s ease;
+}
 
-  background-color: #e8e4ff;
-  border-radius: 5px;
+.select:hover {
+  border-color: #F7941D;
+  background-color: #fff;
+}
+
+.select:focus {
+  border-color: #F7941D;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(247,148,29,0.1);
 }
 .btn-continue {
   border: 1px solid #f3931e;
@@ -138,12 +153,40 @@ form {
   color: #555;
 }
 .modal-content {
-  width: 40vw;
-  height: 30vh;
+  width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  top: 5%;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Prevent modal overflow */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* Ensure modal content doesn't overflow */
+.ReactModal__Content {
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.ReactModal__Overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .btn-kh {
@@ -162,10 +205,17 @@ form {
 }
 
 .select-form {
-  width: 35vw;
+  width: 100%;
   display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-  gap: 3rem;
+@media screen and (min-width: 768px) {
+  .select-form {
+    flex-direction: row;
+    gap: 2rem;
+  }
 }
 
 .select-form-small {
@@ -174,43 +224,37 @@ form {
   flex-direction: column;
   gap: 3rem;
 }
-.layer1 img {
-  width: 25vw;
-  height: 35vh;
-}
-.layer2 img {
-  width: 7vw;
-  height: 15vh;
-}
-
-.layer3 img {
-  height: 26vh;
-}
-.layer4 img {
-  width: 13vw;
-  height: 45vh;
-}
-.layer5 img {
-  width: 13vw;
-  height: 30vh;
-}
-
-.layer6 img {
-  width: 53vw;
-  height: 40vh;
-}
-
-.layer7 img {
-  width: 10vw;
-  height: 20vh;
-}
+/* Decorative layer images - contained within modal */
+.layer1 img,
+.layer2 img,
+.layer3 img,
+.layer4 img,
+.layer5 img,
+.layer6 img,
+.layer7 img,
 .layer8 img {
-  width: 40vw;
-  height: 45vh;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Prevent layer images from overflowing modal */
+.layer1,
+.layer2,
+.layer3,
+.layer4,
+.layer5,
+.layer6,
+.layer7,
+.layer8 {
+  overflow: hidden;
+  pointer-events: none;
 }
 .calendar {
-  height: 60vh;
-  width: 55vw;
+  height: auto;
+  min-height: auto;
+  width: 100%;
+  max-width: 100%;
 }
 .pop-calendar {
   display: flex;
@@ -235,6 +279,25 @@ form {
   .cons-middle h2 {
     width: auto;
     height: auto;
+  }
+  
+  .modal-content {
+    padding: 16px;
+  }
+  
+  .select-form {
+    gap: 1.25rem;
+  }
+  
+  .layer1 img,
+  .layer2 img,
+  .layer3 img,
+  .layer4 img,
+  .layer5 img,
+  .layer6 img,
+  .layer7 img,
+  .layer8 img {
+    opacity: 0.3;
   }
 }
 
