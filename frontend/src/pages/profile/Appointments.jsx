@@ -57,7 +57,15 @@ const Appointments = () => {
       const response = await getUserAppointments(page, 20, selectedStatus);
       
       if (response && response.appointments) {
-        setAppointments(response.appointments);
+        // Sort appointments by newest first (using createdAt or date)
+        const sortedAppointments = [...response.appointments].sort((a, b) => {
+          // Try createdAt first (most accurate), then date, then fallback
+          const dateA = a.createdAt ? new Date(a.createdAt) : (a.date ? new Date(a.date) : new Date(0));
+          const dateB = b.createdAt ? new Date(b.createdAt) : (b.date ? new Date(b.date) : new Date(0));
+          return dateB - dateA; // Newest first (descending order)
+        });
+        
+        setAppointments(sortedAppointments);
         setTotalPages(response.totalPages || 1);
       } else {
         setAppointments([]);
@@ -144,6 +152,15 @@ const Appointments = () => {
 
   return (
     <>
+      <style>{`
+        .tab-container::-webkit-scrollbar {
+          display: none;
+        }
+        .tab-container {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
       <Navbar />
       <div className="min-h-[calc(100vh-80px)] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 overflow-hidden">
         <div className="flex h-[calc(100vh-80px)] overflow-hidden pb-0">
@@ -218,57 +235,60 @@ const Appointments = () => {
                 transition={{ delay: 0.1 }}
                 className="mb-6"
               >
-                <div className="flex flex-wrap gap-3">
+                <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 -mx-2 px-2 sm:mx-0 sm:px-0 tab-container">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedStatus('')}
-                    className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 ${
+                    className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
                       selectedStatus === ''
                         ? 'bg-gradient-to-r from-[#F7941D] to-[#FFA84D] text-white shadow-lg'
                         : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 hover:border-[#F7941D] dark:hover:border-[#F7941D]'
                     }`}
                   >
-                    All
+                    All Appointments
                   </motion.button>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedStatus('pending')}
-                    className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                    className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-300 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap flex-shrink-0 ${
                       selectedStatus === 'pending'
                         ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-lg'
                         : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 hover:border-yellow-400 dark:hover:border-yellow-400'
                     }`}
                   >
-                    <RiLoader4Line />
-                    Pending
+                    <RiLoader4Line className="text-sm sm:text-base" />
+                    <span className="hidden sm:inline">Pending</span>
+                    <span className="sm:hidden">Pending</span>
                   </motion.button>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedStatus('approved')}
-                    className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                    className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-300 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap flex-shrink-0 ${
                       selectedStatus === 'approved'
                         ? 'bg-gradient-to-r from-green-400 to-green-500 text-white shadow-lg'
                         : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 hover:border-green-400 dark:hover:border-green-400'
                     }`}
                   >
-                    <RiCheckboxCircleLine />
-                    Approved
+                    <RiCheckboxCircleLine className="text-sm sm:text-base" />
+                    <span className="hidden sm:inline">Approved</span>
+                    <span className="sm:hidden">Approved</span>
                   </motion.button>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedStatus('cancelled')}
-                    className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                    className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-300 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap flex-shrink-0 ${
                       selectedStatus === 'cancelled'
                         ? 'bg-gradient-to-r from-red-400 to-red-500 text-white shadow-lg'
                         : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 hover:border-red-400 dark:hover:border-red-400'
                     }`}
                   >
-                    <RiCloseCircleLine />
-                    Cancelled
+                    <RiCloseCircleLine className="text-sm sm:text-base" />
+                    <span className="hidden sm:inline">Cancelled</span>
+                    <span className="sm:hidden">Cancelled</span>
                   </motion.button>
                 </div>
               </motion.div>

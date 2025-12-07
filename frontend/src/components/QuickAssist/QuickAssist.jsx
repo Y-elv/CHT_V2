@@ -16,16 +16,27 @@ import {
   useDisclosure,
   useMediaQuery,
 } from "@chakra-ui/react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { RiQuestionAnswerLine, RiSendPlaneFill, RiCloseLine, RiRobotLine } from "react-icons/ri";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+import {
+  RiQuestionAnswerLine,
+  RiSendPlaneFill,
+  RiCloseLine,
+  RiRobotLine,
+} from "react-icons/ri";
 import { askQuestion } from "../../services/quickAssistService";
 
 const QuickAssist = () => {
   const location = useLocation();
   const [isMobile] = useMediaQuery("(max-width: 768px)");
-  
+
   // Hide on login, register, and forgot-password pages
-  const hiddenPaths = ['/login', '/register', '/forgot-password'];
+  const hiddenPaths = ["/login", "/register", "/forgot-password"];
   const shouldHide = hiddenPaths.includes(location.pathname);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [question, setQuestion] = useState("");
@@ -37,10 +48,10 @@ const QuickAssist = () => {
   const modalContentRef = useRef(null);
   const modalCardRef = useRef(null);
 
-  const bgColor = useColorModeValue("white", "gray.800");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const bgColor = "white";
+  const borderColor = useColorModeValue("orange.200", "orange.300");
   const headerBg = "linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)";
-  const inputBg = useColorModeValue("gray.50", "gray.700");
+  const inputBg = useColorModeValue("orange.50", "orange.50");
 
   // 3D card rotation for modal
   const x = useMotionValue(0);
@@ -183,16 +194,16 @@ const QuickAssist = () => {
       <motion.div
         initial={{ scale: 0, opacity: 0, rotate: -180 }}
         animate={{ scale: 1, opacity: 1, rotate: 0 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 300, 
+        transition={{
+          type: "spring",
+          stiffness: 300,
           damping: 20,
-          delay: 0.2
+          delay: 0.2,
         }}
-        whileHover={{ 
+        whileHover={{
           scale: 1.15,
           rotate: [0, -5, 5, -5, 0],
-          transition: { duration: 0.5 }
+          transition: { duration: 0.5 },
         }}
         whileTap={{ scale: 0.9 }}
         style={{
@@ -226,13 +237,20 @@ const QuickAssist = () => {
             boxShadow="0 8px 24px rgba(247, 148, 29, 0.4), 0 0 20px rgba(247, 148, 29, 0.2)"
             _hover={{
               bgGradient: "linear-gradient(135deg, #FFA84D 0%, #F7941D 100%)",
-              boxShadow: "0 12px 32px rgba(247, 148, 29, 0.6), 0 0 30px rgba(247, 148, 29, 0.4)",
+              boxShadow:
+                "0 12px 32px rgba(247, 148, 29, 0.6), 0 0 30px rgba(247, 148, 29, 0.4)",
               transform: "translateY(-4px) translateZ(20px)",
             }}
             _active={{
               transform: "translateY(0px) translateZ(0px)",
             }}
-            leftIcon={isMobile ? <RiRobotLine size={24} /> : <RiQuestionAnswerLine size={24} />}
+            leftIcon={
+              isMobile ? (
+                <RiRobotLine size={24} />
+              ) : (
+                <RiQuestionAnswerLine size={24} />
+              )
+            }
             px={isMobile ? 4 : 6}
             py={isMobile ? 4 : 6}
             fontSize={isMobile ? "0" : "md"}
@@ -291,14 +309,26 @@ const QuickAssist = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 50, rotateX: 20, rotateY: -10 }}
+              initial={{
+                opacity: 0,
+                scale: 0.8,
+                y: 50,
+                rotateX: 20,
+                rotateY: -10,
+              }}
               animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0, rotateY: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 50, rotateX: 20, rotateY: -10 }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 300, 
+              exit={{
+                opacity: 0,
+                scale: 0.8,
+                y: 50,
+                rotateX: 20,
+                rotateY: -10,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
                 damping: 25,
-                duration: 0.5
+                duration: 0.5,
               }}
               style={{
                 transformStyle: "preserve-3d",
@@ -319,7 +349,7 @@ const QuickAssist = () => {
                 display="flex"
                 flexDirection="column"
                 border="2px solid"
-                borderColor={useColorModeValue("orange.200", "orange.800")}
+                borderColor="orange.200"
                 style={{
                   transformStyle: "preserve-3d",
                   rotateX,
@@ -327,195 +357,214 @@ const QuickAssist = () => {
                   transformPerspective: 1000,
                 }}
               >
-          {/* Orange Header */}
-          <Box
-            bgGradient={headerBg}
-            borderTopRadius="2xl"
-            p={4}
-            color="white"
-            position="relative"
-          >
-            <HStack justify="space-between" align="center">
-              <HStack spacing={3}>
+                {/* Orange Header */}
                 <Box
-                  p={2}
-                  bg="whiteAlpha.200"
-                  borderRadius="full"
-                  backdropFilter="blur(10px)"
-                >
-                  <RiQuestionAnswerLine size={24} />
-                </Box>
-                <VStack align="start" spacing={0}>
-                  <Text fontSize="lg" fontWeight="bold">
-                    Funhealth Assist
-                  </Text>
-                  <Text fontSize="xs" color="whiteAlpha.800">
-                    Ask me anything
-                  </Text>
-                </VStack>
-              </HStack>
-              <HStack spacing={2}>
-                {messages.length > 0 && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    color="white"
-                    _hover={{ bg: "whiteAlpha.200" }}
-                    onClick={clearChat}
-                    fontSize="xs"
-                  >
-                    Clear
-                  </Button>
-                )}
-                <IconButton
-                  aria-label="Close"
-                  icon={<RiCloseLine />}
-                  size="sm"
-                  variant="ghost"
+                  bgGradient={headerBg}
+                  borderTopRadius="2xl"
+                  p={4}
                   color="white"
-                  _hover={{ bg: "whiteAlpha.200" }}
-                  onClick={onClose}
-                />
-              </HStack>
-            </HStack>
-          </Box>
-
-          {/* Messages Area */}
-          <Box
-            p={0}
-            flex={1}
-            overflowY="auto"
-            css={{
-              "&::-webkit-scrollbar": {
-                width: "6px",
-              },
-              "&::-webkit-scrollbar-track": {
-                background: "transparent",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                background: useColorModeValue("#F7941D", "#FFA84D"),
-                borderRadius: "3px",
-              },
-            }}
-          >
-            <VStack
-              spacing={4}
-              p={4}
-              align="stretch"
-              minH="300px"
-              maxH="400px"
-            >
-              {messages.length === 0 ? (
-                <VStack spacing={3} py={8} color="gray.500">
-                  <RiQuestionAnswerLine size={48} />
-                  <Text fontSize="sm" textAlign="center">
-                    Start a conversation by asking a question below
-                  </Text>
-                </VStack>
-              ) : (
-                <AnimatePresence>
-                  {messages.map((message) => (
-                    <motion.div
-                      key={message.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {message.type === "loading" ? (
-                        <HStack spacing={2} justify="center" py={4}>
-                          <Spinner size="sm" color="#F7941D" />
-                          <Text fontSize="sm" color="gray.500">
-                            {message.text}
-                          </Text>
-                        </HStack>
-                      ) : message.type === "error" ? (
-                        <Alert status="error" borderRadius="md" fontSize="sm">
-                          <AlertIcon />
-                          {message.text}
-                        </Alert>
-                      ) : message.type === "user" ? (
-                        <Box
-                          alignSelf="flex-end"
-                          maxW="80%"
-                          bgGradient="linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)"
+                  position="relative"
+                >
+                  <HStack justify="space-between" align="center">
+                    <HStack spacing={3}>
+                      <Box
+                        p={2}
+                        bg="whiteAlpha.200"
+                        borderRadius="full"
+                        backdropFilter="blur(10px)"
+                      >
+                        <RiQuestionAnswerLine size={24} />
+                      </Box>
+                      <VStack align="start" spacing={0}>
+                        <Text fontSize="lg" fontWeight="bold">
+                          Funhealth Assist
+                        </Text>
+                        <Text fontSize="xs" color="whiteAlpha.800">
+                          Ask me anything
+                        </Text>
+                      </VStack>
+                    </HStack>
+                    <HStack spacing={2}>
+                      {messages.length > 0 && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
                           color="white"
-                          p={3}
-                          borderRadius="lg"
-                          borderTopRightRadius="sm"
-                          boxShadow="sm"
+                          _hover={{ bg: "whiteAlpha.200" }}
+                          onClick={clearChat}
+                          fontSize="xs"
                         >
-                          <Text fontSize="sm" fontWeight="medium">
-                            {message.text}
-                          </Text>
-                        </Box>
-                      ) : (
-                        <Box
-                          alignSelf="flex-start"
-                          maxW="80%"
-                          bg={useColorModeValue("gray.100", "gray.700")}
-                          p={3}
-                          borderRadius="lg"
-                          borderTopLeftRadius="sm"
-                          boxShadow="sm"
-                        >
-                          <Text fontSize="sm" mb={2}>
-                            {message.text}
-                          </Text>
-                        </Box>
+                          Clear
+                        </Button>
                       )}
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              )}
-              <div ref={messagesEndRef} />
-            </VStack>
-          </Box>
+                      <IconButton
+                        aria-label="Close"
+                        icon={<RiCloseLine />}
+                        size="sm"
+                        variant="ghost"
+                        color="white"
+                        _hover={{ bg: "whiteAlpha.200" }}
+                        onClick={onClose}
+                      />
+                    </HStack>
+                  </HStack>
+                </Box>
 
-          <Divider />
+                {/* Messages Area */}
+                <Box
+                  p={0}
+                  flex={1}
+                  overflowY="auto"
+                  css={{
+                    "&::-webkit-scrollbar": {
+                      width: "6px",
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      background: "transparent",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      background: useColorModeValue("#F7941D", "#FFA84D"),
+                      borderRadius: "3px",
+                    },
+                  }}
+                >
+                  <VStack
+                    spacing={4}
+                    p={4}
+                    align="stretch"
+                    minH="300px"
+                    maxH="400px"
+                  >
+                    {messages.length === 0 ? (
+                      <VStack spacing={3} py={8} color="orange.400">
+                        <RiQuestionAnswerLine size={48} />
+                        <Text
+                          fontSize="sm"
+                          textAlign="center"
+                          color="orange.500"
+                          fontWeight="medium"
+                        >
+                          Start a conversation by asking a question below
+                        </Text>
+                      </VStack>
+                    ) : (
+                      <AnimatePresence>
+                        {messages.map((message) => (
+                          <motion.div
+                            key={message.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            {message.type === "loading" ? (
+                              <HStack spacing={2} justify="center" py={4}>
+                                <Spinner size="sm" color="#F7941D" />
+                                <Text
+                                  fontSize="sm"
+                                  color="orange.500"
+                                  fontWeight="medium"
+                                >
+                                  {message.text}
+                                </Text>
+                              </HStack>
+                            ) : message.type === "error" ? (
+                              <Alert
+                                status="error"
+                                borderRadius="md"
+                                fontSize="sm"
+                                bg="red.50"
+                                border="1px solid"
+                                borderColor="red.200"
+                              >
+                                <AlertIcon color="red.500" />
+                                <Text color="red.700">{message.text}</Text>
+                              </Alert>
+                            ) : message.type === "user" ? (
+                              <Box
+                                alignSelf="flex-end"
+                                maxW="80%"
+                                bgGradient="linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)"
+                                color="white"
+                                p={3}
+                                borderRadius="lg"
+                                borderTopRightRadius="sm"
+                                boxShadow="sm"
+                              >
+                                <Text fontSize="sm" fontWeight="medium">
+                                  {message.text}
+                                </Text>
+                              </Box>
+                            ) : (
+                              <Box
+                                alignSelf="flex-start"
+                                maxW="80%"
+                                bg="orange.50"
+                                p={3}
+                                borderRadius="lg"
+                                borderTopLeftRadius="sm"
+                                boxShadow="sm"
+                                border="1px solid"
+                                borderColor="orange.200"
+                              >
+                                <Text fontSize="sm" mb={2} color="gray.800">
+                                  {message.text}
+                                </Text>
+                              </Box>
+                            )}
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </VStack>
+                </Box>
 
-          {/* Input Area */}
-          <Box p={4} borderTop="1px solid" borderColor={borderColor}>
-            <HStack w="full" spacing={3}>
-              <Input
-                ref={inputRef}
-                placeholder="Type your question here..."
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                onKeyPress={handleKeyPress}
-                bg={inputBg}
-                borderRadius="lg"
-                border="2px solid"
-                borderColor={borderColor}
-                focusBorderColor="#F7941D"
-                _hover={{
-                  borderColor: "#F7941D",
-                }}
-                isDisabled={loading}
-                size="lg"
-              />
-              <IconButton
-                aria-label="Send message"
-                icon={<RiSendPlaneFill />}
-                bgGradient="linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)"
-                color="white"
-                _hover={{
-                  bgGradient: "linear-gradient(135deg, #FFA84D 0%, #F7941D 100%)",
-                  transform: "translateY(-2px)",
-                  boxShadow: "lg",
-                }}
-                _active={{
-                  transform: "translateY(0px)",
-                }}
-                onClick={handleSend}
-                isLoading={loading}
-                isDisabled={!question.trim() || loading}
-                size="lg"
-                borderRadius="lg"
-                boxShadow="sm"
-              />
-            </HStack>
-          </Box>
+                <Divider />
+
+                {/* Input Area */}
+                <Box p={4} borderTop="1px solid" borderColor="orange.200">
+                  <HStack w="full" spacing={3}>
+                    <Input
+                      ref={inputRef}
+                      placeholder="Type your question here..."
+                      value={question}
+                      onChange={(e) => setQuestion(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      bg={inputBg}
+                      borderRadius="lg"
+                      border="2px solid"
+                      borderColor="orange.200"
+                      focusBorderColor="#F7941D"
+                      _hover={{
+                        borderColor: "#F7941D",
+                      }}
+                      isDisabled={loading}
+                      size="lg"
+                    />
+                    <IconButton
+                      aria-label="Send message"
+                      icon={<RiSendPlaneFill />}
+                      bgGradient="linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)"
+                      color="white"
+                      _hover={{
+                        bgGradient:
+                          "linear-gradient(135deg, #FFA84D 0%, #F7941D 100%)",
+                        transform: "translateY(-2px)",
+                        boxShadow: "lg",
+                      }}
+                      _active={{
+                        transform: "translateY(0px)",
+                      }}
+                      onClick={handleSend}
+                      isLoading={loading}
+                      isDisabled={!question.trim() || loading}
+                      size="lg"
+                      borderRadius="lg"
+                      boxShadow="sm"
+                    />
+                  </HStack>
+                </Box>
               </Box>
             </motion.div>
           </Box>
@@ -526,4 +575,3 @@ const QuickAssist = () => {
 };
 
 export default QuickAssist;
-
