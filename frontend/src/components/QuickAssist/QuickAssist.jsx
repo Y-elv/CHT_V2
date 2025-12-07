@@ -14,13 +14,15 @@ import {
   AlertIcon,
   Divider,
   useDisclosure,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { RiQuestionAnswerLine, RiSendPlaneFill, RiCloseLine } from "react-icons/ri";
+import { RiQuestionAnswerLine, RiSendPlaneFill, RiCloseLine, RiRobotLine } from "react-icons/ri";
 import { askQuestion } from "../../services/quickAssistService";
 
 const QuickAssist = () => {
   const location = useLocation();
+  const [isMobile] = useMediaQuery("(max-width: 768px)");
   
   // Hide on login, register, and forgot-password pages
   const hiddenPaths = ['/login', '/register', '/forgot-password'];
@@ -217,7 +219,7 @@ const QuickAssist = () => {
         >
           <Button
             onClick={onOpen}
-            size="lg"
+            size={isMobile ? "lg" : "lg"}
             bgGradient="linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)"
             color="white"
             borderRadius="full"
@@ -230,14 +232,17 @@ const QuickAssist = () => {
             _active={{
               transform: "translateY(0px) translateZ(0px)",
             }}
-            leftIcon={<RiQuestionAnswerLine size={24} />}
-            px={6}
-            py={6}
-            fontSize="md"
+            leftIcon={isMobile ? <RiRobotLine size={24} /> : <RiQuestionAnswerLine size={24} />}
+            px={isMobile ? 4 : 6}
+            py={isMobile ? 4 : 6}
+            fontSize={isMobile ? "0" : "md"}
             fontWeight="semibold"
-            minW="auto"
+            minW={isMobile ? "64px" : "auto"}
+            w={isMobile ? "64px" : "auto"}
+            h={isMobile ? "64px" : "auto"}
             position="relative"
             overflow="visible"
+            aria-label={isMobile ? "Funhealth Assist" : undefined}
           >
             <motion.div
               style={{
@@ -259,7 +264,7 @@ const QuickAssist = () => {
                 ease: "easeInOut",
               }}
             />
-            Funhealth Assist
+            {!isMobile && "Funhealth Assist"}
           </Button>
         </motion.div>
       </motion.div>

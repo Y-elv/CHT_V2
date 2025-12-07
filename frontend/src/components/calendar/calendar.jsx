@@ -3,6 +3,8 @@ import "./calendar.css";
 import Modal from "react-modal";
 import axios from "../../config/axiosConfig";
 import submit from "../../assets/submit.png";
+import { motion } from "framer-motion";
+import { useToast } from "@chakra-ui/react";
 
 Modal.setAppElement("#root");
 
@@ -11,25 +13,73 @@ const CalendarInput = ({
   district,
   serviceName,
   doctorEmail,
+  onBookingSuccess,
 }) => {
+  const toast = useToast();
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedTime, setSelectedTime] = useState("");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isConfirm, setIsConfirm] = useState(false);
+  const [showNextButton, setShowNextButton] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleTimeChange = (event) => {
     setSelectedTime(event.target.value);
+    // Show Next button when both date and time are selected
+    if (selectedDays.length > 0 && event.target.value) {
+      setShowNextButton(true);
+    } else {
+      setShowNextButton(false);
+    }
+  };
+
+  const handleNextClick = () => {
+    if (selectedDays.length === 0) {
+      toast({
+        title: "Date Required",
+        description: "Please select a date first.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+    if (!selectedTime) {
+      toast({
+        title: "Time Required",
+        description: "Please select a time.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+    // Proceed to confirmation
+    handleConfirm(new Event("submit"));
   };
 
   const closeConfirm = () => {
     setIsConfirm(false);
+    // Call the callback if provided to close parent modal
+    if (onBookingSuccess) {
+      onBookingSuccess();
+    }
   };
 
   const handleDayClick = (day) => {
     if (selectedDays.includes(day)) {
       setSelectedDays(selectedDays.filter((d) => d !== day));
     } else {
-      setSelectedDays([...selectedDays, day]);
+      // Only allow one date selection at a time
+      setSelectedDays([day]);
+    }
+    // Show Next button when both date and time are selected
+    if (selectedTime && day) {
+      setShowNextButton(true);
+    } else if (!selectedTime) {
+      setShowNextButton(false);
     }
   };
 
@@ -44,10 +94,32 @@ const CalendarInput = ({
   };
 
   const handleConfirm = async (event) => {
-    event.preventDefault();
+    if (event && event.preventDefault) {
+      event.preventDefault();
+    }
+
+    if (selectedDays.length === 0 || !selectedTime) {
+      toast({
+        title: "Incomplete Selection",
+        description: "Please select both a date and time.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
     const formattedSelectedDays = formatSelectedDays();
-    console.log(`You have selected: ${formattedSelectedDays.join(", ")}`);
-    console.log(`the time for your appointment ${selectedTime}`);
+
+    console.log("📅 [Calendar] Booking submission started:");
+    console.log("   Selected dates:", formattedSelectedDays);
+    console.log("   Selected time:", selectedTime);
+    console.log("   Doctor:", professionalName);
+    console.log("   Doctor email:", doctorEmail);
+    console.log("   District:", district);
+    console.log("   Service:", serviceName);
 
     const requestBody = {
       ProfessionalName: professionalName,
@@ -59,30 +131,89 @@ const CalendarInput = ({
     };
 
     try {
-      const user = JSON.parse(localStorage.getItem("userInfo"));
-      const token = user.token;
-      console.log("token:", token);
+      console.log("📤 [Calendar] Sending booking request...");
+      console.log("   Request body:", requestBody);
+
+      // Try multiple token sources
+      let token = localStorage.getItem("token");
+      if (!token) {
+        token = localStorage.getItem("cht_token");
+      }
+      if (!token) {
+        const user = JSON.parse(localStorage.getItem("userInfo") || "null");
+        if (user && user.token) {
+          token = user.token;
+        }
+      }
+
+      console.log("🔑 [Calendar] Token found:", !!token);
+
+      if (!token) {
+        throw new Error("No authentication token found. Please login again.");
+      }
+
       const response = await axios.post(
         "https://chtv2-bn.onrender.com/api/v2/user/booking",
         requestBody,
         {
           headers: {
             "Content-type": "application/json",
-            Authorization: `${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
+      console.log("✅ [Calendar] Booking successful!");
+      console.log("   Response status:", response.status);
+      console.log("   Response data:", response.data);
+
       if (response.status >= 200 && response.status < 300) {
-        console.log("Booking successful:", response.data);
         setSelectedDays([]);
         setSelectedTime("");
+        setShowNextButton(false);
         setIsConfirm(true);
+
+        toast({
+          title: "Booking Successful!",
+          description:
+            "Your appointment request has been sent. Check your email for confirmation.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
       } else {
-        console.error("Error submitting booking:", response.statusText);
+        console.error(
+          "❌ [Calendar] Unexpected response status:",
+          response.status
+        );
+        throw new Error("Booking failed. Please try again.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("❌ [Calendar] Booking error:");
+      console.error("   Error type:", error.constructor.name);
+      console.error("   Error message:", error.message);
+      console.error("   Error code:", error.code);
+
+      if (error.response) {
+        console.error("   HTTP Status:", error.response.status);
+        console.error("   Response data:", error.response.data);
+      }
+
+      toast({
+        title: "Booking Failed",
+        description:
+          error.response?.data?.message ||
+          error.message ||
+          "Failed to book appointment. Please try again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    } finally {
+      setIsSubmitting(false);
+      console.log("🏁 [Calendar] Booking process finished");
     }
   };
 
@@ -126,17 +257,48 @@ const CalendarInput = ({
 
   return (
     <>
-      <form onSubmit={handleConfirm}>
-        <div className="calendar-input">
-          <h6>Pick from a vast range of our doctors at any time of the day</h6>
-          <div className="calendar-header">
+      <form
+        onSubmit={handleConfirm}
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <div
+          className="calendar-input"
+          style={{
+            width: "100%",
+            maxWidth: "500px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+          }}
+        >
+          <div
+            className="calendar-header"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: "0",
+              padding: "0 4px",
+              gap: "8px",
+            }}
+          >
             <button onClick={handlePrevMonth} className="nav-btn">
               <i
                 className="fas fa-chevron-left"
                 style={{ fontSize: "12px" }}
               ></i>
             </button>
-            <div className="current-date ">
+            <div
+              className="current-date"
+              style={{ flex: 1, textAlign: "center" }}
+            >
               {currentDate.toLocaleString("default", { month: "long" })}{" "}
               {currentDate.getFullYear()}{" "}
               {currentDate.toLocaleString("default", { weekday: "long" })}
@@ -148,28 +310,166 @@ const CalendarInput = ({
               ></i>
             </button>
           </div>
-          <div className="days">{renderDays()}</div>
-          <div className="selected-days">
-            <strong>Selected Days:</strong> {selectedDays.join(", ")}
+          {/* Weekday labels */}
+          <div
+            style={{
+              width: "100%",
+              display: "grid",
+              gridTemplateColumns: "repeat(7, 1fr)",
+              gap: "6px",
+              marginBottom: "8px",
+              padding: "0 4px",
+            }}
+          >
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+              (day, index) => (
+                <div
+                  key={index}
+                  style={{
+                    textAlign: "center",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    color: "#64748b",
+                    padding: "8px 4px",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  {day}
+                </div>
+              )
+            )}
           </div>
-          <label>
-            Select Time:
+          <div
+            className="days"
+            style={{
+              width: "100%",
+              display: "grid",
+              gridTemplateColumns: "repeat(7, 1fr)",
+              gap: "6px",
+              marginBottom: "0",
+            }}
+          >
+            {renderDays()}
+          </div>
+          {selectedDays.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="selected-days"
+              style={{
+                textAlign: "center",
+                marginBottom: "0",
+                fontSize: "14px",
+                color: "#334155",
+                padding: "8px 16px",
+                background: "rgba(247,148,29,0.1)",
+                borderRadius: "8px",
+                border: "1px solid rgba(247,148,29,0.2)",
+              }}
+            >
+              <strong>Selected Date:</strong> {selectedDays[0]}{" "}
+              {currentDate.toLocaleString("default", { month: "long" })},{" "}
+              {currentDate.getFullYear()}
+            </motion.div>
+          )}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            style={{ marginTop: "0", width: "100%" }}
+          >
+            <label
+              style={{
+                display: "block",
+                fontSize: "16px",
+                fontWeight: 600,
+                color: "#334155",
+                marginBottom: "12px",
+              }}
+            >
+              Select Time:
+            </label>
             <input
               type="time"
               value={selectedTime}
               onChange={handleTimeChange}
+              onClick={(e) => {
+                e.target.showPicker?.();
+              }}
+              required
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                borderRadius: "12px",
+                border: "2px solid #e2e8f0",
+                fontSize: "16px",
+                backgroundColor: "#f8fafc",
+                color: "#1e293b",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                outline: "none",
+                WebkitAppearance: "none",
+                MozAppearance: "textfield",
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "#F7941D";
+                e.target.style.backgroundColor = "#fff";
+                e.target.style.boxShadow = "0 0 0 3px rgba(247,148,29,0.1)";
+                // Open time picker on focus for better UX
+                if (e.target.showPicker) {
+                  e.target.showPicker();
+                }
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "#e2e8f0";
+                e.target.style.backgroundColor = "#f8fafc";
+                e.target.style.boxShadow = "none";
+              }}
             />
-          </label>
-          <button
-            type="submit"
-            value="Submit"
-            className={
-              window.innerWidth <= 600 ? "btn-confirm-small" : "btn-confirm"
-            }
-          >
-            <span className="btn-text">Confirm</span>
-            <img src={submit} alt="Submit" className="submit-image" />
-          </button>
+          </motion.div>
+
+          {showNextButton && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              style={{
+                display: "flex",
+                gap: "12px",
+                marginTop: "24px",
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
+              <motion.button
+                type="button"
+                onClick={handleNextClick}
+                disabled={isSubmitting}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                style={{
+                  background:
+                    "linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "12px",
+                  padding: "14px 32px",
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  cursor: isSubmitting ? "not-allowed" : "pointer",
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 4px 12px rgba(247,148,29,0.25)",
+                  opacity: isSubmitting ? 0.7 : 1,
+                  width: "100%",
+                  maxWidth: "300px",
+                }}
+              >
+                {isSubmitting ? "Processing..." : "Next →"}
+              </motion.button>
+            </motion.div>
+          )}
         </div>
       </form>
 
@@ -178,26 +478,145 @@ const CalendarInput = ({
         onRequestClose={closeConfirm}
         style={{
           overlay: {
-            backgroundColor: "#1F2633",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 2000,
           },
           content: {
             color: "black",
-            backgroundColor: "#B8C2D7",
-            height: "50vh",
-            width: window.innerWidth <= 650 ? "80vw" : "95vw",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            top: "20%",
-            right: "50%",
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,247,238,0.98) 40%, rgba(238,240,255,0.98) 100%)",
+            position: "relative",
+            borderRadius: "24px",
+            border: "none",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+            padding: 0,
+            margin: "auto",
+            width: "90%",
+            maxWidth: "500px",
+            height: "auto",
+            minHeight: "300px",
+            overflow: "hidden",
+            inset: "auto",
+            top: "auto",
+            left: "auto",
+            right: "auto",
+            bottom: "auto",
+            transform: "none",
           },
         }}
       >
-        <p style={{ fontSize: "medium" }}>
-          Hoolay !! Your meet up request has been received And Your doctor has
-          Been notified. Check your email for confirmation
-        </p>
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          onClick={closeConfirm}
+          style={{
+            position: "absolute",
+            top: "20px",
+            right: "20px",
+            background: "rgba(255,255,255,0.9)",
+            border: "none",
+            borderRadius: "50%",
+            width: "40px",
+            height: "40px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            fontSize: "20px",
+            color: "#64748b",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            transition: "all 0.3s ease",
+          }}
+          whileHover={{ scale: 1.1, backgroundColor: "#fff" }}
+          whileTap={{ scale: 0.95 }}
+        >
+          ×
+        </motion.button>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          style={{
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "20px",
+            padding: window.innerWidth <= 650 ? "24px" : "40px",
+            width: "100%",
+          }}
+        >
+          <div
+            style={{
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "40px",
+              color: "white",
+              boxShadow: "0 10px 30px rgba(247,148,29,0.3)",
+            }}
+          >
+            ✓
+          </div>
+          <h3
+            style={{
+              fontSize: "24px",
+              fontWeight: 700,
+              margin: 0,
+              background:
+                "linear-gradient(135deg, #F7941D 0%, #FFA84D 50%, #2B2F92 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            Booking Successful!
+          </h3>
+          <p
+            style={{
+              fontSize: "16px",
+              color: "#64748b",
+              lineHeight: 1.6,
+              margin: 0,
+            }}
+          >
+            Your meet up request has been received and your doctor has been
+            notified. Check your email for confirmation.
+          </p>
+          <motion.button
+            onClick={closeConfirm}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            style={{
+              background: "linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)",
+              color: "white",
+              border: "none",
+              borderRadius: "12px",
+              padding: "12px 32px",
+              fontSize: "16px",
+              fontWeight: 600,
+              cursor: "pointer",
+              marginTop: "12px",
+              boxShadow: "0 4px 12px rgba(247,148,29,0.25)",
+            }}
+          >
+            Close
+          </motion.button>
+        </motion.div>
       </Modal>
     </>
   );
