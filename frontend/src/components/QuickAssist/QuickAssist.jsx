@@ -536,8 +536,16 @@ const QuickAssist = () => {
                       border="2px solid"
                       borderColor="orange.200"
                       focusBorderColor="#F7941D"
+                      color="gray.800"
+                      _placeholder={{
+                        color: "gray.400",
+                      }}
                       _hover={{
                         borderColor: "#F7941D",
+                      }}
+                      _focus={{
+                        borderColor: "#F7941D",
+                        bg: "white",
                       }}
                       isDisabled={loading}
                       size="lg"
