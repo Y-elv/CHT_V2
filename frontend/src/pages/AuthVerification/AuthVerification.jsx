@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Box,
@@ -25,12 +25,24 @@ const AuthVerification = () => {
   const setIsLoggedIn = useBadgeStore((state) => state.setIsLoggedIn);
   const [status, setStatus] = useState("processing"); // processing, success, error
   const [message, setMessage] = useState("Authenticating User...");
+  
+  // Use ref to track if toast has already been shown (prevent duplicates)
+  const toastShownRef = useRef(false);
+  const processingStartedRef = useRef(false);
 
   const bgColor = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.700", "gray.200");
   const spinnerColor = useColorModeValue("blue.500", "blue.300");
 
   useEffect(() => {
+    // Prevent multiple executions
+    if (processingStartedRef.current) {
+      console.log("⚠️ [Auth Callback] Processing already started, skipping duplicate execution");
+      return;
+    }
+    
+    processingStartedRef.current = true;
+    
     const processAuthCallback = async () => {
       try {
         console.log("🔵 [Auth Callback] Starting authentication callback processing...");
@@ -349,15 +361,22 @@ const AuthVerification = () => {
         setStatus("success");
         setMessage("Authentication successful! Redirecting...");
 
-        // Show only one toast for login success
-        toast({
-          title: "Login Successful",
-          description: "Welcome back!",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-          position: "bottom",
-        });
+        // Show only one toast for login success (prevent duplicates)
+        if (!toastShownRef.current) {
+          console.log("🎉 [Auth Callback] Showing login success toast");
+          toastShownRef.current = true;
+          toast({
+            title: "Login Successful",
+            description: "Welcome back!",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            position: "bottom",
+            id: "login-success-toast", // Unique ID to prevent duplicates
+          });
+        } else {
+          console.log("⚠️ [Auth Callback] Toast already shown, skipping duplicate");
+        }
 
         // Determine redirect path based on role
         const role = normalizedUser.role;
@@ -422,7 +441,14 @@ const AuthVerification = () => {
     };
 
     processAuthCallback();
-  }, [searchParams, navigate, toast, authLogin, setProfile, setIsLoggedIn]);
+    
+    // Cleanup function
+    return () => {
+      // Reset refs if component unmounts (shouldn't happen, but safety measure)
+      // Don't reset here as we want to prevent duplicates even on re-renders
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.toString()]); // Only depend on searchParams - other functions are stable
 
   // Container variants for animations
   const containerVariants = {
