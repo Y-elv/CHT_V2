@@ -109,30 +109,55 @@ export const AuthProvider = ({ children }) => {
 
   const login = (userData) => {
     try {
+      console.log("🟢 [AuthContext Login] login() called");
+      console.log("🟢 [AuthContext Login] userData received:", userData);
+      console.log("🟢 [AuthContext Login] userData.token exists:", !!userData.token);
+      console.log("🟢 [AuthContext Login] userData.token:", userData.token ? `${userData.token.substring(0, 20)}...` : "null");
+      console.log("🟢 [AuthContext Login] Full token:", userData.token);
+      
+      // Store login time for fresh login detection
+      sessionStorage.setItem("lastLoginTime", Date.now().toString());
+      console.log("🟢 [AuthContext Login] Stored login time:", new Date().toISOString());
+      
       // Store token as "token" (primary key)
       if (userData.token) {
+        console.log("🟢 [AuthContext Login] Storing token as 'token'");
+        console.log("🟢 [AuthContext Login] Full token BEFORE storage:", userData.token);
         localStorage.setItem("token", userData.token);
+        const storedToken = localStorage.getItem("token");
+        console.log("🟢 [AuthContext Login] Token stored, verified:", storedToken?.substring(0, 20) + "...");
+        console.log("🟢 [AuthContext Login] Full token AFTER storage:", storedToken);
+        console.log("🟢 [AuthContext Login] Tokens match:", userData.token === storedToken);
       }
       
       // Store in both formats for compatibility
       // New format: cht_user and cht_token
       if (userData.token) {
+        console.log("🟢 [AuthContext Login] Storing cht_user and cht_token");
         localStorage.setItem("cht_user", JSON.stringify(userData));
         localStorage.setItem("cht_token", userData.token);
+        console.log("🟢 [AuthContext Login] cht_user stored:", !!localStorage.getItem("cht_user"));
+        console.log("🟢 [AuthContext Login] cht_token stored:", !!localStorage.getItem("cht_token"));
       }
       
       // Old format: userInfo (for backward compatibility)
+      console.log("🟢 [AuthContext Login] Storing userInfo");
       localStorage.setItem("userInfo", JSON.stringify(userData));
+      console.log("🟢 [AuthContext Login] userInfo stored:", !!localStorage.getItem("userInfo"));
       
       // Update state
+      console.log("🟢 [AuthContext Login] Updating React state...");
       setUser(userData);
       setToken(userData.token);
+      console.log("🟢 [AuthContext Login] Calling setProfile...");
       setProfile(userData);
+      console.log("🟢 [AuthContext Login] Calling setIsLoggedIn(true)...");
       setIsLoggedIn(true);
+      console.log("🟢 [AuthContext Login] State updated successfully");
 
       return { success: true, userData };
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("❌ [AuthContext Login] Login error:", error);
       return { error: "Failed to save login information" };
     }
   };

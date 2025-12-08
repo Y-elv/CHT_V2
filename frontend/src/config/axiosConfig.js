@@ -69,27 +69,76 @@ axiosInstance.interceptors.request.use(
 
     // Add Authorization header if token exists
     // Try "token" first (primary), then cht_token, then userInfo
+    console.log("🔴 [Axios Interceptor] Request interceptor triggered");
+    console.log("🔴 [Axios Interceptor] Request URL:", config.url);
+    console.log("🔴 [Axios Interceptor] Request method:", config.method);
+    
     try {
+      console.log("🔴 [Axios Interceptor] Attempting to retrieve token from localStorage...");
       let token = localStorage.getItem("token");
+      console.log("🔴 [Axios Interceptor] Token from 'token' key:", !!token, token ? `${token.substring(0, 20)}...` : "null");
       
       if (!token) {
         token = localStorage.getItem("cht_token");
+        console.log("🔴 [Axios Interceptor] Token from 'cht_token' key:", !!token, token ? `${token.substring(0, 20)}...` : "null");
       }
       
       if (!token) {
         // Fallback to old format
+        console.log("🔴 [Axios Interceptor] Trying 'userInfo' format...");
         const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
+        console.log("🔴 [Axios Interceptor] userInfo exists:", !!userInfo);
         if (userInfo && userInfo.token) {
           token = userInfo.token;
+          console.log("🔴 [Axios Interceptor] Token from 'userInfo.token':", !!token, token ? `${token.substring(0, 20)}...` : "null");
         }
       }
       
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        // Check token expiration
+        try {
+          const tokenParts = token.split('.');
+          if (tokenParts.length === 3) {
+            const payload = JSON.parse(atob(tokenParts[1]));
+            const exp = payload.exp;
+            const iat = payload.iat;
+            const now = Math.floor(Date.now() / 1000);
+            const isExpired = exp && now > exp;
+            const timeUntilExpiry = exp ? exp - now : null;
+            
+            console.log("🔴 [Axios Interceptor] Token expiration check:");
+            console.log("🔴 [Axios Interceptor] - Token issued at (iat):", iat, new Date(iat * 1000).toISOString());
+            console.log("🔴 [Axios Interceptor] - Token expires at (exp):", exp, new Date(exp * 1000).toISOString());
+            console.log("🔴 [Axios Interceptor] - Current time:", now, new Date(now * 1000).toISOString());
+            console.log("🔴 [Axios Interceptor] - Is expired:", isExpired);
+            console.log("🔴 [Axios Interceptor] - Time until expiry (seconds):", timeUntilExpiry);
+            console.log("🔴 [Axios Interceptor] - Time until expiry (minutes):", timeUntilExpiry ? Math.floor(timeUntilExpiry / 60) : null);
+            
+            if (isExpired) {
+              console.warn("⚠️ [Axios Interceptor] TOKEN IS EXPIRED! Backend will reject this token.");
+            }
+          }
+        } catch (e) {
+          console.warn("⚠️ [Axios Interceptor] Could not decode token for expiration check:", e);
+        }
+        
+        const authHeader = `Bearer ${token}`;
+        config.headers.Authorization = authHeader;
+        console.log("🔴 [Axios Interceptor] Authorization header set");
+        console.log("🔴 [Axios Interceptor] Full token (for debugging):", token);
+        console.log("🔴 [Axios Interceptor] Authorization header preview:", authHeader.substring(0, 50) + "...");
+        console.log("🔴 [Axios Interceptor] Full Authorization header length:", authHeader.length);
+        console.log("🔴 [Axios Interceptor] Token length:", token.length);
+        console.log("🔴 [Axios Interceptor] Token starts with 'eyJ':", token.startsWith('eyJ'));
+        console.log("🔴 [Axios Interceptor] Token has 3 parts (JWT format):", token.split('.').length === 3);
+        console.log("🔴 [Axios Interceptor] Full Authorization header value:", authHeader);
+      } else {
+        console.warn("⚠️ [Axios Interceptor] No auth token available - request will be unauthenticated");
       }
     } catch (error) {
       // If no token or error parsing, continue without auth header
-      console.warn("No auth token available");
+      console.error("❌ [Axios Interceptor] Error retrieving token:", error);
+      console.warn("⚠️ [Axios Interceptor] No auth token available - request will be unauthenticated");
     }
 
     // Add CSRF token if available
@@ -113,6 +162,9 @@ axiosInstance.interceptors.request.use(
 // Response interceptor - handle errors securely and token expiration
 axiosInstance.interceptors.response.use(
   (response) => {
+    console.log("✅ [Axios Response] Success response received");
+    console.log("✅ [Axios Response] Status:", response.status);
+    console.log("✅ [Axios Response] URL:", response.config?.url);
     // Don't expose sensitive headers in client
     if (response.headers) {
       delete response.headers["authorization"];
@@ -120,17 +172,83 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.log("🔴 [Axios Response] Response interceptor triggered");
+    console.log("🔴 [Axios Response] Error object:", error);
+    console.log("🔴 [Axios Response] Error response exists:", !!error.response);
+    
+    if (error.response) {
+      console.log("🔴 [Axios Response] Response status:", error.response.status);
+      console.log("🔴 [Axios Response] Response status text:", error.response.statusText);
+      console.log("🔴 [Axios Response] Response headers:", error.response.headers);
+      console.log("🔴 [Axios Response] Response data:", error.response.data);
+      console.log("🔴 [Axios Response] Response config URL:", error.response.config?.url);
+      console.log("🔴 [Axios Response] Response config method:", error.response.config?.method);
+      console.log("🔴 [Axios Response] Response config headers:", error.response.config?.headers);
+      console.log("🔴 [Axios Response] Authorization header sent:", error.response.config?.headers?.Authorization?.substring(0, 50) + "...");
+    } else if (error.request) {
+      console.log("🔴 [Axios Response] No response received, request object:", error.request);
+    } else {
+      console.log("🔴 [Axios Response] Error setting up request:", error.message);
+    }
+    
     // Handle 401 Unauthorized - token expired or invalid
     if (error.response?.status === 401) {
-      // Clear auth data and redirect to login
+      console.log("⚠️ [Axios Response] 401 Unauthorized detected");
+      console.log("⚠️ [Axios Response] Backend error message:", error.response?.data?.message || error.response?.data?.error || "No error message");
+      console.log("⚠️ [Axios Response] Backend error data:", JSON.stringify(error.response?.data, null, 2));
+      
+      // Log current token state
+      const currentToken = localStorage.getItem("token") || localStorage.getItem("cht_token");
+      const sentToken = error.response?.config?.headers?.Authorization?.replace('Bearer ', '') || null;
+      console.log("⚠️ [Axios Response] Current token in localStorage:", !!currentToken);
+      console.log("⚠️ [Axios Response] Current token preview:", currentToken ? currentToken.substring(0, 50) + "..." : "null");
+      console.log("⚠️ [Axios Response] Token that was sent:", sentToken ? sentToken.substring(0, 50) + "..." : "null");
+      console.log("⚠️ [Axios Response] Tokens match:", currentToken === sentToken);
+      
+      // Check if this is a fresh login (within last 30 seconds) - don't clear if so
+      const loginTime = sessionStorage.getItem("lastLoginTime");
+      const now = Date.now();
+      const timeSinceLogin = loginTime ? now - parseInt(loginTime) : Infinity;
+      const isFreshLogin = timeSinceLogin < 30000; // 30 seconds
+      
+      console.log("⚠️ [Axios Response] Last login time:", loginTime ? new Date(parseInt(loginTime)).toISOString() : "Never");
+      console.log("⚠️ [Axios Response] Time since login (ms):", timeSinceLogin);
+      console.log("⚠️ [Axios Response] Is fresh login (< 30s):", isFreshLogin);
+      
+      // Don't clear on fresh logins - might be a backend validation issue
+      if (isFreshLogin) {
+        console.warn("⚠️ [Axios Response] Fresh login detected - NOT clearing auth data (might be backend validation issue)");
+        console.warn("⚠️ [Axios Response] Token might be valid but backend is rejecting it");
+        console.warn("⚠️ [Axios Response] Full token sent:", sentToken);
+        console.warn("⚠️ [Axios Response] Full token in localStorage:", currentToken);
+        
+        // Return error without clearing - let the app handle it
+        return Promise.reject({
+          message: error.response?.data?.message || "Authentication failed. Please try logging in again.",
+          status: 401,
+          originalError: error.response?.data,
+          isFreshLogin: true,
+        });
+      }
+      
+      // Clear auth data and redirect to login (only for non-fresh logins)
+      console.log("⚠️ [Axios Response] Clearing auth data and redirecting to login...");
       localStorage.removeItem("userInfo");
+      localStorage.removeItem("cht_user");
+      localStorage.removeItem("cht_token");
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("lastLoginTime");
+      
       // Only redirect if not already on login page
       if (window.location.pathname !== "/login") {
+        console.log("⚠️ [Axios Response] Redirecting to /login");
         window.location.href = "/login";
       }
+      
       return Promise.reject({
-        message: "Session expired. Please login again.",
+        message: error.response?.data?.message || "Session expired. Please login again.",
         status: 401,
+        originalError: error.response?.data,
       });
     }
 
