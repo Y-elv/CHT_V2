@@ -7,7 +7,13 @@ import { Box, Spinner, Text, VStack } from "@chakra-ui/react";
 export const AdminProtectedRoute = ({ children }) => {
   const { isAuthenticated, isAdmin, loading } = useAuth();
 
+  console.log("⚠️ [Auth Guard] AdminProtectedRoute: Auth check");
+  console.log("⚠️ [Auth Guard] isAuthenticated():", isAuthenticated());
+  console.log("⚠️ [Auth Guard] isAdmin():", isAdmin());
+  console.log("⚠️ [Auth Guard] loading:", loading);
+
   if (loading) {
+    console.log("⚠️ [Auth Guard] AdminProtectedRoute: Still loading...");
     return (
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
         <VStack spacing={4}>
@@ -19,13 +25,16 @@ export const AdminProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated()) {
+    console.log("⚠️ [Auth Guard] AdminProtectedRoute: REDIRECTING TO LOGIN - Not authenticated");
     return <Navigate to="/login" replace />;
   }
 
   if (!isAdmin()) {
+    console.log("⚠️ [Auth Guard] AdminProtectedRoute: REDIRECTING TO HOME - Not admin");
     return <Navigate to="/" replace />;
   }
 
+  console.log("✅ [Auth Guard] AdminProtectedRoute: Access granted");
   return children;
 };
 
@@ -33,7 +42,16 @@ export const AdminProtectedRoute = ({ children }) => {
 export const DoctorProtectedRoute = ({ children }) => {
   const { isAuthenticated, isDoctor, loading, user } = useAuth();
 
+  console.log("⚠️ [Auth Guard] DoctorProtectedRoute: Auth check");
+  console.log("⚠️ [Auth Guard] isAuthenticated():", isAuthenticated());
+  console.log("⚠️ [Auth Guard] isDoctor():", isDoctor());
+  console.log("⚠️ [Auth Guard] user:", user);
+  console.log("⚠️ [Auth Guard] user.role:", user?.role);
+  console.log("⚠️ [Auth Guard] user.doctorStatus:", user?.doctorStatus);
+  console.log("⚠️ [Auth Guard] loading:", loading);
+
   if (loading) {
+    console.log("⚠️ [Auth Guard] DoctorProtectedRoute: Still loading...");
     return (
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
         <VStack spacing={4}>
@@ -45,19 +63,23 @@ export const DoctorProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated()) {
+    console.log("⚠️ [Auth Guard] DoctorProtectedRoute: REDIRECTING TO LOGIN - Not authenticated");
     return <Navigate to="/login" replace />;
   }
 
   // Check if user is doctor
   if (user?.role !== "doctor") {
+    console.log("⚠️ [Auth Guard] DoctorProtectedRoute: REDIRECTING TO HOME - Not a doctor");
     return <Navigate to="/" replace />;
   }
 
   // Check if doctor is approved
   if (user?.doctorStatus !== "approved") {
+    console.log("⚠️ [Auth Guard] DoctorProtectedRoute: REDIRECTING TO LOGIN - Doctor not approved");
     return <Navigate to="/login" replace state={{ message: "Your doctor account is pending approval." }} />;
   }
 
+  console.log("✅ [Auth Guard] DoctorProtectedRoute: Access granted");
   return children;
 };
 
@@ -65,7 +87,13 @@ export const DoctorProtectedRoute = ({ children }) => {
 export const PatientProtectedRoute = ({ children }) => {
   const { isAuthenticated, isPatient, loading } = useAuth();
 
+  console.log("⚠️ [Auth Guard] PatientProtectedRoute: Auth check");
+  console.log("⚠️ [Auth Guard] isAuthenticated():", isAuthenticated());
+  console.log("⚠️ [Auth Guard] isPatient():", isPatient());
+  console.log("⚠️ [Auth Guard] loading:", loading);
+
   if (loading) {
+    console.log("⚠️ [Auth Guard] PatientProtectedRoute: Still loading...");
     return (
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
         <VStack spacing={4}>
@@ -77,13 +105,16 @@ export const PatientProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated()) {
+    console.log("⚠️ [Auth Guard] PatientProtectedRoute: REDIRECTING TO LOGIN - Not authenticated");
     return <Navigate to="/login" replace />;
   }
 
   if (!isPatient()) {
+    console.log("⚠️ [Auth Guard] PatientProtectedRoute: REDIRECTING TO HOME - Not a patient");
     return <Navigate to="/" replace />;
   }
 
+  console.log("✅ [Auth Guard] PatientProtectedRoute: Access granted");
   return children;
 };
 
@@ -105,16 +136,29 @@ export const ProtectedRoute = ({ children }) => {
   // Check if user info exists in localStorage (don't redirect if it does)
   const hasUserInfo = () => {
     try {
+      console.log("⚠️ [Auth Guard] ProtectedRoute: Checking for user info...");
       const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
       const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
-      return !!(token || userInfo);
-    } catch {
+      console.log("⚠️ [Auth Guard] Token found:", !!token, token ? `${token.substring(0, 20)}...` : "null");
+      console.log("⚠️ [Auth Guard] UserInfo found:", !!userInfo);
+      const hasInfo = !!(token || userInfo);
+      console.log("⚠️ [Auth Guard] hasUserInfo result:", hasInfo);
+      return hasInfo;
+    } catch (error) {
+      console.error("❌ [Auth Guard] Error checking user info:", error);
       return false;
     }
   };
 
+  console.log("⚠️ [Auth Guard] ProtectedRoute: Auth check");
+  console.log("⚠️ [Auth Guard] isAuthenticated():", isAuthenticated());
+  console.log("⚠️ [Auth Guard] user:", user);
+  console.log("⚠️ [Auth Guard] loading:", loading);
+  console.log("⚠️ [Auth Guard] hasUserInfo():", hasUserInfo());
+
   // Only redirect to login if user is not authenticated AND no user info exists
   if (!isAuthenticated() && !hasUserInfo()) {
+    console.log("⚠️ [Auth Guard] REDIRECTING TO LOGIN - No authentication and no user info");
     return <Navigate to="/login" replace />;
   }
 

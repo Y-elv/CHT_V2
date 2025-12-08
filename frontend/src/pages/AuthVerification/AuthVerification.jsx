@@ -33,16 +33,23 @@ const AuthVerification = () => {
   useEffect(() => {
     const processAuthCallback = async () => {
       try {
+        console.log("🔵 [Auth Callback] Starting authentication callback processing...");
+        console.log("🔵 [Auth Callback] Raw URL:", window.location.href);
+        
         // Get token and user data from URL parameters
         const token = searchParams.get("token");
         const userParam = searchParams.get("user");
         const messageParam = searchParams.get("message");
         const error = searchParams.get("error");
 
-        console.log("🔍 AuthVerification: URL Parameters");
-        console.log("   - Token:", !!token);
-        console.log("   - User param:", !!userParam);
+        console.log("🔍 [Auth Callback] URL Parameters Extracted:");
+        console.log("   - Token exists:", !!token);
+        console.log("   - Token length:", token?.length || 0);
+        console.log("   - Token preview:", token ? `${token.substring(0, 20)}...` : "N/A");
+        console.log("   - User param exists:", !!userParam);
+        console.log("   - User param length:", userParam?.length || 0);
         console.log("   - Message:", messageParam);
+        console.log("   - Error:", error);
 
         // Handle error case
         if (error) {
@@ -83,19 +90,24 @@ const AuthVerification = () => {
         }
 
         // Save token to localStorage as "token"
+        console.log("💾 [Token Storage] Saving token to localStorage...");
+        console.log("💾 [Token Storage] Token BEFORE saving:", token);
         localStorage.setItem("token", token);
-        console.log("✅ Token saved to localStorage as 'token'");
+        const savedToken = localStorage.getItem("token");
+        console.log("💾 [Token Storage] Token AFTER saving:", savedToken);
+        console.log("💾 [Token Storage] Token match:", token === savedToken);
+        console.log("✅ [Token Storage] Token saved to localStorage as 'token'");
 
         // Decode token to extract user information
         let decoded;
         try {
-          decoded = jwtDecode(token).id;
-          console.log("🔓 JWT Token Decoded Successfully:");
-          console.log(
-            "   Full decoded token:",
-            JSON.stringify(decoded, null, 2)
-          );
-          console.log("   All keys in decoded token:", Object.keys(decoded));
+          console.log("🔓 [Token Decode] Starting JWT decode...");
+          console.log("🔓 [Token Decode] Token BEFORE decode:", token);
+          const fullDecoded = jwtDecode(token);
+          console.log("🔓 [Token Decode] Full decoded token:", JSON.stringify(fullDecoded, null, 2));
+          decoded = fullDecoded.id || fullDecoded;
+          console.log("🔓 [Token Decode] Extracted decoded.id:", decoded);
+          console.log("🔓 [Token Decode] All keys in decoded token:", Object.keys(fullDecoded));
 
           // Log all possible paths to user data
           console.log("   - decoded.email:", decoded.email);
@@ -281,31 +293,54 @@ const AuthVerification = () => {
 
         // Store in localStorage (multiple formats for compatibility)
         try {
+          console.log("💾 [LocalStorage Write] Starting localStorage writes...");
+          
+          // Store login time for fresh login detection
+          sessionStorage.setItem("lastLoginTime", Date.now().toString());
+          console.log("💾 [LocalStorage Write] Stored login time:", new Date().toISOString());
+          
           // Store token as "token" (primary)
+          console.log("💾 [LocalStorage Write] Writing 'token':", token?.substring(0, 20) + "...");
+          console.log("💾 [LocalStorage Write] Full token BEFORE storage:", token);
           localStorage.setItem("token", token);
-          console.log("💾 Stored token in localStorage");
+          const verifyToken = localStorage.getItem("token");
+          console.log("💾 [LocalStorage Write] Verified 'token' stored:", !!verifyToken, "Length:", verifyToken?.length);
+          console.log("💾 [LocalStorage Write] Full token AFTER storage:", verifyToken);
+          console.log("💾 [LocalStorage Write] Tokens match:", token === verifyToken);
 
           // Store user object
+          console.log("💾 [LocalStorage Write] Writing 'cht_user':", normalizedUser);
           localStorage.setItem("cht_user", JSON.stringify(normalizedUser));
-          console.log("💾 Stored cht_user in localStorage");
+          const verifyChtUser = localStorage.getItem("cht_user");
+          console.log("💾 [LocalStorage Write] Verified 'cht_user' stored:", !!verifyChtUser);
 
           // Store token separately (for backward compatibility)
+          console.log("💾 [LocalStorage Write] Writing 'cht_token':", token?.substring(0, 20) + "...");
           localStorage.setItem("cht_token", token);
+          const verifyChtToken = localStorage.getItem("cht_token");
+          console.log("💾 [LocalStorage Write] Verified 'cht_token' stored:", !!verifyChtToken);
 
           // Also store in userInfo for backward compatibility
+          console.log("💾 [LocalStorage Write] Writing 'userInfo':", normalizedUser);
           localStorage.setItem("userInfo", JSON.stringify(normalizedUser));
-          console.log("💾 Stored userInfo in localStorage");
+          const verifyUserInfo = localStorage.getItem("userInfo");
+          console.log("💾 [LocalStorage Write] Verified 'userInfo' stored:", !!verifyUserInfo);
+          
+          console.log("✅ [LocalStorage Write] All localStorage writes completed");
         } catch (storageError) {
-          console.error("❌ Error storing authentication data:", storageError);
+          console.error("❌ [LocalStorage Write] Error storing authentication data:", storageError);
           throw new Error("Failed to save authentication data");
         }
 
         // Update auth context and global state (Zustand)
-        console.log("🔄 Updating auth context and global state...");
+        console.log("🔄 [Auth State] Updating auth context and global state...");
+        console.log("🔄 [Auth State] Calling authLogin with:", normalizedUser);
         authLogin(normalizedUser);
+        console.log("🔄 [Auth State] Calling setProfile with:", normalizedUser);
         setProfile(normalizedUser);
+        console.log("🔄 [Auth State] Calling setIsLoggedIn with: true");
         setIsLoggedIn(true);
-        console.log("✅ Auth state updated successfully");
+        console.log("✅ [Auth State] Auth state updated successfully");
 
         // Dispatch custom event to notify other components
         window.dispatchEvent(new Event("userLoggedIn"));

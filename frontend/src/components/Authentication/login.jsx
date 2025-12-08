@@ -68,6 +68,7 @@ const Login = () => {
 
   // Handle Google login button click
   const handleGoogleLogin = () => {
+    console.log("🔵 [Google OAuth] handleGoogleLogin called");
     setGoogleLoading(true);
     
     // Determine the redirect URL based on environment
@@ -76,8 +77,14 @@ const Login = () => {
       ? `${window.location.origin}/auth-verification`
       : "https://funhealth.netlify.app/auth-verification";
     
+    console.log("🔵 [Google OAuth] Environment:", isDevelopment ? "Development" : "Production");
+    console.log("🔵 [Google OAuth] Redirect URL:", redirectUrl);
+    
     // Redirect to backend Google OAuth endpoint with redirect_url parameter
     const googleAuthUrl = `https://chtv2-bn.onrender.com/auth/google?redirect_url=${encodeURIComponent(redirectUrl)}`;
+    
+    console.log("🔵 [Google OAuth] Full Google Auth URL:", googleAuthUrl);
+    console.log("🔵 [Google OAuth] Redirecting to Google OAuth...");
     
     window.location.href = googleAuthUrl;
   };
