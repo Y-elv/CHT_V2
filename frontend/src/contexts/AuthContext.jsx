@@ -26,19 +26,25 @@ export const AuthProvider = ({ children }) => {
             const userFromToken = extractUserFromToken();
             console.log("👤 User extracted from token:", userFromToken);
             
-            if (userFromToken) {
+            if (userFromToken && userFromToken.email && userFromToken.role) {
               // Reconstruct user object with token
               const userInfo = {
                 ...userFromToken,
                 token: token,
-                _id: userFromToken.id,
+                _id: userFromToken.id || userFromToken._id,
               };
               console.log("✅ Restored user from token:", userInfo);
+              console.log("   - Name:", userInfo.name);
+              console.log("   - Email:", userInfo.email);
+              console.log("   - Role:", userInfo.role);
+              console.log("   - Pic:", userInfo.pic);
+              console.log("   - ID:", userInfo._id);
               setUser(userInfo);
               setToken(token);
               setProfile(userInfo);
               setIsLoggedIn(true);
               setLoading(false);
+              console.log("✅ AuthContext: Session restored successfully from token");
               return;
             }
           } catch (e) {
@@ -60,11 +66,13 @@ export const AuthProvider = ({ children }) => {
             console.log("   - Email:", userInfo.email);
             console.log("   - Role:", userInfo.role);
             console.log("   - Pic:", userInfo.pic);
+            console.log("   - ID:", userInfo._id);
             setUser(userInfo);
             setToken(chtToken);
             setProfile(userInfo);
             setIsLoggedIn(true);
             setLoading(false);
+            console.log("✅ AuthContext: Session restored successfully from cht_user");
             return;
           } catch (e) {
             console.error("❌ Error parsing cht_user:", e);
@@ -78,16 +86,25 @@ export const AuthProvider = ({ children }) => {
         if (userInfoStr) {
           try {
             const userInfo = JSON.parse(userInfoStr);
-            if (userInfo && userInfo.token) {
-              console.log("✅ Restored user from userInfo:", userInfo);
-              console.log("   - Name:", userInfo.name);
-              console.log("   - Email:", userInfo.email);
-              console.log("   - Role:", userInfo.role);
-              console.log("   - Pic:", userInfo.pic);
-              setUser(userInfo);
-              setToken(userInfo.token);
-              setProfile(userInfo);
-              setIsLoggedIn(true);
+            if (userInfo && (userInfo.token || userInfo.email)) {
+              // Ensure token is present
+              const token = userInfo.token || localStorage.getItem("token") || localStorage.getItem("cht_token");
+              if (token) {
+                userInfo.token = token;
+                console.log("✅ Restored user from userInfo:", userInfo);
+                console.log("   - Name:", userInfo.name);
+                console.log("   - Email:", userInfo.email);
+                console.log("   - Role:", userInfo.role);
+                console.log("   - Pic:", userInfo.pic);
+                console.log("   - ID:", userInfo._id);
+                setUser(userInfo);
+                setToken(token);
+                setProfile(userInfo);
+                setIsLoggedIn(true);
+                setLoading(false);
+                console.log("✅ AuthContext: Session restored successfully from userInfo");
+                return;
+              }
             }
           } catch (e) {
             console.error("❌ Error parsing userInfo:", e);

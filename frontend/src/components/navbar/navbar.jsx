@@ -36,24 +36,43 @@ const Navbar = ({ active }) => {
   const { user: chatUser = null, chats = [], logoutHandler: chatLogoutHandler } = chatContext || {};
   
   // Get AuthContext for immediate user state updates
-  const { user: authUser, logout: authLogout, isAuthenticated } = useAuth();
+  const { user: authUser, logout: authLogout, isAuthenticated, loading: authLoading } = useAuth();
   
-  // Use authUser if available, otherwise fall back to chatUser
-  const user = authUser || chatUser;
+  // Get user from localStorage as fallback if authUser is not available yet
+  const getUserFromStorage = () => {
+    try {
+      const chtUser = localStorage.getItem("cht_user");
+      const userInfo = localStorage.getItem("userInfo");
+      if (chtUser) {
+        return JSON.parse(chtUser);
+      } else if (userInfo) {
+        return JSON.parse(userInfo);
+      }
+    } catch (error) {
+      console.error("❌ Navbar: Error reading user from storage:", error);
+    }
+    return null;
+  };
+  
+  // Use authUser if available, otherwise try localStorage, then fall back to chatUser
+  const storageUser = !authUser && !authLoading ? getUserFromStorage() : null;
+  const user = authUser || storageUser || chatUser;
   
   // Debug logging
   useEffect(() => {
     console.log("🔍 Navbar: User state check");
     console.log("   - authUser:", authUser);
+    console.log("   - storageUser:", storageUser);
     console.log("   - chatUser:", chatUser);
     console.log("   - Final user:", user);
+    console.log("   - authLoading:", authLoading);
     if (user) {
       console.log("   - User.name:", user.name);
       console.log("   - User.email:", user.email);
       console.log("   - User.pic:", user.pic);
       console.log("   - User.role:", user.role);
     }
-  }, [authUser, chatUser, user]);
+  }, [authUser, storageUser, chatUser, user, authLoading]);
   
   const logoutHandler = () => {
     if (authLogout) authLogout();
