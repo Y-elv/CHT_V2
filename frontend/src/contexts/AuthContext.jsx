@@ -15,11 +15,22 @@ export const AuthProvider = ({ children }) => {
   // Auto-restore session on mount
   useEffect(() => {
     const restoreSession = () => {
-      console.log("🔄 AuthContext: Restoring session from localStorage...");
+      // ============================================
+      // [AUTH][STORE] Session Restoration Start
+      // ============================================
+      console.log("============================================");
+      console.log("[AUTH][STORE] AuthContext: Restoring session from localStorage...");
+      console.log("[AUTH][STORE] Timestamp:", new Date().toISOString());
+      console.log("[AUTH][STORE] Component: AuthProvider");
       try {
-        // Try to extract user from token first (new method)
+        // ============================================
+        // [AUTH][STORAGE READ] Reading Token
+        // ============================================
+        console.log("[AUTH][STORAGE READ] Reading 'token' from localStorage...");
         const token = localStorage.getItem("token");
-        console.log("🔑 Token found in localStorage:", !!token);
+        console.log("[AUTH][STORAGE READ] Token found:", !!token);
+        console.log("[AUTH][STORAGE READ] Token length:", token?.length || 0);
+        console.log("[AUTH][STORAGE READ] Token preview:", token ? `${token.substring(0, 20)}...` : "null");
         
         if (token) {
           try {
@@ -46,10 +57,16 @@ export const AuthProvider = ({ children }) => {
           }
         }
 
-        // Try new format (cht_user and cht_token)
+        // ============================================
+        // [AUTH][STORAGE READ] Reading cht_user and cht_token
+        // ============================================
+        console.log("[AUTH][STORAGE READ] Reading 'cht_user' from localStorage...");
         const chtUser = localStorage.getItem("cht_user");
+        console.log("[AUTH][STORAGE READ] Reading 'cht_token' from localStorage...");
         const chtToken = localStorage.getItem("cht_token") || localStorage.getItem("token");
-        console.log("📦 Checking cht_user format:", !!chtUser, "cht_token:", !!chtToken);
+        console.log("[AUTH][STORAGE READ] cht_user exists:", !!chtUser);
+        console.log("[AUTH][STORAGE READ] cht_token exists:", !!chtToken);
+        console.log("[AUTH][STORAGE READ] cht_token length:", chtToken?.length || 0);
         
         if (chtUser && chtToken) {
           try {
@@ -71,9 +88,13 @@ export const AuthProvider = ({ children }) => {
           }
         }
         
-        // Fallback to old format (userInfo)
+        // ============================================
+        // [AUTH][STORAGE READ] Reading userInfo (fallback)
+        // ============================================
+        console.log("[AUTH][STORAGE READ] Reading 'userInfo' from localStorage (fallback)...");
         const userInfoStr = localStorage.getItem("userInfo");
-        console.log("📦 Checking userInfo format:", !!userInfoStr);
+        console.log("[AUTH][STORAGE READ] userInfo exists:", !!userInfoStr);
+        console.log("[AUTH][STORAGE READ] userInfo length:", userInfoStr?.length || 0);
         
         if (userInfoStr) {
           try {
@@ -94,92 +115,208 @@ export const AuthProvider = ({ children }) => {
           }
         }
         
-        console.log("⚠️ No user data found in localStorage");
+        console.log("[AUTH][STORE] ⚠️ No user data found in localStorage");
       } catch (error) {
-        console.error("❌ Error restoring session:", error);
+        console.error("[AUTH][STORE] ❌ Error restoring session:", error);
+        console.error("[AUTH][STORE] Error stack:", error.stack);
         // Don't clean up data on error - might be temporary issue
       } finally {
         setLoading(false);
-        console.log("✅ AuthContext: Session restoration complete");
+        console.log("[AUTH][STORE] Session restoration complete");
+        console.log("[AUTH][STORE] Loading state set to false");
+        console.log("============================================");
       }
     };
 
     restoreSession();
   }, [setProfile, setIsLoggedIn]);
+  
+  // ============================================
+  // [AUTH][RENDER] AuthContext Lifecycle
+  // ============================================
+  useEffect(() => {
+    console.log("[AUTH][RENDER] AuthProvider component mounted");
+    return () => {
+      console.log("[AUTH][RENDER] AuthProvider component unmounted");
+    };
+  }, []);
 
   const login = (userData) => {
+    // ============================================
+    // [AUTH][STORE] Login Function Called
+    // ============================================
+    console.log("============================================");
+    console.log("[AUTH][STORE] login() function called");
+    console.log("[AUTH][STORE] Timestamp:", new Date().toISOString());
+    console.log("[AUTH][STORE] userData received:", userData);
+    console.log("[AUTH][STORE] userData.email:", userData?.email);
+    console.log("[AUTH][STORE] userData.role:", userData?.role);
+    console.log("[AUTH][STORE] userData.token exists:", !!userData.token);
+    console.log("[AUTH][STORE] userData.token preview:", userData.token ? `${userData.token.substring(0, 20)}...` : "null");
+    console.log("[AUTH][STORE] userData.token length:", userData.token?.length || 0);
+    console.log("[AUTH][STORE] Full token:", userData.token);
+    
     try {
-      console.log("🟢 [AuthContext Login] login() called");
-      console.log("🟢 [AuthContext Login] userData received:", userData);
-      console.log("🟢 [AuthContext Login] userData.token exists:", !!userData.token);
-      console.log("🟢 [AuthContext Login] userData.token:", userData.token ? `${userData.token.substring(0, 20)}...` : "null");
-      console.log("🟢 [AuthContext Login] Full token:", userData.token);
+      // ============================================
+      // [AUTH][STORAGE WRITE] Storing Login Time
+      // ============================================
+      const loginTime = Date.now().toString();
+      console.log("[AUTH][STORAGE WRITE] Storing login time to sessionStorage...");
+      console.log("[AUTH][STORAGE WRITE] Login time:", loginTime);
+      console.log("[AUTH][STORAGE WRITE] Login time (ISO):", new Date(parseInt(loginTime)).toISOString());
+      sessionStorage.setItem("lastLoginTime", loginTime);
+      const storedLoginTime = sessionStorage.getItem("lastLoginTime");
+      console.log("[AUTH][STORAGE WRITE] Login time stored:", storedLoginTime);
       
-      // Store login time for fresh login detection
-      sessionStorage.setItem("lastLoginTime", Date.now().toString());
-      console.log("🟢 [AuthContext Login] Stored login time:", new Date().toISOString());
-      
-      // Store token as "token" (primary key)
+      // ============================================
+      // [AUTH][STORAGE WRITE] Storing Token (Primary)
+      // ============================================
       if (userData.token) {
-        console.log("🟢 [AuthContext Login] Storing token as 'token'");
-        console.log("🟢 [AuthContext Login] Full token BEFORE storage:", userData.token);
-        localStorage.setItem("token", userData.token);
+        // Trim token to ensure no whitespace issues
+        const cleanToken = userData.token.trim();
+        console.log("[AUTH][STORAGE WRITE] ===== STORING TOKEN =====");
+        console.log("[AUTH][STORAGE WRITE] Key: 'token'");
+        console.log("[AUTH][STORAGE WRITE] Token BEFORE storage:", cleanToken);
+        console.log("[AUTH][STORAGE WRITE] Token length:", cleanToken.length);
+        console.log("[AUTH][STORAGE WRITE] Token starts with 'eyJ':", cleanToken.startsWith('eyJ'));
+        localStorage.setItem("token", cleanToken);
         const storedToken = localStorage.getItem("token");
-        console.log("🟢 [AuthContext Login] Token stored, verified:", storedToken?.substring(0, 20) + "...");
-        console.log("🟢 [AuthContext Login] Full token AFTER storage:", storedToken);
-        console.log("🟢 [AuthContext Login] Tokens match:", userData.token === storedToken);
+        console.log("[AUTH][STORAGE WRITE] Token AFTER storage:", storedToken);
+        console.log("[AUTH][STORAGE WRITE] Token length after storage:", storedToken?.length);
+        console.log("[AUTH][STORAGE WRITE] Tokens match:", cleanToken === storedToken);
+        console.log("[AUTH][STORAGE WRITE] Token stored successfully:", !!storedToken);
+        console.log("[AUTH][STORAGE WRITE] Stored token starts with 'eyJ':", storedToken?.startsWith('eyJ'));
       }
       
-      // Store in both formats for compatibility
-      // New format: cht_user and cht_token
+      // ============================================
+      // [AUTH][STORAGE WRITE] Storing cht_user and cht_token
+      // ============================================
       if (userData.token) {
-        console.log("🟢 [AuthContext Login] Storing cht_user and cht_token");
-        localStorage.setItem("cht_user", JSON.stringify(userData));
+        console.log("[AUTH][STORAGE WRITE] Storing 'cht_user'...");
+        const chtUserStr = JSON.stringify(userData);
+        console.log("[AUTH][STORAGE WRITE] cht_user JSON length:", chtUserStr.length);
+        localStorage.setItem("cht_user", chtUserStr);
+        const verifyChtUser = localStorage.getItem("cht_user");
+        console.log("[AUTH][STORAGE WRITE] cht_user stored:", !!verifyChtUser);
+        
+        console.log("[AUTH][STORAGE WRITE] Storing 'cht_token'...");
         localStorage.setItem("cht_token", userData.token);
-        console.log("🟢 [AuthContext Login] cht_user stored:", !!localStorage.getItem("cht_user"));
-        console.log("🟢 [AuthContext Login] cht_token stored:", !!localStorage.getItem("cht_token"));
+        const verifyChtToken = localStorage.getItem("cht_token");
+        console.log("[AUTH][STORAGE WRITE] cht_token stored:", !!verifyChtToken);
+        console.log("[AUTH][STORAGE WRITE] cht_token matches:", userData.token === verifyChtToken);
       }
       
-      // Old format: userInfo (for backward compatibility)
-      console.log("🟢 [AuthContext Login] Storing userInfo");
-      localStorage.setItem("userInfo", JSON.stringify(userData));
-      console.log("🟢 [AuthContext Login] userInfo stored:", !!localStorage.getItem("userInfo"));
+      // ============================================
+      // [AUTH][STORAGE WRITE] Storing userInfo (backward compatibility)
+      // ============================================
+      console.log("[AUTH][STORAGE WRITE] Storing 'userInfo' (backward compatibility)...");
+      const userInfoStr = JSON.stringify(userData);
+      console.log("[AUTH][STORAGE WRITE] userInfo JSON length:", userInfoStr.length);
+      localStorage.setItem("userInfo", userInfoStr);
+      const verifyUserInfo = localStorage.getItem("userInfo");
+      console.log("[AUTH][STORAGE WRITE] userInfo stored:", !!verifyUserInfo);
       
-      // Update state
-      console.log("🟢 [AuthContext Login] Updating React state...");
+      // ============================================
+      // [AUTH][STORE] Updating React State
+      // ============================================
+      console.log("[AUTH][STORE] Updating React state...");
+      console.log("[AUTH][STORE] Step 1: Calling setUser()...");
       setUser(userData);
+      console.log("[AUTH][STORE] Step 2: Calling setToken()...");
       setToken(userData.token);
-      console.log("🟢 [AuthContext Login] Calling setProfile...");
+      console.log("[AUTH][STORE] Step 3: Calling setProfile()...");
       setProfile(userData);
-      console.log("🟢 [AuthContext Login] Calling setIsLoggedIn(true)...");
+      console.log("[AUTH][STORE] Step 4: Calling setIsLoggedIn(true)...");
       setIsLoggedIn(true);
-      console.log("🟢 [AuthContext Login] State updated successfully");
+      
+      // ============================================
+      // [AUTH][STORE] Login Complete Verification
+      // ============================================
+      console.log("[AUTH][STORE] ===== LOGIN COMPLETE - VERIFICATION =====");
+      console.log("[AUTH][STORE] Verifying all storage after login:");
+      const finalToken = localStorage.getItem("token");
+      const finalChtToken = localStorage.getItem("cht_token");
+      const finalUserInfo = localStorage.getItem("userInfo");
+      const finalChtUser = localStorage.getItem("cht_user");
+      console.log("[AUTH][STORE] - 'token' exists:", !!finalToken);
+      console.log("[AUTH][STORE] - 'cht_token' exists:", !!finalChtToken);
+      console.log("[AUTH][STORE] - 'userInfo' exists:", !!finalUserInfo);
+      console.log("[AUTH][STORE] - 'cht_user' exists:", !!finalChtUser);
+      console.log("[AUTH][STORE] State updated successfully");
+      console.log("============================================");
 
       return { success: true, userData };
     } catch (error) {
-      console.error("❌ [AuthContext Login] Login error:", error);
+      console.error("[AUTH][STORE] ❌ Login error:", error);
+      console.error("[AUTH][STORE] Error stack:", error.stack);
       return { error: "Failed to save login information" };
     }
   };
 
   const logout = () => {
+    // ============================================
+    // [AUTH][STORE] Logout Function Called
+    // ============================================
+    console.log("============================================");
+    console.log("[AUTH][STORE] logout() function called");
+    console.log("[AUTH][STORE] Timestamp:", new Date().toISOString());
+    console.log("[AUTH][STORE] Checking storage BEFORE logout:");
+    const tokenBeforeLogout = localStorage.getItem("token");
+    const userInfoBeforeLogout = localStorage.getItem("userInfo");
+    console.log("[AUTH][STORE] - 'token' exists:", !!tokenBeforeLogout);
+    console.log("[AUTH][STORE] - 'userInfo' exists:", !!userInfoBeforeLogout);
+    
     // Remove all auth-related data
+    console.log("[AUTH][STORAGE WRITE] Removing auth data from localStorage...");
+    console.log("[AUTH][STORAGE WRITE] Removing 'userInfo'...");
     localStorage.removeItem("userInfo");
+    console.log("[AUTH][STORAGE WRITE] Removing 'cht_user'...");
     localStorage.removeItem("cht_user");
+    console.log("[AUTH][STORAGE WRITE] Removing 'cht_token'...");
     localStorage.removeItem("cht_token");
+    console.log("[AUTH][STORAGE WRITE] Removing 'token'...");
     localStorage.removeItem("token"); // Remove primary token key
+    
+    console.log("[AUTH][STORAGE WRITE] Removing 'lastLoginTime' from sessionStorage...");
+    sessionStorage.removeItem("lastLoginTime");
+    
+    console.log("[AUTH][STORE] Updating React state...");
     setUser(null);
     setToken(null);
     clearProfile();
     setIsLoggedIn(false);
+    
+    console.log("[AUTH][STORE] Verifying storage AFTER logout:");
+    const tokenAfterLogout = localStorage.getItem("token");
+    const userInfoAfterLogout = localStorage.getItem("userInfo");
+    console.log("[AUTH][STORE] - 'token' exists:", !!tokenAfterLogout);
+    console.log("[AUTH][STORE] - 'userInfo' exists:", !!userInfoAfterLogout);
+    console.log("[AUTH][STORE] Logout complete");
+    console.log("============================================");
     // Navigation will be handled by the component calling logout
   };
 
   // Role checking utilities
-  const isAdmin = () => user?.role === "admin";
-  const isDoctor = () => user?.role === "doctor" && user?.doctorStatus === "approved";
-  const isPatient = () => user?.role === "patient";
-  const isAuthenticated = () => !!user && !!token;
+  const isAdmin = () => {
+    const result = user?.role === "admin";
+    console.log("[AUTH][STORE] isAdmin() called - result:", result, "user.role:", user?.role);
+    return result;
+  };
+  const isDoctor = () => {
+    const result = user?.role === "doctor" && user?.doctorStatus === "approved";
+    console.log("[AUTH][STORE] isDoctor() called - result:", result, "user.role:", user?.role, "doctorStatus:", user?.doctorStatus);
+    return result;
+  };
+  const isPatient = () => {
+    const result = user?.role === "patient";
+    console.log("[AUTH][STORE] isPatient() called - result:", result, "user.role:", user?.role);
+    return result;
+  };
+  const isAuthenticated = () => {
+    const result = !!user && !!token;
+    console.log("[AUTH][STORE] isAuthenticated() called - result:", result, "user exists:", !!user, "token exists:", !!token);
+    return result;
+  };
 
   // Get redirect path based on role (for reference, actual redirect handled in login component)
   const getRoleRedirectPath = () => {

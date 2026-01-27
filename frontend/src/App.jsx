@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useNotificationListener } from "./hooks/useNotificationListener";
 
@@ -50,6 +51,60 @@ import {
 import QuickAssist from "./components/QuickAssist/QuickAssist";
 
 function App() {
+  // ============================================
+  // [AUTH][APP INIT] App Component Mount
+  // ============================================
+  useEffect(() => {
+    console.log("[AUTH][APP INIT] App component mounted");
+    console.log("[AUTH][APP INIT] Current pathname:", window.location.pathname);
+    console.log("[AUTH][APP INIT] Current search:", window.location.search);
+    console.log("[AUTH][APP INIT] Current hash:", window.location.hash);
+    
+    // Detect page reload
+    const navEntry = performance.getEntriesByType('navigation')[0];
+    const isPageReload = performance.navigation?.type === 1 || 
+                         (navEntry && navEntry.type === 'reload');
+    console.log("[AUTH][APP INIT] Page reload detected:", isPageReload);
+    console.log("[AUTH][APP INIT] Navigation type:", performance.navigation?.type);
+    console.log("[AUTH][APP INIT] Navigation entry type:", navEntry?.type);
+    
+    // Check auth state after mount
+    const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
+    const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
+    console.log("[AUTH][APP INIT] Auth state after mount:");
+    console.log("[AUTH][APP INIT] - Token exists:", !!token);
+    console.log("[AUTH][APP INIT] - Token length:", token?.length || 0);
+    console.log("[AUTH][APP INIT] - UserInfo exists:", !!userInfo);
+    
+    // Listen for beforeunload to detect navigation
+    const handleBeforeUnload = () => {
+      console.log("[AUTH][RENDER] Page unloading (beforeunload event)");
+      console.log("[AUTH][RENDER] Current URL:", window.location.href);
+      const tokenBeforeUnload = localStorage.getItem("token");
+      console.log("[AUTH][RENDER] Token exists before unload:", !!tokenBeforeUnload);
+    };
+    
+    // Listen for page visibility changes
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log("[AUTH][RENDER] Page hidden");
+      } else {
+        console.log("[AUTH][RENDER] Page visible");
+        const tokenOnVisible = localStorage.getItem("token");
+        console.log("[AUTH][RENDER] Token exists on visible:", !!tokenOnVisible);
+      }
+    };
+    
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    
+    return () => {
+      console.log("[AUTH][APP INIT] App component unmounting");
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   // Initialize notification listener (auto-fetch and toast alerts)
   useNotificationListener();
 

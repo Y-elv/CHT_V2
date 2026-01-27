@@ -63,15 +63,35 @@ const useNotificationStore = create((set, get) => ({
       });
       return result;
     } catch (error) {
+      // ============================================
+      // EXPOSE FULL AXIOS ERROR
+      // ============================================
+      console.error("🟥 RAW AXIOS ERROR:", error);
+      console.error("🟥 AXIOS RESPONSE:", error.response);
+      console.error("🟥 AXIOS STATUS:", error.response?.status);
+      console.error("🟥 AXIOS DATA:", error.response?.data);
       console.error("❌ Failed to fetch notifications:", error);
       console.error("Error response:", error.response?.data);
       console.error("Error status:", error.response?.status);
+      
       set({
         loading: false,
         error: error.message || "Failed to fetch notifications",
         notifications: [], // Set empty array on error
       });
-      throw error;
+      
+      // Preserve original Axios error structure when re-throwing
+      if (error.response) {
+        throw error; // Re-throw original Axios error with response
+      } else {
+        const enhancedError = Object.assign(new Error(error.message || "Failed to fetch notifications"), {
+          originalError: error,
+          request: error.request,
+          response: null,
+          isAxiosError: error.isAxiosError || false,
+        });
+        throw enhancedError;
+      }
     }
   },
 
@@ -86,6 +106,13 @@ const useNotificationStore = create((set, get) => ({
       set({ unreadCount: count || 0 });
       return count || 0;
     } catch (error) {
+      // ============================================
+      // EXPOSE FULL AXIOS ERROR
+      // ============================================
+      console.error("🟥 RAW AXIOS ERROR:", error);
+      console.error("🟥 AXIOS RESPONSE:", error.response);
+      console.error("🟥 AXIOS STATUS:", error.response?.status);
+      console.error("🟥 AXIOS DATA:", error.response?.data);
       console.error("❌ Failed to fetch unread count:", error);
       console.error("Error response:", error.response?.data);
       // Don't throw, just log - we'll use the current state
@@ -128,13 +155,32 @@ const useNotificationStore = create((set, get) => ({
     try {
       await markNotificationAsRead(notificationId);
     } catch (error) {
+      // ============================================
+      // EXPOSE FULL AXIOS ERROR
+      // ============================================
+      console.error("🟥 RAW AXIOS ERROR:", error);
+      console.error("🟥 AXIOS RESPONSE:", error.response);
+      console.error("🟥 AXIOS STATUS:", error.response?.status);
+      console.error("🟥 AXIOS DATA:", error.response?.data);
       console.error("Failed to mark notification as read:", error);
       // Revert optimistic update on error
       set({
         notifications,
         unreadCount,
       });
-      throw error;
+      
+      // Preserve original Axios error structure when re-throwing
+      if (error.response) {
+        throw error; // Re-throw original Axios error with response
+      } else {
+        const enhancedError = Object.assign(new Error(error.message || "Failed to mark notification as read"), {
+          originalError: error,
+          request: error.request,
+          response: null,
+          isAxiosError: error.isAxiosError || false,
+        });
+        throw enhancedError;
+      }
     }
   },
 

@@ -80,6 +80,13 @@ const Navbar = ({ active }) => {
     if (user && shouldShowNotifications) {
       // Fetch notifications and unread count on component mount
       refresh().catch((error) => {
+        // ============================================
+        // EXPOSE FULL AXIOS ERROR
+        // ============================================
+        console.error("🟥 RAW AXIOS ERROR:", error);
+        console.error("🟥 AXIOS RESPONSE:", error.response);
+        console.error("🟥 AXIOS STATUS:", error.response?.status);
+        console.error("🟥 AXIOS DATA:", error.response?.data);
         console.error("Failed to fetch notifications:", error);
       });
     }
@@ -119,6 +126,13 @@ const Navbar = ({ active }) => {
       try {
         await markAsRead(notificationId);
       } catch (error) {
+        // ============================================
+        // EXPOSE FULL AXIOS ERROR
+        // ============================================
+        console.error("🟥 RAW AXIOS ERROR:", error);
+        console.error("🟥 AXIOS RESPONSE:", error.response);
+        console.error("🟥 AXIOS STATUS:", error.response?.status);
+        console.error("🟥 AXIOS DATA:", error.response?.data);
         console.error("Failed to mark notification as read:", error);
       }
     }
@@ -412,6 +426,13 @@ const Navbar = ({ active }) => {
                             try {
                               await refresh();
                             } catch (error) {
+                              // ============================================
+                              // EXPOSE FULL AXIOS ERROR
+                              // ============================================
+                              console.error("🟥 RAW AXIOS ERROR:", error);
+                              console.error("🟥 AXIOS RESPONSE:", error.response);
+                              console.error("🟥 AXIOS STATUS:", error.response?.status);
+                              console.error("🟥 AXIOS DATA:", error.response?.data);
                               console.error("Failed to refresh notifications:", error);
                             }
                           }}

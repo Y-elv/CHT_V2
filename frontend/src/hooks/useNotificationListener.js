@@ -29,18 +29,24 @@ export const useNotificationListener = () => {
 
   // Auto-fetch on mount
   useEffect(() => {
-    // Check if user is logged in
-    try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-      if (userInfo && userInfo.token) {
-        // Fetch notifications and unread count
-        refresh().catch((error) => {
-          console.error("Failed to fetch notifications on mount:", error);
-        });
-      }
-    } catch (error) {
-      // User not logged in, skip fetching
-      console.log("No user session found, skipping notification fetch");
+    // Check if token exists using SINGLE source
+    const token = localStorage.getItem("token");
+    if (token) {
+      console.log("[AUTH][STORAGE] Token found on mount, fetching notifications");
+      console.log("[AUTH][STORAGE] Token length:", token.length);
+      // Fetch notifications and unread count
+      refresh().catch((error) => {
+        // ============================================
+        // EXPOSE FULL AXIOS ERROR
+        // ============================================
+        console.error("🟥 RAW AXIOS ERROR:", error);
+        console.error("🟥 AXIOS RESPONSE:", error.response);
+        console.error("🟥 AXIOS STATUS:", error.response?.status);
+        console.error("🟥 AXIOS DATA:", error.response?.data);
+        console.error("[AUTH][RESPONSE][401] Failed to fetch notifications on mount:", error);
+      });
+    } else {
+      console.log("[AUTH][STORAGE] No token found, skipping notification fetch");
     }
   }, []); // Only run once on mount
 
@@ -79,15 +85,19 @@ export const useNotificationListener = () => {
   // Optional: Set up polling for notifications (every 30 seconds)
   useEffect(() => {
     const interval = setInterval(() => {
-      try {
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-        if (userInfo && userInfo.token) {
-          fetchUnreadCount().catch((error) => {
-            console.error("Failed to poll unread count:", error);
-          });
-        }
-      } catch (error) {
-        // User not logged in, skip polling
+      // Check if token exists using SINGLE source
+      const token = localStorage.getItem("token");
+      if (token) {
+        fetchUnreadCount().catch((error) => {
+          // ============================================
+          // EXPOSE FULL AXIOS ERROR
+          // ============================================
+          console.error("🟥 RAW AXIOS ERROR:", error);
+          console.error("🟥 AXIOS RESPONSE:", error.response);
+          console.error("🟥 AXIOS STATUS:", error.response?.status);
+          console.error("🟥 AXIOS DATA:", error.response?.data);
+          console.error("[AUTH][RESPONSE][401] Failed to poll unread count:", error);
+        });
       }
     }, 30000); // Poll every 30 seconds
 

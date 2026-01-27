@@ -43,6 +43,7 @@ function validateUrl(url) {
 
 // Create axios instance with secure defaults
 const axiosInstance = axios.create({
+  baseURL: "https://chtv2-bn.onrender.com", // Base URL for all API requests
   timeout: 30000, // 30 seconds
   headers: {
     "Content-Type": "application/json",
@@ -68,77 +69,69 @@ axiosInstance.interceptors.request.use(
     }
 
     // Add Authorization header if token exists
-    // Try "token" first (primary), then cht_token, then userInfo
-    console.log("🔴 [Axios Interceptor] Request interceptor triggered");
-    console.log("🔴 [Axios Interceptor] Request URL:", config.url);
-    console.log("🔴 [Axios Interceptor] Request method:", config.method);
+    // Use SINGLE source: localStorage.getItem("token")
+    const isAbsoluteURL = config.url && !config.url.startsWith("/");
+    
+    // ============================================
+    // [FRONTEND][AXIOS] Request Interceptor
+    // ============================================
+    console.log("============================================");
+    console.log("[FRONTEND][AXIOS] Request interceptor triggered");
+    console.log("[FRONTEND][AXIOS] Timestamp:", new Date().toISOString());
+    console.log("[FRONTEND][AXIOS] Request URL:", config.url);
+    console.log("[FRONTEND][AXIOS] Full URL:", config.baseURL ? `${config.baseURL}${config.url}` : config.url);
+    console.log("[FRONTEND][AXIOS] Method:", config.method?.toUpperCase());
+    console.log("[FRONTEND][AXIOS] isAbsoluteURL:", isAbsoluteURL);
     
     try {
-      console.log("🔴 [Axios Interceptor] Attempting to retrieve token from localStorage...");
+      console.log("[AUTH][STORAGE] Reading token from localStorage key: 'token'");
       let token = localStorage.getItem("token");
-      console.log("🔴 [Axios Interceptor] Token from 'token' key:", !!token, token ? `${token.substring(0, 20)}...` : "null");
       
-      if (!token) {
-        token = localStorage.getItem("cht_token");
-        console.log("🔴 [Axios Interceptor] Token from 'cht_token' key:", !!token, token ? `${token.substring(0, 20)}...` : "null");
+      // Trim token to remove any whitespace
+      if (token) {
+        token = token.trim();
       }
       
-      if (!token) {
-        // Fallback to old format
-        console.log("🔴 [Axios Interceptor] Trying 'userInfo' format...");
-        const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-        console.log("🔴 [Axios Interceptor] userInfo exists:", !!userInfo);
-        if (userInfo && userInfo.token) {
-          token = userInfo.token;
-          console.log("🔴 [Axios Interceptor] Token from 'userInfo.token':", !!token, token ? `${token.substring(0, 20)}...` : "null");
-        }
-      }
+      const tokenExists = !!token;
+      const tokenLength = token?.length || 0;
+      
+      console.log("[AUTH][STORAGE] Token exists:", tokenExists);
+      console.log("[AUTH][STORAGE] Token length:", tokenLength);
+      console.log("[AUTH][STORAGE] Token starts with 'eyJ':", token?.startsWith('eyJ') || false);
+      console.log("[AUTH][STORAGE] Token preview (first 50 chars):", token ? token.substring(0, 50) + "..." : "null");
       
       if (token) {
-        // Check token expiration
-        try {
-          const tokenParts = token.split('.');
-          if (tokenParts.length === 3) {
-            const payload = JSON.parse(atob(tokenParts[1]));
-            const exp = payload.exp;
-            const iat = payload.iat;
-            const now = Math.floor(Date.now() / 1000);
-            const isExpired = exp && now > exp;
-            const timeUntilExpiry = exp ? exp - now : null;
-            
-            console.log("🔴 [Axios Interceptor] Token expiration check:");
-            console.log("🔴 [Axios Interceptor] - Token issued at (iat):", iat, new Date(iat * 1000).toISOString());
-            console.log("🔴 [Axios Interceptor] - Token expires at (exp):", exp, new Date(exp * 1000).toISOString());
-            console.log("🔴 [Axios Interceptor] - Current time:", now, new Date(now * 1000).toISOString());
-            console.log("🔴 [Axios Interceptor] - Is expired:", isExpired);
-            console.log("🔴 [Axios Interceptor] - Time until expiry (seconds):", timeUntilExpiry);
-            console.log("🔴 [Axios Interceptor] - Time until expiry (minutes):", timeUntilExpiry ? Math.floor(timeUntilExpiry / 60) : null);
-            
-            if (isExpired) {
-              console.warn("⚠️ [Axios Interceptor] TOKEN IS EXPIRED! Backend will reject this token.");
-            }
-          }
-        } catch (e) {
-          console.warn("⚠️ [Axios Interceptor] Could not decode token for expiration check:", e);
-        }
-        
+        // Create Authorization header exactly as curl format: "Bearer <token>"
         const authHeader = `Bearer ${token}`;
+        
+        // Set Authorization header - axios normalizes to lowercase 'authorization' but we set both
         config.headers.Authorization = authHeader;
-        console.log("🔴 [Axios Interceptor] Authorization header set");
-        console.log("🔴 [Axios Interceptor] Full token (for debugging):", token);
-        console.log("🔴 [Axios Interceptor] Authorization header preview:", authHeader.substring(0, 50) + "...");
-        console.log("🔴 [Axios Interceptor] Full Authorization header length:", authHeader.length);
-        console.log("🔴 [Axios Interceptor] Token length:", token.length);
-        console.log("🔴 [Axios Interceptor] Token starts with 'eyJ':", token.startsWith('eyJ'));
-        console.log("🔴 [Axios Interceptor] Token has 3 parts (JWT format):", token.split('.').length === 3);
-        console.log("🔴 [Axios Interceptor] Full Authorization header value:", authHeader);
+        config.headers.authorization = authHeader;
+        
+          console.log("[FRONTEND][AXIOS] ✅ Authorization header attached: true");
+        console.log("[FRONTEND][AXIOS] Token length:", tokenLength);
+        console.log("[FRONTEND][AXIOS] Auth header length:", authHeader.length);
+        console.log("[FRONTEND][AXIOS] Auth header format check:", authHeader.startsWith('Bearer ') ? "✅ CORRECT" : "❌ INCORRECT");
+        console.log("[FRONTEND][AXIOS] Auth header preview:", authHeader.substring(0, 60) + "...");
+        console.log("[FRONTEND][AXIOS] Full Authorization header:", authHeader);
+        
+        // Verify header was set correctly
+        const verifyHeader = config.headers.Authorization || config.headers.authorization;
+        console.log("[FRONTEND][AXIOS] Header verification:", verifyHeader ? "✅ SET" : "❌ NOT SET");
+        if (verifyHeader) {
+          console.log("[FRONTEND][AXIOS] Verified header preview:", verifyHeader.substring(0, 60) + "...");
+          console.log("[FRONTEND][AXIOS] Verified header matches:", verifyHeader === authHeader);
+        }
+        console.log("============================================");
       } else {
-        console.warn("⚠️ [Axios Interceptor] No auth token available - request will be unauthenticated");
+        console.log("[FRONTEND][AXIOS] ❌ Authorization header attached: false");
+        console.log("[FRONTEND][AXIOS] ❌ No token available - request will be unauthenticated");
+        console.log("============================================");
       }
     } catch (error) {
       // If no token or error parsing, continue without auth header
-      console.error("❌ [Axios Interceptor] Error retrieving token:", error);
-      console.warn("⚠️ [Axios Interceptor] No auth token available - request will be unauthenticated");
+      console.error("❌ [AUTH][AXIOS][REQUEST] Error retrieving token:", error);
+      console.warn("⚠️ [AUTH][AXIOS][REQUEST] No auth token available - request will be unauthenticated");
     }
 
     // Add CSRF token if available
@@ -162,9 +155,9 @@ axiosInstance.interceptors.request.use(
 // Response interceptor - handle errors securely and token expiration
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log("✅ [Axios Response] Success response received");
-    console.log("✅ [Axios Response] Status:", response.status);
-    console.log("✅ [Axios Response] URL:", response.config?.url);
+    console.log("[FRONTEND][AXIOS] ✅ Success response received");
+    console.log("[FRONTEND][AXIOS] Status:", response.status);
+    console.log("[FRONTEND][AXIOS] URL:", response.config?.url);
     // Don't expose sensitive headers in client
     if (response.headers) {
       delete response.headers["authorization"];
@@ -172,38 +165,79 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log("🔴 [Axios Response] Response interceptor triggered");
-    console.log("🔴 [Axios Response] Error object:", error);
-    console.log("🔴 [Axios Response] Error response exists:", !!error.response);
+    // ============================================
+    // [FRONTEND][AXIOS] Response Error Interceptor
+    // ============================================
+    console.log("============================================");
+    console.log("[FRONTEND][AXIOS] ❌ Response interceptor triggered (error)");
+    console.log("[FRONTEND][AXIOS] Timestamp:", new Date().toISOString());
+    
+    // ============================================
+    // EXPOSE FULL AXIOS ERROR - BEFORE ANY WRAPPING
+    // ============================================
+    console.error("🟥 RAW AXIOS ERROR:", error);
+    console.error("🟥 AXIOS RESPONSE:", error.response);
+    console.error("🟥 AXIOS STATUS:", error.response?.status);
+    console.error("🟥 AXIOS DATA:", error.response?.data);
+    
+    console.log("[FRONTEND][AXIOS] Error response exists:", !!error.response);
+    console.log("[FRONTEND][AXIOS] Error request exists:", !!error.request);
+    console.log("[FRONTEND][AXIOS] Error isAxiosError:", error.isAxiosError);
     
     if (error.response) {
-      console.log("🔴 [Axios Response] Response status:", error.response.status);
-      console.log("🔴 [Axios Response] Response status text:", error.response.statusText);
-      console.log("🔴 [Axios Response] Response headers:", error.response.headers);
-      console.log("🔴 [Axios Response] Response data:", error.response.data);
-      console.log("🔴 [Axios Response] Response config URL:", error.response.config?.url);
-      console.log("🔴 [Axios Response] Response config method:", error.response.config?.method);
-      console.log("🔴 [Axios Response] Response config headers:", error.response.config?.headers);
-      console.log("🔴 [Axios Response] Authorization header sent:", error.response.config?.headers?.Authorization?.substring(0, 50) + "...");
+      console.log("[FRONTEND][AXIOS] Response status:", error.response.status);
+      console.log("[FRONTEND][AXIOS] Response status text:", error.response.statusText);
+      console.log("[FRONTEND][AXIOS] Response data:", JSON.stringify(error.response.data, null, 2));
+      console.log("[FRONTEND][AXIOS] Request URL:", error.response.config?.url);
+      console.log("[FRONTEND][AXIOS] Request method:", error.response.config?.method);
+      console.log("[FRONTEND][AXIOS] Authorization header was sent:", !!error.response.config?.headers?.Authorization || !!error.response.config?.headers?.authorization);
+      if (error.response.config?.headers?.Authorization || error.response.config?.headers?.authorization) {
+        const sentHeader = error.response.config?.headers?.Authorization || error.response.config?.headers?.authorization;
+        console.log("[FRONTEND][AXIOS] Sent Authorization header preview:", sentHeader.substring(0, 60) + "...");
+      }
+      console.log("[FRONTEND][AXIOS] This is an AXIOS RESPONSE ERROR (backend responded)");
     } else if (error.request) {
-      console.log("🔴 [Axios Response] No response received, request object:", error.request);
+      console.log("[FRONTEND][AXIOS] No response received, request object:", error.request);
+      console.log("[FRONTEND][AXIOS] This is a NETWORK ERROR (no backend response)");
     } else {
-      console.log("🔴 [Axios Response] Error setting up request:", error.message);
+      console.log("[FRONTEND][AXIOS] Error setting up request:", error.message);
+      console.log("[FRONTEND][AXIOS] This is a REQUEST SETUP ERROR (not an Axios response error)");
     }
     
     // Handle 401 Unauthorized - token expired or invalid
     if (error.response?.status === 401) {
-      console.log("⚠️ [Axios Response] 401 Unauthorized detected");
-      console.log("⚠️ [Axios Response] Backend error message:", error.response?.data?.message || error.response?.data?.error || "No error message");
-      console.log("⚠️ [Axios Response] Backend error data:", JSON.stringify(error.response?.data, null, 2));
+      const requestURL = error.response?.config?.url || error.config?.url || "unknown";
+      const fullURL = error.response?.config?.baseURL 
+        ? `${error.response.config.baseURL}${requestURL}` 
+        : requestURL;
+      const authHeaderSent = !!error.response?.config?.headers?.Authorization || 
+                            !!error.response?.config?.headers?.authorization ||
+                            !!error.config?.headers?.Authorization ||
+                            !!error.config?.headers?.authorization;
+      const currentToken = localStorage.getItem("token");
+      const sentAuthHeader = error.response?.config?.headers?.Authorization || 
+                            error.response?.config?.headers?.authorization ||
+                            error.config?.headers?.Authorization ||
+                            error.config?.headers?.authorization;
+      const sentToken = sentAuthHeader?.replace(/^Bearer\s+/i, '') || null;
       
-      // Log current token state
-      const currentToken = localStorage.getItem("token") || localStorage.getItem("cht_token");
-      const sentToken = error.response?.config?.headers?.Authorization?.replace('Bearer ', '') || null;
-      console.log("⚠️ [Axios Response] Current token in localStorage:", !!currentToken);
-      console.log("⚠️ [Axios Response] Current token preview:", currentToken ? currentToken.substring(0, 50) + "..." : "null");
-      console.log("⚠️ [Axios Response] Token that was sent:", sentToken ? sentToken.substring(0, 50) + "..." : "null");
-      console.log("⚠️ [Axios Response] Tokens match:", currentToken === sentToken);
+      console.log("[AUTH][RESPONSE][401] ========================================");
+      console.log("[AUTH][RESPONSE][401] 401 Unauthorized detected");
+      console.log("[AUTH][RESPONSE][401] Request URL:", requestURL);
+      console.log("[AUTH][RESPONSE][401] Full URL:", fullURL);
+      console.log("[AUTH][RESPONSE][401] Response status:", error.response?.status);
+      console.log("[AUTH][RESPONSE][401] Authorization header was attached:", authHeaderSent);
+      console.log("[AUTH][RESPONSE][401] Sent Authorization header:", sentAuthHeader ? sentAuthHeader.substring(0, 60) + "..." : "null");
+      console.log("[AUTH][RESPONSE][401] Current token in localStorage:", !!currentToken);
+      console.log("[AUTH][RESPONSE][401] Token length in localStorage:", currentToken?.length || 0);
+      console.log("[AUTH][RESPONSE][401] Token preview (localStorage):", currentToken ? currentToken.substring(0, 50) + "..." : "null");
+      console.log("[AUTH][RESPONSE][401] Token that was sent:", !!sentToken, sentToken ? `length: ${sentToken.length}` : "null");
+      console.log("[AUTH][RESPONSE][401] Sent token preview:", sentToken ? sentToken.substring(0, 50) + "..." : "null");
+      console.log("[AUTH][RESPONSE][401] Tokens match:", currentToken?.trim() === sentToken?.trim());
+      console.log("[AUTH][RESPONSE][401] Token starts with 'eyJ' (sent):", sentToken?.startsWith('eyJ') || false);
+      console.log("[AUTH][RESPONSE][401] Token starts with 'eyJ' (stored):", currentToken?.startsWith('eyJ') || false);
+      console.log("[AUTH][RESPONSE][401] Backend error:", error.response?.data?.message || error.response?.data?.error || "No error message");
+      console.log("[AUTH][RESPONSE][401] Full error response:", JSON.stringify(error.response?.data, null, 2));
       
       // Check if this is a fresh login (within last 30 seconds) - don't clear if so
       const loginTime = sessionStorage.getItem("lastLoginTime");
@@ -211,24 +245,28 @@ axiosInstance.interceptors.response.use(
       const timeSinceLogin = loginTime ? now - parseInt(loginTime) : Infinity;
       const isFreshLogin = timeSinceLogin < 30000; // 30 seconds
       
-      console.log("⚠️ [Axios Response] Last login time:", loginTime ? new Date(parseInt(loginTime)).toISOString() : "Never");
-      console.log("⚠️ [Axios Response] Time since login (ms):", timeSinceLogin);
-      console.log("⚠️ [Axios Response] Is fresh login (< 30s):", isFreshLogin);
+      console.log("[AUTH][RESPONSE][401] Last login time:", loginTime ? new Date(parseInt(loginTime)).toISOString() : "Never");
+      console.log("[AUTH][RESPONSE][401] Time since login (ms):", timeSinceLogin);
+      console.log("[AUTH][RESPONSE][401] Is fresh login (< 30s):", isFreshLogin);
       
       // Don't clear on fresh logins - might be a backend validation issue
       if (isFreshLogin) {
-        console.warn("⚠️ [Axios Response] Fresh login detected - NOT clearing auth data (might be backend validation issue)");
-        console.warn("⚠️ [Axios Response] Token might be valid but backend is rejecting it");
-        console.warn("⚠️ [Axios Response] Full token sent:", sentToken);
-        console.warn("⚠️ [Axios Response] Full token in localStorage:", currentToken);
+        console.warn("[AUTH][RESPONSE][401] Fresh login detected - NOT clearing auth data (might be backend validation issue)");
+        console.warn("[AUTH][RESPONSE][401] Token might be valid but backend is rejecting it");
+        console.warn("[AUTH][RESPONSE][401] Token sent length:", sentToken?.length || 0);
+        console.warn("[AUTH][RESPONSE][401] Token in localStorage length:", currentToken?.length || 0);
         
-        // Return error without clearing - let the app handle it
-        return Promise.reject({
-          message: error.response?.data?.message || "Authentication failed. Please try logging in again.",
+        // Preserve original Axios error structure when re-throwing
+        const enhancedError = Object.assign(new Error(error.response?.data?.message || "Authentication failed. Please try logging in again."), {
+          response: error.response, // Preserve full response
+          request: error.request,
+          config: error.config,
+          isAxiosError: error.isAxiosError,
           status: 401,
           originalError: error.response?.data,
           isFreshLogin: true,
         });
+        return Promise.reject(enhancedError);
       }
       
       // Clear auth data and redirect to login (only for non-fresh logins)
@@ -245,22 +283,26 @@ axiosInstance.interceptors.response.use(
         window.location.href = "/login";
       }
       
-      return Promise.reject({
-        message: error.response?.data?.message || "Session expired. Please login again.",
+      // Preserve original Axios error structure when re-throwing
+      const enhancedError = Object.assign(new Error(error.response?.data?.message || "Session expired. Please login again."), {
+        response: error.response, // Preserve full response
+        request: error.request,
+        config: error.config,
+        isAxiosError: error.isAxiosError,
         status: 401,
         originalError: error.response?.data,
       });
+      return Promise.reject(enhancedError);
     }
 
-    // Sanitize error messages to prevent information leakage
+    // Handle non-401 errors - preserve Axios error structure
     if (error.response) {
       // For 400 errors, preserve more details for validation errors
       const isValidationError = error.response.status === 400;
       const errorData = error.response.data || {};
       
-      // Server responded with error status
-      const sanitizedError = {
-        ...error,
+      // Preserve original Axios error structure while sanitizing data
+      const sanitizedError = Object.assign(new Error(errorData.message || errorData.error || "An error occurred"), {
         response: {
           ...error.response,
           // Keep more details for validation errors, sanitize others
@@ -274,7 +316,10 @@ axiosInstance.interceptors.response.use(
             status: error.response.status,
           },
         },
-      };
+        request: error.request,
+        config: error.config,
+        isAxiosError: error.isAxiosError,
+      });
 
       // Log full error for debugging (always log in development)
       if (process.env.NODE_ENV !== "production" || isValidationError) {
@@ -285,15 +330,25 @@ axiosInstance.interceptors.response.use(
     } else if (error.request) {
       // Request was made but no response received
       console.error("Network Error:", error.message);
-      return Promise.reject({
-        message: "Network error. Please check your connection.",
+      // Preserve error structure for network errors
+      const networkError = Object.assign(new Error("Network error. Please check your connection."), {
+        request: error.request,
+        config: error.config,
+        isAxiosError: error.isAxiosError,
+        response: null, // Explicitly set to null
       });
+      return Promise.reject(networkError);
     } else {
       // Something else happened
       console.error("Error:", error.message);
-      return Promise.reject({
-        message: "An unexpected error occurred.",
+      // Preserve error structure for setup errors
+      const setupError = Object.assign(new Error("An unexpected error occurred."), {
+        originalError: error,
+        response: null,
+        request: null,
+        isAxiosError: error.isAxiosError || false,
       });
+      return Promise.reject(setupError);
     }
   }
 );
