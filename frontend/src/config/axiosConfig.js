@@ -53,69 +53,116 @@ const axiosInstance = axios.create({
 // Request interceptor - validate URLs, add security headers, and inject auth token
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Validate URL if it's a full URL
-    if (config.url && !config.url.startsWith("/")) {
-      validateUrl(config.url);
+    // ------------------------------
+    // Normalize / trim config.url first
+    // ------------------------------
+    try {
+      // JSON.stringify to reveal hidden whitespace characters
+      console.log("[FRONTEND][AXIOS] Raw config.url (JSON):", JSON.stringify(config.url));
+
+      if (typeof config.url === "string") {
+        const rawUrl = config.url;
+        const trimmedUrl = rawUrl.trim();
+
+        if (trimmedUrl !== rawUrl) {
+          console.warn("[FRONTEND][AXIOS] Trimmed whitespace from request url", {
+            before: JSON.stringify(rawUrl),
+            after: JSON.stringify(trimmedUrl),
+          });
+        }
+
+        // Replace with trimmed url immediately so subsequent logic uses cleaned value
+        config.url = trimmedUrl;
+      }
+    } catch (e) {
+      // On any unexpected error here, continue — later validation will catch invalid URLs
+      console.error("[FRONTEND][AXIOS] Error trimming config.url:", e);
     }
 
-    // Ensure HTTPS in production
+    // Determine if URL is absolute (after trimming)
+    const isAbsoluteURL = typeof config.url === "string" && /^https?:\/\//i.test(config.url);
+
+    // If the URL is absolute, validate it and prevent baseURL from being appended
+    if (isAbsoluteURL) {
+      // Validate the absolute URL against TRUSTED_DOMAINS
+      validateUrl(config.url);
+
+      // Prevent axios from concatenating baseURL with an absolute URL
+      // (this avoids duplicated-host situations when a URL accidentally had whitespace)
+      config.baseURL = undefined;
+    } else {
+      // If URL is relative and baseURL is set in axios instance, keep it
+      // For safety, also ensure relative paths start with '/'
+      if (typeof config.url === "string" && !config.url.startsWith("/")) {
+        // leave it as-is if user intentionally passes relative path without leading slash
+        // but log it for debugging
+        console.log("[FRONTEND][AXIOS] Note: request path does not start with '/':", config.url);
+      }
+    }
+
+    // Ensure HTTPS in production for absolute HTTP requests
     if (
       process.env.NODE_ENV === "production" &&
-      config.url &&
+      typeof config.url === "string" &&
       config.url.startsWith("http://")
     ) {
       console.warn("Blocked insecure HTTP request in production");
       throw new Error("Insecure HTTP requests are not allowed in production");
     }
 
-    // Add Authorization header if token exists
-    // Use SINGLE source: localStorage.getItem("token")
-    const isAbsoluteURL = config.url && !config.url.startsWith("/");
-    
     // ============================================
-    // [FRONTEND][AXIOS] Request Interceptor
+    // [FRONTEND][AXIOS] Request Interceptor Logging
     // ============================================
     console.log("============================================");
     console.log("[FRONTEND][AXIOS] Request interceptor triggered");
     console.log("[FRONTEND][AXIOS] Timestamp:", new Date().toISOString());
-    console.log("[FRONTEND][AXIOS] Request URL:", config.url);
+    console.log("[FRONTEND][AXIOS] Request URL (trimmed):", JSON.stringify(config.url));
     console.log("[FRONTEND][AXIOS] Full URL:", config.baseURL ? `${config.baseURL}${config.url}` : config.url);
     console.log("[FRONTEND][AXIOS] Method:", config.method?.toUpperCase());
     console.log("[FRONTEND][AXIOS] isAbsoluteURL:", isAbsoluteURL);
-    
+
+    // Attach Authorization header if token exists
     try {
       console.log("[AUTH][STORAGE] Reading token from localStorage key: 'token'");
-      let token = localStorage.getItem("token");
-      
+      let token = null;
+      if (typeof window !== "undefined" && window.localStorage) {
+        token = localStorage.getItem("token");
+      }
+
       // Trim token to remove any whitespace
       if (token) {
         token = token.trim();
       }
-      
+
       const tokenExists = !!token;
       const tokenLength = token?.length || 0;
-      
+
       console.log("[AUTH][STORAGE] Token exists:", tokenExists);
       console.log("[AUTH][STORAGE] Token length:", tokenLength);
-      console.log("[AUTH][STORAGE] Token starts with 'eyJ':", token?.startsWith('eyJ') || false);
-      console.log("[AUTH][STORAGE] Token preview (first 50 chars):", token ? token.substring(0, 50) + "..." : "null");
-      
+      console.log("[AUTH][STORAGE] Token starts with 'eyJ':", token?.startsWith("eyJ") || false);
+      console.log(
+        "[AUTH][STORAGE] Token preview (first 50 chars):",
+        token ? token.substring(0, 50) + "..." : "null"
+      );
+
       if (token) {
         // Create Authorization header exactly as curl format: "Bearer <token>"
         const authHeader = `Bearer ${token}`;
-        
-        // Set Authorization header - axios normalizes to lowercase 'authorization' but we set both
+
+        // Ensure headers object exists
+        config.headers = config.headers || {};
+
+        // Set Authorization header - axios normalizes to lowercase 'authorization'
         config.headers.Authorization = authHeader;
         config.headers.authorization = authHeader;
-        
-          console.log("[FRONTEND][AXIOS] ✅ Authorization header attached: true");
+
+        console.log("[FRONTEND][AXIOS] ✅ Authorization header attached: true");
         console.log("[FRONTEND][AXIOS] Token length:", tokenLength);
         console.log("[FRONTEND][AXIOS] Auth header length:", authHeader.length);
-        console.log("[FRONTEND][AXIOS] Auth header format check:", authHeader.startsWith('Bearer ') ? "✅ CORRECT" : "❌ INCORRECT");
+        console.log("[FRONTEND][AXIOS] Auth header format check:", authHeader.startsWith("Bearer ") ? "✅ CORRECT" : "❌ INCORRECT");
         console.log("[FRONTEND][AXIOS] Auth header preview:", authHeader.substring(0, 60) + "...");
         console.log("[FRONTEND][AXIOS] Full Authorization header:", authHeader);
-        
-        // Verify header was set correctly
+
         const verifyHeader = config.headers.Authorization || config.headers.authorization;
         console.log("[FRONTEND][AXIOS] Header verification:", verifyHeader ? "✅ SET" : "❌ NOT SET");
         if (verifyHeader) {
@@ -135,14 +182,34 @@ axiosInstance.interceptors.request.use(
     }
 
     // Add CSRF token if available
-    const csrfToken = document.querySelector(
-      'meta[name="csrf-token"]'
-    )?.content;
+    const csrfToken = typeof document !== "undefined"
+      ? document.querySelector('meta[name="csrf-token"]')?.content
+      : null;
     if (csrfToken && !config.headers["X-CSRF-Token"]) {
       config.headers["X-CSRF-Token"] = csrfToken;
     }
 
-    // Add Authorization token from localStorage if available (duplicate check removed - handled above)
+    // Final guard: compute effective fullUrl and block if encoded spaces still present
+    try {
+      const base = config.baseURL || "";
+      const path = config.url || "";
+      const fullUrl = base + path;
+      console.log("[FRONTEND][AXIOS] Request prepare", {
+        base,
+        path,
+        fullUrl,
+        containsWhitespace: /\s/.test(fullUrl),
+        containsPct20: fullUrl.includes("%20"),
+      });
+
+      if (/\s/.test(fullUrl) || fullUrl.includes("%20")) {
+        console.error("[FRONTEND][AXIOS] Blocking request: URL contains whitespace or %20", JSON.stringify(fullUrl));
+        throw new Error("Invalid request URL (contains whitespace or %20): " + fullUrl);
+      }
+    } catch (e) {
+      console.error("[FRONTEND][AXIOS] Final URL guard error:", e);
+      throw e;
+    }
 
     return config;
   },
@@ -171,7 +238,7 @@ axiosInstance.interceptors.response.use(
     console.log("============================================");
     console.log("[FRONTEND][AXIOS] ❌ Response interceptor triggered (error)");
     console.log("[FRONTEND][AXIOS] Timestamp:", new Date().toISOString());
-    
+
     // ============================================
     // EXPOSE FULL AXIOS ERROR - BEFORE ANY WRAPPING
     // ============================================
@@ -179,11 +246,11 @@ axiosInstance.interceptors.response.use(
     console.error("🟥 AXIOS RESPONSE:", error.response);
     console.error("🟥 AXIOS STATUS:", error.response?.status);
     console.error("🟥 AXIOS DATA:", error.response?.data);
-    
+
     console.log("[FRONTEND][AXIOS] Error response exists:", !!error.response);
     console.log("[FRONTEND][AXIOS] Error request exists:", !!error.request);
     console.log("[FRONTEND][AXIOS] Error isAxiosError:", error.isAxiosError);
-    
+
     if (error.response) {
       console.log("[FRONTEND][AXIOS] Response status:", error.response.status);
       console.log("[FRONTEND][AXIOS] Response status text:", error.response.statusText);
@@ -203,24 +270,24 @@ axiosInstance.interceptors.response.use(
       console.log("[FRONTEND][AXIOS] Error setting up request:", error.message);
       console.log("[FRONTEND][AXIOS] This is a REQUEST SETUP ERROR (not an Axios response error)");
     }
-    
+
     // Handle 401 Unauthorized - token expired or invalid
     if (error.response?.status === 401) {
       const requestURL = error.response?.config?.url || error.config?.url || "unknown";
-      const fullURL = error.response?.config?.baseURL 
-        ? `${error.response.config.baseURL}${requestURL}` 
+      const fullURL = error.response?.config?.baseURL
+        ? `${error.response.config.baseURL}${requestURL}`
         : requestURL;
-      const authHeaderSent = !!error.response?.config?.headers?.Authorization || 
-                            !!error.response?.config?.headers?.authorization ||
-                            !!error.config?.headers?.Authorization ||
-                            !!error.config?.headers?.authorization;
-      const currentToken = localStorage.getItem("token");
-      const sentAuthHeader = error.response?.config?.headers?.Authorization || 
-                            error.response?.config?.headers?.authorization ||
-                            error.config?.headers?.Authorization ||
-                            error.config?.headers?.authorization;
-      const sentToken = sentAuthHeader?.replace(/^Bearer\s+/i, '') || null;
-      
+      const authHeaderSent = !!error.response?.config?.headers?.Authorization ||
+        !!error.response?.config?.headers?.authorization ||
+        !!error.config?.headers?.Authorization ||
+        !!error.config?.headers?.authorization;
+      const currentToken = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const sentAuthHeader = error.response?.config?.headers?.Authorization ||
+        error.response?.config?.headers?.authorization ||
+        error.config?.headers?.Authorization ||
+        error.config?.headers?.authorization;
+      const sentToken = sentAuthHeader?.replace(/^Bearer\s+/i, "") || null;
+
       console.log("[AUTH][RESPONSE][401] ========================================");
       console.log("[AUTH][RESPONSE][401] 401 Unauthorized detected");
       console.log("[AUTH][RESPONSE][401] Request URL:", requestURL);
@@ -234,28 +301,28 @@ axiosInstance.interceptors.response.use(
       console.log("[AUTH][RESPONSE][401] Token that was sent:", !!sentToken, sentToken ? `length: ${sentToken.length}` : "null");
       console.log("[AUTH][RESPONSE][401] Sent token preview:", sentToken ? sentToken.substring(0, 50) + "..." : "null");
       console.log("[AUTH][RESPONSE][401] Tokens match:", currentToken?.trim() === sentToken?.trim());
-      console.log("[AUTH][RESPONSE][401] Token starts with 'eyJ' (sent):", sentToken?.startsWith('eyJ') || false);
-      console.log("[AUTH][RESPONSE][401] Token starts with 'eyJ' (stored):", currentToken?.startsWith('eyJ') || false);
+      console.log("[AUTH][RESPONSE][401] Token starts with 'eyJ' (sent):", sentToken?.startsWith("eyJ") || false);
+      console.log("[AUTH][RESPONSE][401] Token starts with 'eyJ' (stored):", currentToken?.startsWith("eyJ") || false);
       console.log("[AUTH][RESPONSE][401] Backend error:", error.response?.data?.message || error.response?.data?.error || "No error message");
       console.log("[AUTH][RESPONSE][401] Full error response:", JSON.stringify(error.response?.data, null, 2));
-      
+
       // Check if this is a fresh login (within last 30 seconds) - don't clear if so
       const loginTime = sessionStorage.getItem("lastLoginTime");
       const now = Date.now();
       const timeSinceLogin = loginTime ? now - parseInt(loginTime) : Infinity;
       const isFreshLogin = timeSinceLogin < 30000; // 30 seconds
-      
+
       console.log("[AUTH][RESPONSE][401] Last login time:", loginTime ? new Date(parseInt(loginTime)).toISOString() : "Never");
       console.log("[AUTH][RESPONSE][401] Time since login (ms):", timeSinceLogin);
       console.log("[AUTH][RESPONSE][401] Is fresh login (< 30s):", isFreshLogin);
-      
+
       // Don't clear on fresh logins - might be a backend validation issue
       if (isFreshLogin) {
         console.warn("[AUTH][RESPONSE][401] Fresh login detected - NOT clearing auth data (might be backend validation issue)");
         console.warn("[AUTH][RESPONSE][401] Token might be valid but backend is rejecting it");
         console.warn("[AUTH][RESPONSE][401] Token sent length:", sentToken?.length || 0);
         console.warn("[AUTH][RESPONSE][401] Token in localStorage length:", currentToken?.length || 0);
-        
+
         // Preserve original Axios error structure when re-throwing
         const enhancedError = Object.assign(new Error(error.response?.data?.message || "Authentication failed. Please try logging in again."), {
           response: error.response, // Preserve full response
@@ -268,21 +335,23 @@ axiosInstance.interceptors.response.use(
         });
         return Promise.reject(enhancedError);
       }
-      
+
       // Clear auth data and redirect to login (only for non-fresh logins)
       console.log("⚠️ [Axios Response] Clearing auth data and redirecting to login...");
-      localStorage.removeItem("userInfo");
-      localStorage.removeItem("cht_user");
-      localStorage.removeItem("cht_token");
-      localStorage.removeItem("token");
-      sessionStorage.removeItem("lastLoginTime");
-      
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("cht_user");
+        localStorage.removeItem("cht_token");
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("lastLoginTime");
+      }
+
       // Only redirect if not already on login page
-      if (window.location.pathname !== "/login") {
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
         console.log("⚠️ [Axios Response] Redirecting to /login");
         window.location.href = "/login";
       }
-      
+
       // Preserve original Axios error structure when re-throwing
       const enhancedError = Object.assign(new Error(error.response?.data?.message || "Session expired. Please login again."), {
         response: error.response, // Preserve full response
@@ -300,7 +369,7 @@ axiosInstance.interceptors.response.use(
       // For 400 errors, preserve more details for validation errors
       const isValidationError = error.response.status === 400;
       const errorData = error.response.data || {};
-      
+
       // Preserve original Axios error structure while sanitizing data
       const sanitizedError = Object.assign(new Error(errorData.message || errorData.error || "An error occurred"), {
         response: {
