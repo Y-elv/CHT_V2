@@ -10,10 +10,10 @@ import Calendar from "../../components/calendar/calendar";
 import Navbar from "../../components/navbar/navbar";
 import layer1 from "../../assets/Layer_1.png";
 import layer2 from "../../assets/Layer_2.png";
-import layer3 from "../../assets/layer_3.png";
-import layer4 from "../../assets/layer_4.png";
-import layer5 from "../../assets/layer_5.png";
-import layer6 from "../../assets/layer_6.png";
+import layer3 from "../../assets/Layer_3.png";
+import layer4 from "../../assets/Layer_4.png";
+import layer5 from "../../assets/Layer_5.png";
+import layer6 from "../../assets/Layer_6.png";
 import luke from "../../assets/luke.png";
 import alex from "../../assets/alex.png";
 import marvin from "../../assets/marvin.png";
@@ -25,8 +25,11 @@ import karenera from "../../assets/karenera.png";
 import submit from "../../assets/submit.png";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import axios from "../../config/axiosConfig";
-import { useToast, Spinner, Box } from "@chakra-ui/react";
+import axios from "../../api/axios";
+import { useToast, Spinner, Box, Button, Avatar, Heading, Text, VStack, HStack } from "@chakra-ui/react";
+import { useAuthStore } from "../../store/authStore";
+import { IoMailOutline, IoCallOutline, IoChatbubbleOutline, IoStarOutline } from "react-icons/io5";
+import { RiUserHeartLine, RiStethoscopeLine, RiTimeLine } from "react-icons/ri";
 const Consultation = () => {
   const navigate = useNavigate();
   const toast = useToast();
@@ -40,6 +43,122 @@ const Consultation = () => {
   const [selectedDoctorData, setSelectedDoctorData] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedService, setSelectedService] = useState("");
+
+  // Enhanced team member data with chat functionality
+  const teamMembers = [
+    {
+      id: 1,
+      name: "Dr. Luke Belmar",
+      title: "Mental Health Specialist",
+      image: luke,
+      email: "luke.belmar@kundwa.health",
+      phone: "+250 788 000 001",
+      specialty: "Mental Health",
+      rating: 4.9,
+      experience: "8+ years",
+      description: "I provide a safe and confidential space to discuss your thoughts, emotions, and challenges. Together, we'll work on developing coping strategies and managing stress.",
+      available: true,
+      chatId: "luke-belmar"
+    },
+    {
+      id: 2,
+      name: "Dr. Flores Martinez",
+      title: "Sexual Health Expert",
+      image: flores,
+      email: "flores.martinez@kundwa.health",
+      phone: "+250 788 000 002",
+      specialty: "Sexual Health",
+      rating: 4.8,
+      experience: "6+ years",
+      description: "Specialized in sexual and reproductive health education, providing confidential and non-judgmental guidance on sensitive topics.",
+      available: true,
+      chatId: "flores-martinez"
+    },
+    {
+      id: 3,
+      name: "Dr. Juanita Kim",
+      title: "Counseling & Therapy",
+      image: juanita,
+      email: "juanita.kim@kundwa.health",
+      phone: "+250 788 000 003",
+      specialty: "Counseling",
+      rating: 4.9,
+      experience: "7+ years",
+      description: "Expert in adolescent counseling and youth empowerment, helping young people navigate life's challenges with confidence.",
+      available: true,
+      chatId: "juanita-kim"
+    },
+    {
+      id: 4,
+      name: "Dr. Cooper Johnson",
+      title: "Mental Health Counselor",
+      image: cooper,
+      email: "cooper.johnson@kundwa.health",
+      phone: "+250 788 000 004",
+      specialty: "Mental Health",
+      rating: 4.7,
+      experience: "5+ years",
+      description: "Focused on youth mental health, providing innovative therapeutic approaches for today's challenges.",
+      available: true,
+      chatId: "cooper-johnson"
+    },
+    {
+      id: 5,
+      name: "Dr. Alex Chen",
+      title: "Sexual Health Advisor",
+      image: alex,
+      email: "alex.chen@kundwa.health",
+      phone: "+250 788 000 005",
+      specialty: "Sexual Health",
+      rating: 4.8,
+      experience: "6+ years",
+      description: "Dedicated to providing accurate sexual health information and breaking down barriers to open communication.",
+      available: true,
+      chatId: "alex-chen"
+    },
+    {
+      id: 6,
+      name: "Dr. Marvin Davis",
+      title: "Therapy & Wellness",
+      image: marvin,
+      email: "marvin.davis@kundwa.health",
+      phone: "+250 788 000 006",
+      specialty: "Therapy",
+      rating: 4.6,
+      experience: "4+ years",
+      description: "Holistic approach to mental wellness, combining traditional therapy with modern wellness techniques.",
+      available: true,
+      chatId: "marvin-davis"
+    },
+    {
+      id: 7,
+      name: "Dr. Kenny Park",
+      title: "Youth Mental Health",
+      image: kenny,
+      email: "kenny.park@kundwa.health",
+      phone: "+250 788 000 007",
+      specialty: "Mental Health",
+      rating: 4.8,
+      experience: "5+ years",
+      description: "Specialized in working with young adults, creating relatable and effective therapeutic relationships.",
+      available: true,
+      chatId: "kenny-park"
+    },
+    {
+      id: 8,
+      name: "Dr. Karenera Smith",
+      title: "Counseling Specialist",
+      image: karenera,
+      email: "karenera.smith@kundwa.health",
+      phone: "+250 788 000 008",
+      specialty: "Counseling",
+      rating: 4.9,
+      experience: "9+ years",
+      description: "Experienced counselor with expertise in trauma-informed care and youth empowerment strategies.",
+      available: true,
+      chatId: "karenera-smith"
+    }
+  ];
 
   // Fetch approved doctors from API
   const fetchDoctors = async () => {
@@ -259,6 +378,12 @@ const Consultation = () => {
     setIsModalOpen2(false);
   };
 
+  // Handle chat navigation
+  const handleChatWithDoctor = (member) => {
+    // Navigate to chat pages with the doctor's chat ID
+    navigate(`/chatpages?doctor=${member.chatId}`);
+  };
+
   // Animations matching OurTeamPage style
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -296,134 +421,225 @@ const Consultation = () => {
         <div className="cons-container" style={{ overflowX: "hidden" }}>
           <Navbar />
           <div className="cons-middle" style={{ paddingBottom: 72 }}>
-            <motion.h2
+            {/* Enhanced Title Section */}
+            <motion.div
               variants={titleVariants}
               initial="hidden"
               animate="visible"
-              style={{
-                textAlign: "center",
-                marginTop: 10,
-                marginBottom: 20,
-                fontWeight: 700,
-                background:
-                  "linear-gradient(135deg, #F7941D 0%, #FFA84D 50%, #2B2F92 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
+              style={{ textAlign: "center", marginBottom: 60 }}
             >
-              MEET THE TEAM
-            </motion.h2>
+              <motion.h2
+                style={{
+                  fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                  fontWeight: 800,
+                  background:
+                    "linear-gradient(135deg, #F7941D 0%, #FFA84D 50%, #2B2F92 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  marginBottom: 16,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                MEET OUR EXPERT TEAM
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                style={{
+                  fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
+                  color: "#64748b",
+                  maxWidth: "600px",
+                  margin: "0 auto",
+                  lineHeight: 1.6,
+                }}
+              >
+                Connect with our dedicated healthcare professionals for confidential support and guidance
+              </motion.p>
+            </motion.div>
 
-            <Container fluid className="prof-card">
-              <Row className="prof-card-up d-flex flex-wrap justify-content-center g-5 gy-5 gx-5">
-                <Col xs={12} sm={6} md={4}>
+            {/* Enhanced Team Cards Grid */}
+            <Container fluid style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 24px" }}>
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+                  gap: "32px",
+                  marginBottom: "60px",
+                }}
+              >
+                {teamMembers.map((member, index) => (
                   <motion.div
+                    key={member.id}
                     variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
+                    whileHover={{
+                      y: -12,
+                      scale: 1.03,
+                      transition: { type: "spring", stiffness: 300, damping: 20 },
+                    }}
+                    style={{
+                      background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%)",
+                      borderRadius: "24px",
+                      border: "1px solid rgba(43,47,146,0.1)",
+                      boxShadow: "0 20px 40px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.5)",
+                      backdropFilter: "blur(10px)",
+                      padding: "32px 24px",
+                      position: "relative",
+                      overflow: "hidden",
+                    }}
                   >
-                    <CardProf imgName={luke} />
-                  </motion.div>
-                </Col>
-                <Col xs={12} sm={6} md={4}>
-                  <motion.div
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                  >
-                    <CardProf imgName={flores} />
-                  </motion.div>
-                </Col>
-                <Col xs={12} sm={6} md={4}>
-                  <motion.div
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                  >
-                    <CardProf imgName={juanita} />
-                  </motion.div>
-                </Col>
-                <Col xs={12} sm={6} md={4}>
-                  <motion.div
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                  >
-                    <CardProf imgName={cooper} />
-                  </motion.div>
-                </Col>
-              </Row>
+                    {/* Decorative gradient overlay */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: "4px",
+                        background: "linear-gradient(90deg, #F7941D 0%, #FFA84D 50%, #2B2F92 100%)",
+                        borderRadius: "24px 24px 0 0",
+                      }}
+                    />
 
-              <Row className="prof-card-down d-flex flex-wrap g-5 gy-5 gx-5">
-                <Col xs={12} sm={6} md={4}>
-                  <motion.div
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                  >
-                    <CardProf imgName={alex} className="img-fluid" />
+                    {/* Avatar Section */}
+                    <motion.div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        marginBottom: "24px",
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <div
+                        style={{
+                          position: "relative",
+                          marginBottom: "16px",
+                        }}
+                      >
+                        <Avatar
+                          src={member.image}
+                          name={member.name}
+                          size="xl"
+                          style={{
+                            width: "120px",
+                            height: "120px",
+                            border: "4px solid #F7941D",
+                            boxShadow: "0 8px 24px rgba(247,148,29,0.3)",
+                          }}
+                        />
+                        {/* Online status indicator */}
+                        <div
+                          style={{
+                            position: "absolute",
+                            bottom: "8px",
+                            right: "8px",
+                            width: "20px",
+                            height: "20px",
+                            backgroundColor: member.available ? "#10b981" : "#ef4444",
+                            borderRadius: "50%",
+                            border: "3px solid white",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                          }}
+                        />
+                      </div>
+                    </motion.div>
+
+                    {/* Doctor Info */}
+                    <VStack spacing={3} align="center" style={{ textAlign: "center", marginBottom: "20px" }}>
+                      <Heading
+                        size="md"
+                        style={{
+                          background: "linear-gradient(135deg, #2B2F92 0%, #1E2266 100%)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {member.name}
+                      </Heading>
+                      <Text
+                        fontSize="sm"
+                        fontWeight={600}
+                        color="#F7941D"
+                        style={{ textTransform: "uppercase", letterSpacing: "0.05em" }}
+                      >
+                        {member.title}
+                      </Text>
+                      <HStack spacing={2} align="center">
+                        <IoStarOutline color="#F59E0B" size={16} />
+                        <Text fontSize="sm" fontWeight={600} color="#1f2937">
+                          {member.rating}
+                        </Text>
+                        <Text fontSize="sm" color="#6b7280">
+                          ({member.experience})
+                        </Text>
+                      </HStack>
+                    </VStack>
+
+                    {/* Description */}
+                    <Text
+                      fontSize="sm"
+                      color="#4b5563"
+                      lineHeight={1.6}
+                      style={{ textAlign: "center", marginBottom: "24px", minHeight: "60px" }}
+                    >
+                      {member.description}
+                    </Text>
+
+                    {/* Contact Info */}
+                    <VStack spacing={3} style={{ marginBottom: "24px" }}>
+                      <HStack spacing={2} align="center" style={{ fontSize: "0.875rem" }}>
+                        <IoMailOutline color="#2B2F92" size={16} />
+                        <Text color="#4b5563">{member.email}</Text>
+                      </HStack>
+                      <HStack spacing={2} align="center" style={{ fontSize: "0.875rem" }}>
+                        <IoCallOutline color="#F7941D" size={16} />
+                        <Text color="#4b5563">{member.phone}</Text>
+                      </HStack>
+                    </VStack>
                   </motion.div>
-                </Col>
-                <Col xs={12} sm={6} md={4} className="mb-3 mb-md-0">
-                  <motion.div
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                  >
-                    <CardProf imgName={marvin} />
-                  </motion.div>
-                </Col>
-                <Col xs={12} sm={6} md={4}>
-                  <motion.div
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                  >
-                    <CardProf imgName={kenny} />
-                  </motion.div>
-                </Col>
-                <Col xs={12} sm={6} md={4}>
-                  <motion.div
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                  >
-                    <CardProf imgName={karenera} />
-                  </motion.div>
-                </Col>
-              </Row>
+                ))}
+              </motion.div>
             </Container>
-            <div className="kh-rooms">
+            {/* Enhanced CTA Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              style={{ textAlign: "center", marginBottom: "60px" }}
+            >
               <motion.button
                 whileHover={{
                   scale: 1.05,
-                  y: -2,
-                  boxShadow: "0 10px 25px rgba(247,148,29,0.35)",
+                  y: -4,
+                  boxShadow: "0 20px 40px rgba(247,148,29,0.4)",
                 }}
                 whileTap={{ scale: 0.98 }}
-                className="btn-kh"
                 onClick={showModal}
                 style={{
-                  background:
-                    "linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)",
+                  background: "linear-gradient(135deg, #F7941D 0%, #FFA84D 100%)",
                   color: "white",
-                  borderRadius: 9999,
+                  borderRadius: "9999px",
                   border: "none",
                   outline: "none",
+                  padding: "16px 48px",
+                  fontSize: "1.125rem",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  boxShadow: "0 10px 25px rgba(247,148,29,0.3)",
+                  letterSpacing: "0.02em",
                 }}
               >
-                talk to us
+                Start Consultation
               </motion.button>
-            </div>
+            </motion.div>
             <div className="cons-about">
               <div
                 className="cons-about-up"

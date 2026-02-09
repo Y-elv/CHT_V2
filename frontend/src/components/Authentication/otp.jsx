@@ -4,7 +4,7 @@ import { useToast, Box, Image, VStack } from "@chakra-ui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import logo from "../../assets/LOGO FULL.png";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 
 const OTP = () => {
   const navigate = useNavigate();

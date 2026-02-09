@@ -11,7 +11,7 @@ import {
 import React, { useState, useRef } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import "./signup.css";
@@ -88,20 +88,12 @@ const Signup = () => {
       return;
     }
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-        },
-      };
-      const { data } = await axios.post(
-        " https://chtv2-bn.onrender.com/api/v2/user/register",
-        {
-          name,
-          email,
-          password,
-        },
-        config
-      );
+      // Use the new cookie-based axios instance
+      const { data } = await axios.post("/api/v2/user/register", {
+        name,
+        email,
+        password,
+      });
       console.log("data are :", data);
 
       toast({

@@ -10,7 +10,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChatState } from "../Context/chatProvider";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthStore } from "../../store/authStore";
 import {
   Menu,
   MenuButton,
@@ -22,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import useNotificationStore from "../../zustandStore/notificationStore";
+import { handleAuthError, initAuthErrorHandler } from "../../utils/authErrorHandler";
 
 const Navbar = ({ active }) => {
   const [showMenu, setShowMenu] = useState(false);
@@ -35,8 +36,8 @@ const Navbar = ({ active }) => {
   const chatContext = ChatState();
   const { user: chatUser = null, chats = [], logoutHandler: chatLogoutHandler } = chatContext || {};
   
-  // Get AuthContext for immediate user state updates
-  const { user: authUser, logout: authLogout, isAuthenticated } = useAuth();
+  // Get AuthStore for immediate user state updates
+  const { user: authUser } = useAuthStore();
   
   // Use authUser if available, otherwise fall back to chatUser
   const user = authUser || chatUser;
@@ -80,6 +81,14 @@ const Navbar = ({ active }) => {
     if (user && shouldShowNotifications) {
       // Fetch notifications and unread count on component mount
       refresh().catch((error) => {
+        // ============================================
+        // HANDLE AUTHENTICATION ERRORS GLOBALLY
+        // ============================================
+        if (handleAuthError(error, "navbar notification fetch")) {
+          // Auth error was handled globally
+          return;
+        }
+        
         // ============================================
         // EXPOSE FULL AXIOS ERROR
         // ============================================
@@ -142,7 +151,7 @@ const Navbar = ({ active }) => {
       navigate(notification.link);
       setShowNotifications(false);
     } else if (notification.type === "message" || notification.chatId) {
-      navigate("/chats");
+      navigate("/chatpages");
       setShowNotifications(false);
     } else {
       setShowNotifications(false);
@@ -271,7 +280,7 @@ const Navbar = ({ active }) => {
               Updates
             </Link>
             <Link
-              to="/our-teamm"
+              to="/consultation"
               className={`nav-link relative text-slate-700 dark:text-slate-300 hover:text-[#F7941D] dark:hover:text-[#F7941D] font-medium transition-colors duration-200 px-2 py-1 ${
                 active === "ourTeam" ? "text-[#F7941D] dark:text-[#F7941D]" : ""
               }`}
@@ -658,10 +667,10 @@ const Navbar = ({ active }) => {
                     >
                       {[
                         { to: "/our-news", label: "Updates" },
-                        { to: "/our-teamm", label: "Our Team" },
+                        { to: "/consultation", label: "Our Team" },
                         { to: "/menu", label: "Menu" },
                         { to: "/consultation", label: "Consultation" },
-                        { to: "/chats", label: "Chats" },
+                        { to: "/chatpages", label: "Chats" },
                         { to: "/game", label: "Game" },
                         { to: "/news", label: "News" },
                       ].map((link, index) => (

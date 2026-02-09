@@ -70,7 +70,7 @@ const UserNavbar = () => {
             <Link className="nav-link text-black text-sm" to="/Consultation">
               Consultation
             </Link>
-            <Link className="nav-link text-black text-sm" to="/chats">
+            <Link className="nav-link text-black text-sm" to="/chatpages">
               Chats
             </Link>
             <Link className="nav-link text-black text-sm" to="/game">

@@ -1,6 +1,6 @@
 // store/adminStore.ts
 import { create } from "zustand";
-import axios from "../config/axiosConfig";
+import axios from "../api/axios";
 import {
   Consultation,
   Doctor,

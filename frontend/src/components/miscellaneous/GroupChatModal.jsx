@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 import { FormControl, useDisclosure, useToast } from "@chakra-ui/react";
 import {
   Modal,

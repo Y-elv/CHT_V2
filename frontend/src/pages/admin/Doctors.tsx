@@ -30,7 +30,7 @@ import {
   TagLeftIcon,
 } from "@chakra-ui/react";
 import { RiStethoscopeLine, RiCheckLine, RiCloseLine } from "react-icons/ri";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios"; // ✅ Use cookie-based axios
 
 interface ApiDoctor {
   _id: string;

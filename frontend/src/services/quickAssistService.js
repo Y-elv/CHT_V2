@@ -5,7 +5,7 @@
  * Uses axios instance with baseURL configured
  */
 
-import axios from "../config/axiosConfig";
+import axios from "../api/axios";
 
 // Use relative URL since axios instance has baseURL configured
 const BASE_URL = "/api/ask";

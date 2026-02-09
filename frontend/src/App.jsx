@@ -1,331 +1,284 @@
-import { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
-import { useNotificationListener } from "./hooks/useNotificationListener";
-
-import "./App.css";
-import Chatpages from "./pages/Chatpages";
-import ServicePage from "./pages/service/service";
-import Pharmacy from "./pages/pharmacy/Pharmacy";
-import LandingPage from "./pages/landingPage/landingPage";
-import Game from "./pages/game/game";
-import News from "./pages/news/news";
-import Menu from "./pages/menu/menu";
-import Consultation from "./pages/consultation/consultation";
-import Profile from "./pages/profile/profile";
-import Appointments from "./pages/profile/Appointments";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import Login from "./components/Authentication/login";
-import Signup from "./components/Authentication/signup";
-import DoctorRegister from "./components/Authentication/doctorRegister";
-import OTP from "./components/Authentication/otp";
-import VerificationSuccess from "./components/Authentication/verificationSuccess";
-import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
-import AuthVerification from "./pages/AuthVerification/AuthVerification";
-import Hospital from "./pages/hospital/Hospital";
-import OurTeamPage from "./pages/OurTeamPage";
-import NewsPage from "./pages/NewsPage";
-import ArticlesPage from "./pages/ArticlesPage";
-import ServicesPage from "./pages/ServicesPage";
-import ErrorPage from "./pages/ErrorPage";
-import BookingOnSmallDevice from "./pages/BookingOnSmallDevice";
-import AdminLayout from "./pages/admin/AdminLayout";
-import Dashboard from "./pages/admin/Dashboard";
-import DoctorsPage from "./pages/admin/Doctors";
-import DoctorDashboard from "./pages/DoctorDashboard";
-import QuickActions from "./pages/doctor/QuickActions";
-import MyPatients from "./pages/doctor/MyPatients";
-import Messages from "./pages/doctor/Messages";
-import Schedule from "./pages/doctor/Schedule";
-import PatientRecords from "./pages/doctor/PatientRecords";
-import Availability from "./pages/doctor/Availability";
-import Notifications from "./pages/doctor/Notifications";
-import Analytics from "./pages/doctor/Analytics";
-import DoctorProfile from "./pages/doctor/Profile";
-import Settings from "./pages/doctor/Settings";
+import React, { Suspense, useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import {
-  AdminProtectedRoute,
-  DoctorProtectedRoute,
-  ProtectedRoute,
-} from "./components/ProtectedRoute";
+  Box,
+  ChakraProvider,
+  ColorModeScript,
+  extendTheme,
+  theme as chakraTheme,
+  useToast,
+} from "@chakra-ui/react";
+import ChatProvider from "./components/Context/chatProvider";
+import { ProtectedRoute, DoctorProtectedRoute, PatientProtectedRoute, AdminProtectedRoute } from "./components/ProtectedRoute";
+import { initAuthErrorHandler } from "./utils/authErrorHandler";
+import ErrorBoundary from "./components/ErrorBoundary";
 import QuickAssist from "./components/QuickAssist/QuickAssist";
 
-function App() {
-  // ============================================
-  // [AUTH][APP INIT] App Component Mount
-  // ============================================
-  useEffect(() => {
-    console.log("[AUTH][APP INIT] App component mounted");
-    console.log("[AUTH][APP INIT] Current pathname:", window.location.pathname);
-    console.log("[AUTH][APP INIT] Current search:", window.location.search);
-    console.log("[AUTH][APP INIT] Current hash:", window.location.hash);
-    
-    // Detect page reload
-    const navEntry = performance.getEntriesByType('navigation')[0];
-    const isPageReload = performance.navigation?.type === 1 || 
-                         (navEntry && navEntry.type === 'reload');
-    console.log("[AUTH][APP INIT] Page reload detected:", isPageReload);
-    console.log("[AUTH][APP INIT] Navigation type:", performance.navigation?.type);
-    console.log("[AUTH][APP INIT] Navigation entry type:", navEntry?.type);
-    
-    // Check auth state after mount
-    const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
-    const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
-    console.log("[AUTH][APP INIT] Auth state after mount:");
-    console.log("[AUTH][APP INIT] - Token exists:", !!token);
-    console.log("[AUTH][APP INIT] - Token length:", token?.length || 0);
-    console.log("[AUTH][APP INIT] - UserInfo exists:", !!userInfo);
-    
-    // Listen for beforeunload to detect navigation
-    const handleBeforeUnload = () => {
-      console.log("[AUTH][RENDER] Page unloading (beforeunload event)");
-      console.log("[AUTH][RENDER] Current URL:", window.location.href);
-      const tokenBeforeUnload = localStorage.getItem("token");
-      console.log("[AUTH][RENDER] Token exists before unload:", !!tokenBeforeUnload);
-    };
-    
-    // Listen for page visibility changes
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        console.log("[AUTH][RENDER] Page hidden");
-      } else {
-        console.log("[AUTH][RENDER] Page visible");
-        const tokenOnVisible = localStorage.getItem("token");
-        console.log("[AUTH][RENDER] Token exists on visible:", !!tokenOnVisible);
-      }
-    };
-    
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    
-    return () => {
-      console.log("[AUTH][APP INIT] App component unmounting");
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
+// Lazy load components
+const LandingPage = React.lazy(() => import("./pages/landingPage/landingPage"));
+const Login = React.lazy(() => import("./pages/Login"));
+const Signup = React.lazy(() => import("./components/Authentication/signup"));
+const ForgotPassword = React.lazy(() => import("./pages/ForgotPassword/ForgotPassword"));
+const AuthVerification = React.lazy(() => import("./pages/AuthVerification/AuthVerification"));
+const DoctorDashboard = React.lazy(() => import("./pages/DoctorDashboard"));
+const PatientDashboard = React.lazy(() => import("./pages/patient/Dashboard"));
+const AdminDashboard = React.lazy(() => import("./pages/admin/Dashboard"));
+const Profile = React.lazy(() => import("./pages/profile/profile"));
+const Appointments = React.lazy(() => import("./pages/profile/Appointments"));
+const Consultation = React.lazy(() => import("./pages/consultation/consultation"));
+const Game = React.lazy(() => import("./pages/game/game"));
+const News = React.lazy(() => import("./pages/news/news"));
+const Menu = React.lazy(() => import("./pages/menu/menu"));
+const OurTeamPage = React.lazy(() => import("./pages/OurTeamPage"));
+const Hospital = React.lazy(() => import("./pages/hospital/Hospital"));
+const Pharmacy = React.lazy(() => import("./pages/pharmacy/Pharmacy"));
+const Service = React.lazy(() => import("./pages/service/service"));
+const Chatpages = React.lazy(() => import("./pages/Chatpages"));
 
-  // Initialize notification listener (auto-fetch and toast alerts)
-  useNotificationListener();
+// Doctor components
+const DoctorMessages = React.lazy(() => import("./pages/doctor/Messages"));
+const DoctorSchedule = React.lazy(() => import("./pages/doctor/Schedule"));
+const DoctorPatients = React.lazy(() => import("./pages/doctor/MyPatients"));
+const DoctorNotifications = React.lazy(() => import("./pages/doctor/Notifications"));
+const DoctorProfile = React.lazy(() => import("./pages/doctor/Profile"));
+const DoctorSettings = React.lazy(() => import("./pages/doctor/Settings"));
+const DoctorAnalytics = React.lazy(() => import("./pages/doctor/Analytics"));
+const DoctorAvailability = React.lazy(() => import("./pages/doctor/Availability"));
+const DoctorPatientRecords = React.lazy(() => import("./pages/doctor/PatientRecords"));
+
+// Admin components
+const AdminDoctors = React.lazy(() => import("./pages/admin/Doctors"));
+const AdminLayout = React.lazy(() => import("./pages/admin/AdminLayout"));
+
+// Extend Chakra theme
+const theme = extendTheme({
+  ...chakraTheme,
+  colors: {
+    brand: {
+      50: "#0D47A1",
+      100: "#1E40AF",
+      200: "#3182CE",
+      300: "#4C1D95",
+      400: "#6366F1",
+      500: "#9333EA",
+      600: "#C41E3A",
+      700: "#E53E3E",
+      800: "#2D3748",
+      900: "#1A202C",
+    },
+  },
+});
+
+// Loading component for lazy loading
+const PageLoader = () => (
+  <Box
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    minH="100vh"
+  >
+    <div>Loading...</div>
+  </Box>
+);
+
+function App() {
+  const toast = useToast();
+  
+  // Initialize global auth error handler with toast instance
+  useEffect(() => {
+    initAuthErrorHandler(toast);
+  }, [toast]);
 
   return (
-    <div>
-      {/* Quick Assist - Available on all pages */}
+    <ErrorBoundary>
+      <Box>
+        <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/auth-verification" element={<AuthVerification />} />
+
+          {/* Public Information Pages */}
+          <Route path="/news" element={<News />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/our-team" element={<OurTeamPage />} />
+          <Route path="/hospital" element={<Hospital />} />
+          <Route path="/pharmacy" element={<Pharmacy />} />
+          <Route path="/service" element={<Service />} />
+
+          {/* Patient Protected Routes */}
+          <Route
+            path="/profile"
+            element={
+              <PatientProtectedRoute>
+                <Profile />
+              </PatientProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile/appointments"
+            element={
+              <PatientProtectedRoute>
+                <Appointments />
+              </PatientProtectedRoute>
+            }
+          />
+          <Route
+            path="/consultation"
+            element={
+              <PatientProtectedRoute>
+                <Consultation />
+              </PatientProtectedRoute>
+            }
+          />
+          <Route
+            path="/game"
+            element={
+              <PatientProtectedRoute>
+                <Game />
+              </PatientProtectedRoute>
+            }
+          />
+          <Route
+            path="/chatpages"
+            element={
+              <PatientProtectedRoute>
+                <Chatpages />
+              </PatientProtectedRoute>
+            }
+          />
+
+          {/* Doctor Protected Routes */}
+          <Route
+            path="/doctor/*"
+            element={
+              <DoctorProtectedRoute>
+                <DoctorDashboard />
+              </DoctorProtectedRoute>
+            }
+          />
+          {/* Individual Doctor Routes for Navigation */}
+          <Route
+            path="/doctor/messages"
+            element={
+              <DoctorProtectedRoute>
+                <DoctorMessages />
+              </DoctorProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/schedule"
+            element={
+              <DoctorProtectedRoute>
+                <DoctorSchedule />
+              </DoctorProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/patients"
+            element={
+              <DoctorProtectedRoute>
+                <DoctorPatients />
+              </DoctorProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/notifications"
+            element={
+              <DoctorProtectedRoute>
+                <DoctorNotifications />
+              </DoctorProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/profile"
+            element={
+              <DoctorProtectedRoute>
+                <DoctorProfile />
+              </DoctorProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/settings"
+            element={
+              <DoctorProtectedRoute>
+                <DoctorSettings />
+              </DoctorProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/analytics"
+            element={
+              <DoctorProtectedRoute>
+                <DoctorAnalytics />
+              </DoctorProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/availability"
+            element={
+              <DoctorProtectedRoute>
+                <DoctorAvailability />
+              </DoctorProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/patient-records"
+            element={
+              <DoctorProtectedRoute>
+                <DoctorPatientRecords />
+              </DoctorProtectedRoute>
+            }
+          />
+
+          {/* Patient Dashboard Routes */}
+          <Route
+            path="/patient/*"
+            element={
+              <PatientProtectedRoute>
+                <PatientDashboard />
+              </PatientProtectedRoute>
+            }
+          />
+
+          {/* Admin Protected Routes */}
+          <Route
+            path="/admin/*"
+            element={
+              <AdminProtectedRoute>
+                <AdminDashboard />
+              </AdminProtectedRoute>
+            }
+          />
+          {/* Individual Admin Routes */}
+          <Route
+            path="/admin/doctors"
+            element={
+              <AdminProtectedRoute>
+                <AdminDoctors />
+              </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/layout"
+            element={
+              <AdminProtectedRoute>
+                <AdminLayout />
+              </AdminProtectedRoute>
+            }
+          />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
       <QuickAssist />
-      
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/home" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Signup />} />
-        <Route path="/doctor/register" element={<DoctorRegister />} />
-        <Route path="/otp" element={<OTP />} />
-        <Route path="/verification-success" element={<VerificationSuccess />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/auth-verification" element={<AuthVerification />} />
-        <Route path="/our-teamm" element={<OurTeamPage />} />
-        <Route path="/our-services" element={<ServicesPage />} />
-        <Route path="/our-news" element={<NewsPage />} />
-        <Route path="/our-articles" element={<ArticlesPage />} />
-        <Route path="/consultation" element={<Consultation />} />
-
-        {/* Protected Public Routes */}
-        <Route
-          path="/chats"
-          element={
-            <ProtectedRoute>
-              <Chatpages />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/services"
-          element={
-            <ProtectedRoute>
-              <ServicePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/pharmacy"
-          element={
-            <ProtectedRoute>
-              <Pharmacy />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/hospital"
-          element={
-            <ProtectedRoute>
-              <Hospital />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/game"
-          element={
-            <ProtectedRoute>
-              <Game />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/news"
-          element={
-            <ProtectedRoute>
-              <News />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/menu"
-          element={
-            <ProtectedRoute>
-              <Menu />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile/appointments"
-          element={
-            <ProtectedRoute>
-              <Appointments />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/book"
-          element={
-            <ProtectedRoute>
-              <BookingOnSmallDevice />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Admin Routes - Protected */}
-        <Route
-          path="/admin"
-          element={
-            <AdminProtectedRoute>
-              <AdminLayout />
-            </AdminProtectedRoute>
-          }
-        >
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="consultations" element={<Dashboard />} />
-          <Route path="users" element={<Dashboard />} />
-          <Route path="doctors" element={<DoctorsPage />} />
-          <Route path="messages" element={<Dashboard />} />
-          <Route path="game" element={<Dashboard />} />
-          <Route path="content" element={<Dashboard />} />
-          <Route path="analytics" element={<Dashboard />} />
-          <Route path="settings" element={<Dashboard />} />
-        </Route>
-
-        {/* Doctor Routes - Protected */}
-        <Route
-          path="/doctor/dashboard"
-          element={
-            <DoctorProtectedRoute>
-              <DoctorDashboard />
-            </DoctorProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/consultations"
-          element={
-            <DoctorProtectedRoute>
-              <QuickActions />
-            </DoctorProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/patients"
-          element={
-            <DoctorProtectedRoute>
-              <MyPatients />
-            </DoctorProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/messages"
-          element={
-            <DoctorProtectedRoute>
-              <Messages />
-            </DoctorProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/schedule"
-          element={
-            <DoctorProtectedRoute>
-              <Schedule />
-            </DoctorProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/records"
-          element={
-            <DoctorProtectedRoute>
-              <PatientRecords />
-            </DoctorProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/availability"
-          element={
-            <DoctorProtectedRoute>
-              <Availability />
-            </DoctorProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/notifications"
-          element={
-            <DoctorProtectedRoute>
-              <Notifications />
-            </DoctorProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/analytics"
-          element={
-            <DoctorProtectedRoute>
-              <Analytics />
-            </DoctorProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/profile"
-          element={
-            <DoctorProtectedRoute>
-              <DoctorProfile />
-            </DoctorProtectedRoute>
-          }
-        />
-        <Route
-          path="/doctor/settings"
-          element={
-            <DoctorProtectedRoute>
-              <Settings />
-            </DoctorProtectedRoute>
-          }
-        />
-
-        <Route path="*" element={<ErrorPage />} />
-      </Routes>
-    </div>
+    </Box>
+    </ErrorBoundary>
   );
 }
 

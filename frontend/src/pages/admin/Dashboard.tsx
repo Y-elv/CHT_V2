@@ -63,12 +63,8 @@ const Dashboard: React.FC = () => {
     console.log("[AUTH][RENDER] Timestamp:", new Date().toISOString());
     console.log("[AUTH][RENDER] Current URL:", window.location.href);
     
-    // Check auth state
-    const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
-    const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
-    console.log("[AUTH][RENDER] AdminDashboard auth state:");
-    console.log("[AUTH][RENDER] - Token exists:", !!token);
-    console.log("[AUTH][RENDER] - UserInfo exists:", !!userInfo);
+    // Cookie-based auth - no localStorage checks needed
+    console.log("[AUTH][RENDER] Using cookie-based authentication");
     
     fetchDashboardStats();
     fetchConsultations();

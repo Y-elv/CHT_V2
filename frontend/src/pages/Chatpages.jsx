@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/navbar/navbar";
-import axios from "../config/axiosConfig";
+import axios from "../api/axios";
 import {
   Box,
   Container,

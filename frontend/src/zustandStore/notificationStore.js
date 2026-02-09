@@ -8,18 +8,7 @@
  * - Integrates with backend notification APIs
  * - Supports optimistic UI updates
  * - Handles real-time notification additions
- * - Manages unread count and notification list
- */
-
-import { create } from "zustand";
-import {
-  getNotifications,
-  getUnreadCount,
-  markNotificationAsRead,
-} from "../services/notificationService";
-
-/**
- * Notification object structure:
+ * - Manages unread count and notification structure:
  * {
  *   _id: string,
  *   title: string,
@@ -31,6 +20,10 @@ import {
  *   ...other fields
  * }
  */
+
+import { create } from "zustand";
+import { getNotifications, getUnreadCount, markNotificationAsRead } from "../services/notificationService";
+import { handleAuthError } from "../utils/authErrorHandler";
 
 const useNotificationStore = create((set, get) => ({
   // State
@@ -63,6 +56,15 @@ const useNotificationStore = create((set, get) => ({
       });
       return result;
     } catch (error) {
+      // ============================================
+      // HANDLE AUTHENTICATION ERRORS GLOBALLY
+      // ============================================
+      if (handleAuthError(error, "notification fetch")) {
+        // Auth error was handled globally
+        set({ loading: false, error: null });
+        return;
+      }
+      
       // ============================================
       // EXPOSE FULL AXIOS ERROR
       // ============================================
@@ -185,6 +187,20 @@ const useNotificationStore = create((set, get) => ({
   },
 
   /**
+   * Clear all notifications (for cleanup)
+   */
+  clearNotifications: () => {
+    console.log("🗑️ [NOTIFICATION STORE] Clearing all notifications");
+    set({
+      notifications: [],
+      unreadCount: 0,
+      loading: false,
+      error: null,
+      lastFetched: null,
+    });
+  },
+
+  /**
    * Add a new incoming notification (for real-time updates)
    * @param {Object} newNotification - The new notification object
    */
@@ -236,4 +252,3 @@ const useNotificationStore = create((set, get) => ({
 }));
 
 export default useNotificationStore;
-
