@@ -35,9 +35,17 @@ const AuthVerification = () => {
   const spinnerColor = useColorModeValue("blue.500", "blue.300");
 
   useEffect(() => {
+    // ============================================
+    // [AUTH][CALLBACK] Component Mount Detection
+    // ============================================
+    console.log("============================================");
+    console.log("[AUTH][CALLBACK] AuthVerification component mounted");
+    console.log("[AUTH][CALLBACK] Timestamp:", new Date().toISOString());
+    console.log("[AUTH][CALLBACK] Component render count check");
+    
     // Prevent multiple executions
     if (processingStartedRef.current) {
-      console.log("⚠️ [Auth Callback] Processing already started, skipping duplicate execution");
+      console.log("[AUTH][CALLBACK] ⚠️ Processing already started, skipping duplicate execution");
       return;
     }
     
@@ -45,23 +53,40 @@ const AuthVerification = () => {
     
     const processAuthCallback = async () => {
       try {
-        console.log("🔵 [Auth Callback] Starting authentication callback processing...");
-        console.log("🔵 [Auth Callback] Raw URL:", window.location.href);
+        // ============================================
+        // [AUTH][CALLBACK] Starting Callback Processing
+        // ============================================
+        console.log("============================================");
+        console.log("[AUTH][CALLBACK] Starting authentication callback processing...");
+        console.log("[AUTH][CALLBACK] Timestamp:", new Date().toISOString());
+        console.log("[AUTH][CALLBACK] Full URL:", window.location.href);
+        console.log("[AUTH][CALLBACK] Pathname:", window.location.pathname);
+        console.log("[AUTH][CALLBACK] Search params:", window.location.search);
+        console.log("[AUTH][CALLBACK] Hash:", window.location.hash);
         
-        // Get token and user data from URL parameters
-        const token = searchParams.get("token");
+        // ============================================
+        // [AUTH][CALLBACK] Extract URL Parameters
+        // ============================================
+        console.log("[AUTH][CALLBACK] Extracting URL parameters...");
+        let token = searchParams.get("token");
+        // Trim token immediately to remove any whitespace or URL encoding artifacts
+        if (token) {
+          token = token.trim();
+        }
         const userParam = searchParams.get("user");
         const messageParam = searchParams.get("message");
         const error = searchParams.get("error");
 
-        console.log("🔍 [Auth Callback] URL Parameters Extracted:");
-        console.log("   - Token exists:", !!token);
-        console.log("   - Token length:", token?.length || 0);
-        console.log("   - Token preview:", token ? `${token.substring(0, 20)}...` : "N/A");
-        console.log("   - User param exists:", !!userParam);
-        console.log("   - User param length:", userParam?.length || 0);
-        console.log("   - Message:", messageParam);
-        console.log("   - Error:", error);
+        console.log("[AUTH][CALLBACK] URL Parameters Extracted:");
+        console.log("[AUTH][CALLBACK] - Token exists:", !!token);
+        console.log("[AUTH][CALLBACK] - Token length:", token?.length || 0);
+        console.log("[AUTH][CALLBACK] - Token preview:", token ? `${token.substring(0, 20)}...` : "N/A");
+        console.log("[AUTH][CALLBACK] - Full token:", token);
+        console.log("[AUTH][CALLBACK] - User param exists:", !!userParam);
+        console.log("[AUTH][CALLBACK] - User param length:", userParam?.length || 0);
+        console.log("[AUTH][CALLBACK] - User param preview:", userParam ? `${userParam.substring(0, 50)}...` : "N/A");
+        console.log("[AUTH][CALLBACK] - Message:", messageParam);
+        console.log("[AUTH][CALLBACK] - Error:", error);
 
         // Handle error case
         if (error) {
@@ -101,14 +126,38 @@ const AuthVerification = () => {
           return;
         }
 
+        // ============================================
+        // [AUTH][CALLBACK] BEFORE Token Storage
+        // ============================================
+        console.log("[AUTH][CALLBACK] ===== BEFORE SAVING TOKEN =====");
+        console.log("[AUTH][CALLBACK] Token from URL:", token);
+        console.log("[AUTH][CALLBACK] Token length:", token?.length);
+        console.log("[AUTH][CALLBACK] Checking localStorage BEFORE save:");
+        const tokenBefore = localStorage.getItem("token");
+        const chtTokenBefore = localStorage.getItem("cht_token");
+        const userInfoBefore = localStorage.getItem("userInfo");
+        console.log("[AUTH][CALLBACK] - Existing 'token':", !!tokenBefore);
+        console.log("[AUTH][CALLBACK] - Existing 'cht_token':", !!chtTokenBefore);
+        console.log("[AUTH][CALLBACK] - Existing 'userInfo':", !!userInfoBefore);
+        
         // Save token to localStorage as "token"
-        console.log("💾 [Token Storage] Saving token to localStorage...");
-        console.log("💾 [Token Storage] Token BEFORE saving:", token);
-        localStorage.setItem("token", token);
+        // Ensure token is trimmed before saving
+        const cleanToken = token.trim();
+        console.log("[AUTH][CALLBACK] Saving token to localStorage as 'token'...");
+        console.log("[AUTH][CALLBACK] Token length before trim:", token.length);
+        console.log("[AUTH][CALLBACK] Token length after trim:", cleanToken.length);
+        console.log("[AUTH][CALLBACK] Token starts with 'eyJ':", cleanToken.startsWith('eyJ'));
+        localStorage.setItem("token", cleanToken);
+        
+        // ============================================
+        // [AUTH][CALLBACK] AFTER Token Storage
+        // ============================================
+        console.log("[AUTH][CALLBACK] ===== AFTER SAVING TOKEN =====");
         const savedToken = localStorage.getItem("token");
-        console.log("💾 [Token Storage] Token AFTER saving:", savedToken);
-        console.log("💾 [Token Storage] Token match:", token === savedToken);
-        console.log("✅ [Token Storage] Token saved to localStorage as 'token'");
+        console.log("[AUTH][CALLBACK] Token retrieved after save:", savedToken);
+        console.log("[AUTH][CALLBACK] Token length after save:", savedToken?.length);
+        console.log("[AUTH][CALLBACK] Tokens match:", token === savedToken);
+        console.log("[AUTH][CALLBACK] Token saved successfully:", !!savedToken);
 
         // Decode token to extract user information
         let decoded;
@@ -311,14 +360,17 @@ const AuthVerification = () => {
           sessionStorage.setItem("lastLoginTime", Date.now().toString());
           console.log("💾 [LocalStorage Write] Stored login time:", new Date().toISOString());
           
-          // Store token as "token" (primary)
-          console.log("💾 [LocalStorage Write] Writing 'token':", token?.substring(0, 20) + "...");
-          console.log("💾 [LocalStorage Write] Full token BEFORE storage:", token);
-          localStorage.setItem("token", token);
+          // Store token as "token" (primary) - ensure it's trimmed
+          const cleanTokenForStorage = token.trim();
+          console.log("💾 [LocalStorage Write] Writing 'token':", cleanTokenForStorage?.substring(0, 20) + "...");
+          console.log("💾 [LocalStorage Write] Full token BEFORE storage:", cleanTokenForStorage);
+          console.log("💾 [LocalStorage Write] Token starts with 'eyJ':", cleanTokenForStorage.startsWith('eyJ'));
+          localStorage.setItem("token", cleanTokenForStorage);
           const verifyToken = localStorage.getItem("token");
           console.log("💾 [LocalStorage Write] Verified 'token' stored:", !!verifyToken, "Length:", verifyToken?.length);
           console.log("💾 [LocalStorage Write] Full token AFTER storage:", verifyToken);
-          console.log("💾 [LocalStorage Write] Tokens match:", token === verifyToken);
+          console.log("💾 [LocalStorage Write] Tokens match:", cleanTokenForStorage === verifyToken);
+          console.log("💾 [LocalStorage Write] Stored token starts with 'eyJ':", verifyToken?.startsWith('eyJ'));
 
           // Store user object
           console.log("💾 [LocalStorage Write] Writing 'cht_user':", normalizedUser);
@@ -344,15 +396,41 @@ const AuthVerification = () => {
           throw new Error("Failed to save authentication data");
         }
 
+        // ============================================
+        // [AUTH][CALLBACK] BEFORE Auth State Update
+        // ============================================
+        console.log("[AUTH][CALLBACK] ===== BEFORE AUTH STATE UPDATE =====");
+        console.log("[AUTH][CALLBACK] Normalized user object:", normalizedUser);
+        console.log("[AUTH][CALLBACK] User email:", normalizedUser.email);
+        console.log("[AUTH][CALLBACK] User role:", normalizedUser.role);
+        console.log("[AUTH][CALLBACK] User token exists:", !!normalizedUser.token);
+        
         // Update auth context and global state (Zustand)
-        console.log("🔄 [Auth State] Updating auth context and global state...");
-        console.log("🔄 [Auth State] Calling authLogin with:", normalizedUser);
-        authLogin(normalizedUser);
-        console.log("🔄 [Auth State] Calling setProfile with:", normalizedUser);
+        console.log("[AUTH][CALLBACK] Updating auth context and global state...");
+        console.log("[AUTH][CALLBACK] Step 1: Calling authLogin()...");
+        const loginResult = authLogin(normalizedUser);
+        console.log("[AUTH][CALLBACK] authLogin() result:", loginResult);
+        
+        console.log("[AUTH][CALLBACK] Step 2: Calling setProfile()...");
         setProfile(normalizedUser);
-        console.log("🔄 [Auth State] Calling setIsLoggedIn with: true");
+        
+        console.log("[AUTH][CALLBACK] Step 3: Calling setIsLoggedIn(true)...");
         setIsLoggedIn(true);
-        console.log("✅ [Auth State] Auth state updated successfully");
+        
+        // ============================================
+        // [AUTH][CALLBACK] AFTER Auth State Update
+        // ============================================
+        console.log("[AUTH][CALLBACK] ===== AFTER AUTH STATE UPDATE =====");
+        console.log("[AUTH][CALLBACK] Verifying localStorage after state update:");
+        const tokenAfter = localStorage.getItem("token");
+        const chtTokenAfter = localStorage.getItem("cht_token");
+        const userInfoAfter = localStorage.getItem("userInfo");
+        const chtUserAfter = localStorage.getItem("cht_user");
+        console.log("[AUTH][CALLBACK] - 'token' exists:", !!tokenAfter);
+        console.log("[AUTH][CALLBACK] - 'cht_token' exists:", !!chtTokenAfter);
+        console.log("[AUTH][CALLBACK] - 'userInfo' exists:", !!userInfoAfter);
+        console.log("[AUTH][CALLBACK] - 'cht_user' exists:", !!chtUserAfter);
+        console.log("[AUTH][CALLBACK] Auth state update completed successfully");
 
         // Dispatch custom event to notify other components
         window.dispatchEvent(new Event("userLoggedIn"));
@@ -410,12 +488,31 @@ const AuthVerification = () => {
           console.log("   ⚠️ Unknown role, defaulting to: /profile");
         }
 
-        console.log("🚀 Final redirect path:", redirectPath);
+        console.log("[AUTH][CALLBACK] Final redirect path:", redirectPath);
+
+        // ============================================
+        // [AUTH][CALLBACK] BEFORE Navigation
+        // ============================================
+        console.log("[AUTH][CALLBACK] ===== BEFORE NAVIGATION =====");
+        console.log("[AUTH][CALLBACK] Current URL:", window.location.href);
+        console.log("[AUTH][CALLBACK] Target path:", redirectPath);
+        console.log("[AUTH][CALLBACK] Verifying token exists before navigation:");
+        const tokenBeforeNav = localStorage.getItem("token");
+        console.log("[AUTH][CALLBACK] - Token exists:", !!tokenBeforeNav);
+        console.log("[AUTH][CALLBACK] - Token length:", tokenBeforeNav?.length || 0);
+        console.log("[AUTH][CALLBACK] Waiting 1500ms before navigation...");
 
         // Redirect after a short delay
         setTimeout(() => {
-          console.log("📍 Navigating to:", redirectPath);
+          console.log("[AUTH][CALLBACK] ===== NAVIGATING NOW =====");
+          console.log("[AUTH][CALLBACK] Timestamp:", new Date().toISOString());
+          console.log("[AUTH][CALLBACK] Navigating to:", redirectPath);
+          console.log("[AUTH][CALLBACK] Final token check before navigate():");
+          const finalToken = localStorage.getItem("token");
+          console.log("[AUTH][CALLBACK] - Token exists:", !!finalToken);
+          console.log("[AUTH][CALLBACK] - Token:", finalToken ? `${finalToken.substring(0, 30)}...` : "null");
           navigate(redirectPath);
+          console.log("[AUTH][CALLBACK] navigate() called");
         }, 1500);
       } catch (error) {
         console.error("Error processing authentication:", error);
@@ -444,11 +541,25 @@ const AuthVerification = () => {
     
     // Cleanup function
     return () => {
+      console.log("[AUTH][CALLBACK] AuthVerification component cleanup/unmount");
+      console.log("[AUTH][CALLBACK] Checking token after unmount:");
+      const tokenAfterUnmount = localStorage.getItem("token");
+      console.log("[AUTH][CALLBACK] - Token exists:", !!tokenAfterUnmount);
       // Reset refs if component unmounts (shouldn't happen, but safety measure)
       // Don't reset here as we want to prevent duplicates even on re-renders
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.toString()]); // Only depend on searchParams - other functions are stable
+  
+  // ============================================
+  // [AUTH][RENDER] Component Lifecycle
+  // ============================================
+  useEffect(() => {
+    console.log("[AUTH][RENDER] AuthVerification component mounted");
+    return () => {
+      console.log("[AUTH][RENDER] AuthVerification component unmounted");
+    };
+  }, []);
 
   // Container variants for animations
   const containerVariants = {

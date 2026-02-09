@@ -63,9 +63,27 @@ const DoctorDashboard = () => {
 
   // Default to dark mode
   useEffect(() => {
+    // ============================================
+    // [AUTH][RENDER] DoctorDashboard Mount
+    // ============================================
+    console.log("[AUTH][RENDER] DoctorDashboard component mounted");
+    console.log("[AUTH][RENDER] Timestamp:", new Date().toISOString());
+    console.log("[AUTH][RENDER] Current URL:", window.location.href);
+    
+    // Check auth state
+    const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
+    const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
+    console.log("[AUTH][RENDER] DoctorDashboard auth state:");
+    console.log("[AUTH][RENDER] - Token exists:", !!token);
+    console.log("[AUTH][RENDER] - UserInfo exists:", !!userInfo);
+    
     if (colorMode !== "dark") {
       toggleColorMode();
     }
+    
+    return () => {
+      console.log("[AUTH][RENDER] DoctorDashboard component unmounting");
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

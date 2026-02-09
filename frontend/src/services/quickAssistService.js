@@ -2,12 +2,13 @@
  * Quick Assist API Service
  * 
  * Handles API calls to the Quick Assist endpoint
- * Base URL: https://chtv2-bn.onrender.com/api/ask
+ * Uses axios instance with baseURL configured
  */
 
 import axios from "../config/axiosConfig";
 
-const BASE_URL = "https://chtv2-bn.onrender.com/api/ask";
+// Use relative URL since axios instance has baseURL configured
+const BASE_URL = "/api/ask";
 
 /**
  * Ask a question to the Quick Assist API

@@ -5,15 +5,36 @@ import { Box, Spinner, Text, VStack } from "@chakra-ui/react";
 
 // Admin Protected Route
 export const AdminProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const { isAuthenticated, isAdmin, loading, user } = useAuth();
+  const location = window.location;
 
-  console.log("⚠️ [Auth Guard] AdminProtectedRoute: Auth check");
-  console.log("⚠️ [Auth Guard] isAuthenticated():", isAuthenticated());
-  console.log("⚠️ [Auth Guard] isAdmin():", isAdmin());
-  console.log("⚠️ [Auth Guard] loading:", loading);
+  // ============================================
+  // [AUTH][GUARD] AdminProtectedRoute Check
+  // ============================================
+  console.log("============================================");
+  console.log("[AUTH][GUARD] AdminProtectedRoute: Auth check");
+  console.log("[AUTH][GUARD] Timestamp:", new Date().toISOString());
+  console.log("[AUTH][GUARD] Route:", location.pathname);
+  console.log("[AUTH][GUARD] Full URL:", location.href);
+  
+  // Check storage state
+  const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
+  const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
+  console.log("[AUTH][GUARD] Storage state:");
+  console.log("[AUTH][GUARD] - Token exists:", !!token);
+  console.log("[AUTH][GUARD] - Token preview:", token ? `${token.substring(0, 20)}...` : "null");
+  console.log("[AUTH][GUARD] - UserInfo exists:", !!userInfo);
+  
+  console.log("[AUTH][GUARD] Auth state:");
+  console.log("[AUTH][GUARD] - loading:", loading);
+  console.log("[AUTH][GUARD] - user:", user);
+  console.log("[AUTH][GUARD] - user.role:", user?.role);
+  console.log("[AUTH][GUARD] - isAuthenticated():", isAuthenticated());
+  console.log("[AUTH][GUARD] - isAdmin():", isAdmin());
 
   if (loading) {
-    console.log("⚠️ [Auth Guard] AdminProtectedRoute: Still loading...");
+    console.log("[AUTH][GUARD] AdminProtectedRoute: Still loading...");
+    console.log("============================================");
     return (
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
         <VStack spacing={4}>
@@ -25,33 +46,60 @@ export const AdminProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated()) {
-    console.log("⚠️ [Auth Guard] AdminProtectedRoute: REDIRECTING TO LOGIN - Not authenticated");
+    console.log("[AUTH][GUARD] AdminProtectedRoute: ❌ REDIRECTING TO LOGIN");
+    console.log("[AUTH][GUARD] Reason: Not authenticated");
+    console.log("[AUTH][GUARD] - user exists:", !!user);
+    console.log("[AUTH][GUARD] - token exists:", !!token);
+    console.log("============================================");
     return <Navigate to="/login" replace />;
   }
 
   if (!isAdmin()) {
-    console.log("⚠️ [Auth Guard] AdminProtectedRoute: REDIRECTING TO HOME - Not admin");
+    console.log("[AUTH][GUARD] AdminProtectedRoute: ❌ REDIRECTING TO HOME");
+    console.log("[AUTH][GUARD] Reason: Not admin");
+    console.log("[AUTH][GUARD] - user.role:", user?.role);
+    console.log("============================================");
     return <Navigate to="/" replace />;
   }
 
-  console.log("✅ [Auth Guard] AdminProtectedRoute: Access granted");
+  console.log("[AUTH][GUARD] AdminProtectedRoute: ✅ Access granted");
+  console.log("============================================");
   return children;
 };
 
 // Doctor Protected Route (requires approved status)
 export const DoctorProtectedRoute = ({ children }) => {
   const { isAuthenticated, isDoctor, loading, user } = useAuth();
+  const location = window.location;
 
-  console.log("⚠️ [Auth Guard] DoctorProtectedRoute: Auth check");
-  console.log("⚠️ [Auth Guard] isAuthenticated():", isAuthenticated());
-  console.log("⚠️ [Auth Guard] isDoctor():", isDoctor());
-  console.log("⚠️ [Auth Guard] user:", user);
-  console.log("⚠️ [Auth Guard] user.role:", user?.role);
-  console.log("⚠️ [Auth Guard] user.doctorStatus:", user?.doctorStatus);
-  console.log("⚠️ [Auth Guard] loading:", loading);
+  // ============================================
+  // [AUTH][GUARD] DoctorProtectedRoute Check
+  // ============================================
+  console.log("============================================");
+  console.log("[AUTH][GUARD] DoctorProtectedRoute: Auth check");
+  console.log("[AUTH][GUARD] Timestamp:", new Date().toISOString());
+  console.log("[AUTH][GUARD] Route:", location.pathname);
+  console.log("[AUTH][GUARD] Full URL:", location.href);
+  
+  // Check storage state
+  const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
+  const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
+  console.log("[AUTH][GUARD] Storage state:");
+  console.log("[AUTH][GUARD] - Token exists:", !!token);
+  console.log("[AUTH][GUARD] - Token preview:", token ? `${token.substring(0, 20)}...` : "null");
+  console.log("[AUTH][GUARD] - UserInfo exists:", !!userInfo);
+  
+  console.log("[AUTH][GUARD] Auth state:");
+  console.log("[AUTH][GUARD] - loading:", loading);
+  console.log("[AUTH][GUARD] - user:", user);
+  console.log("[AUTH][GUARD] - user.role:", user?.role);
+  console.log("[AUTH][GUARD] - user.doctorStatus:", user?.doctorStatus);
+  console.log("[AUTH][GUARD] - isAuthenticated():", isAuthenticated());
+  console.log("[AUTH][GUARD] - isDoctor():", isDoctor());
 
   if (loading) {
-    console.log("⚠️ [Auth Guard] DoctorProtectedRoute: Still loading...");
+    console.log("[AUTH][GUARD] DoctorProtectedRoute: Still loading...");
+    console.log("============================================");
     return (
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
         <VStack spacing={4}>
@@ -63,37 +111,69 @@ export const DoctorProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated()) {
-    console.log("⚠️ [Auth Guard] DoctorProtectedRoute: REDIRECTING TO LOGIN - Not authenticated");
+    console.log("[AUTH][GUARD] DoctorProtectedRoute: ❌ REDIRECTING TO LOGIN");
+    console.log("[AUTH][GUARD] Reason: Not authenticated");
+    console.log("[AUTH][GUARD] - user exists:", !!user);
+    console.log("[AUTH][GUARD] - token exists:", !!token);
+    console.log("============================================");
     return <Navigate to="/login" replace />;
   }
 
   // Check if user is doctor
   if (user?.role !== "doctor") {
-    console.log("⚠️ [Auth Guard] DoctorProtectedRoute: REDIRECTING TO HOME - Not a doctor");
+    console.log("[AUTH][GUARD] DoctorProtectedRoute: ❌ REDIRECTING TO HOME");
+    console.log("[AUTH][GUARD] Reason: Not a doctor");
+    console.log("[AUTH][GUARD] - user.role:", user?.role);
+    console.log("============================================");
     return <Navigate to="/" replace />;
   }
 
   // Check if doctor is approved
   if (user?.doctorStatus !== "approved") {
-    console.log("⚠️ [Auth Guard] DoctorProtectedRoute: REDIRECTING TO LOGIN - Doctor not approved");
+    console.log("[AUTH][GUARD] DoctorProtectedRoute: ❌ REDIRECTING TO LOGIN");
+    console.log("[AUTH][GUARD] Reason: Doctor not approved");
+    console.log("[AUTH][GUARD] - user.doctorStatus:", user?.doctorStatus);
+    console.log("============================================");
     return <Navigate to="/login" replace state={{ message: "Your doctor account is pending approval." }} />;
   }
 
-  console.log("✅ [Auth Guard] DoctorProtectedRoute: Access granted");
+  console.log("[AUTH][GUARD] DoctorProtectedRoute: ✅ Access granted");
+  console.log("============================================");
   return children;
 };
 
 // Patient Protected Route
 export const PatientProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isPatient, loading } = useAuth();
+  const { isAuthenticated, isPatient, loading, user } = useAuth();
+  const location = window.location;
 
-  console.log("⚠️ [Auth Guard] PatientProtectedRoute: Auth check");
-  console.log("⚠️ [Auth Guard] isAuthenticated():", isAuthenticated());
-  console.log("⚠️ [Auth Guard] isPatient():", isPatient());
-  console.log("⚠️ [Auth Guard] loading:", loading);
+  // ============================================
+  // [AUTH][GUARD] PatientProtectedRoute Check
+  // ============================================
+  console.log("============================================");
+  console.log("[AUTH][GUARD] PatientProtectedRoute: Auth check");
+  console.log("[AUTH][GUARD] Timestamp:", new Date().toISOString());
+  console.log("[AUTH][GUARD] Route:", location.pathname);
+  console.log("[AUTH][GUARD] Full URL:", location.href);
+  
+  // Check storage state
+  const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
+  const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
+  console.log("[AUTH][GUARD] Storage state:");
+  console.log("[AUTH][GUARD] - Token exists:", !!token);
+  console.log("[AUTH][GUARD] - Token preview:", token ? `${token.substring(0, 20)}...` : "null");
+  console.log("[AUTH][GUARD] - UserInfo exists:", !!userInfo);
+  
+  console.log("[AUTH][GUARD] Auth state:");
+  console.log("[AUTH][GUARD] - loading:", loading);
+  console.log("[AUTH][GUARD] - user:", user);
+  console.log("[AUTH][GUARD] - user.role:", user?.role);
+  console.log("[AUTH][GUARD] - isAuthenticated():", isAuthenticated());
+  console.log("[AUTH][GUARD] - isPatient():", isPatient());
 
   if (loading) {
-    console.log("⚠️ [Auth Guard] PatientProtectedRoute: Still loading...");
+    console.log("[AUTH][GUARD] PatientProtectedRoute: Still loading...");
+    console.log("============================================");
     return (
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
         <VStack spacing={4}>
@@ -105,24 +185,44 @@ export const PatientProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated()) {
-    console.log("⚠️ [Auth Guard] PatientProtectedRoute: REDIRECTING TO LOGIN - Not authenticated");
+    console.log("[AUTH][GUARD] PatientProtectedRoute: ❌ REDIRECTING TO LOGIN");
+    console.log("[AUTH][GUARD] Reason: Not authenticated");
+    console.log("[AUTH][GUARD] - user exists:", !!user);
+    console.log("[AUTH][GUARD] - token exists:", !!token);
+    console.log("============================================");
     return <Navigate to="/login" replace />;
   }
 
   if (!isPatient()) {
-    console.log("⚠️ [Auth Guard] PatientProtectedRoute: REDIRECTING TO HOME - Not a patient");
+    console.log("[AUTH][GUARD] PatientProtectedRoute: ❌ REDIRECTING TO HOME");
+    console.log("[AUTH][GUARD] Reason: Not a patient");
+    console.log("[AUTH][GUARD] - user.role:", user?.role);
+    console.log("============================================");
     return <Navigate to="/" replace />;
   }
 
-  console.log("✅ [Auth Guard] PatientProtectedRoute: Access granted");
+  console.log("[AUTH][GUARD] PatientProtectedRoute: ✅ Access granted");
+  console.log("============================================");
   return children;
 };
 
 // General Protected Route (any authenticated user)
 export const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuth();
+  const location = window.location;
+
+  // ============================================
+  // [AUTH][GUARD] ProtectedRoute Check
+  // ============================================
+  console.log("============================================");
+  console.log("[AUTH][GUARD] ProtectedRoute: Auth check");
+  console.log("[AUTH][GUARD] Timestamp:", new Date().toISOString());
+  console.log("[AUTH][GUARD] Route:", location.pathname);
+  console.log("[AUTH][GUARD] Full URL:", location.href);
 
   if (loading) {
+    console.log("[AUTH][GUARD] ProtectedRoute: Still loading...");
+    console.log("============================================");
     return (
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
         <VStack spacing={4}>
@@ -136,34 +236,66 @@ export const ProtectedRoute = ({ children }) => {
   // Check if user info exists in localStorage (don't redirect if it does)
   const hasUserInfo = () => {
     try {
-      console.log("⚠️ [Auth Guard] ProtectedRoute: Checking for user info...");
+      console.log("[AUTH][GUARD] ProtectedRoute: Checking for user info in localStorage...");
+      // ============================================
+      // [AUTH][STORAGE READ] Reading from localStorage
+      // ============================================
+      console.log("[AUTH][STORAGE READ] Reading 'token' from localStorage...");
       const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
+      console.log("[AUTH][STORAGE READ] Token found:", !!token);
+      console.log("[AUTH][STORAGE READ] Token preview:", token ? `${token.substring(0, 20)}...` : "null");
+      console.log("[AUTH][STORAGE READ] Token length:", token?.length || 0);
+      
+      console.log("[AUTH][STORAGE READ] Reading 'userInfo' or 'cht_user' from localStorage...");
       const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
-      console.log("⚠️ [Auth Guard] Token found:", !!token, token ? `${token.substring(0, 20)}...` : "null");
-      console.log("⚠️ [Auth Guard] UserInfo found:", !!userInfo);
+      console.log("[AUTH][STORAGE READ] UserInfo found:", !!userInfo);
+      console.log("[AUTH][STORAGE READ] UserInfo length:", userInfo?.length || 0);
+      
       const hasInfo = !!(token || userInfo);
-      console.log("⚠️ [Auth Guard] hasUserInfo result:", hasInfo);
+      console.log("[AUTH][GUARD] hasUserInfo() result:", hasInfo);
       return hasInfo;
     } catch (error) {
-      console.error("❌ [Auth Guard] Error checking user info:", error);
+      console.error("[AUTH][GUARD] ❌ Error checking user info:", error);
+      console.error("[AUTH][GUARD] Error stack:", error.stack);
       return false;
     }
   };
 
-  console.log("⚠️ [Auth Guard] ProtectedRoute: Auth check");
-  console.log("⚠️ [Auth Guard] isAuthenticated():", isAuthenticated());
-  console.log("⚠️ [Auth Guard] user:", user);
-  console.log("⚠️ [Auth Guard] loading:", loading);
-  console.log("⚠️ [Auth Guard] hasUserInfo():", hasUserInfo());
+  // Check storage state
+  const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
+  const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
+  console.log("[AUTH][GUARD] Storage state:");
+  console.log("[AUTH][GUARD] - Token exists:", !!token);
+  console.log("[AUTH][GUARD] - Token preview:", token ? `${token.substring(0, 20)}...` : "null");
+  console.log("[AUTH][GUARD] - UserInfo exists:", !!userInfo);
+  
+  console.log("[AUTH][GUARD] Auth state:");
+  console.log("[AUTH][GUARD] - loading:", loading);
+  console.log("[AUTH][GUARD] - user:", user);
+  console.log("[AUTH][GUARD] - user.role:", user?.role);
+  console.log("[AUTH][GUARD] - isAuthenticated():", isAuthenticated());
+  console.log("[AUTH][GUARD] - hasUserInfo():", hasUserInfo());
 
   // Only redirect to login if user is not authenticated AND no user info exists
   if (!isAuthenticated() && !hasUserInfo()) {
-    console.log("⚠️ [Auth Guard] REDIRECTING TO LOGIN - No authentication and no user info");
+    console.log("[AUTH][GUARD] ProtectedRoute: ❌ REDIRECTING TO LOGIN");
+    console.log("[AUTH][GUARD] Reason: No authentication and no user info");
+    console.log("[AUTH][GUARD] - isAuthenticated():", isAuthenticated());
+    console.log("[AUTH][GUARD] - hasUserInfo():", hasUserInfo());
+    console.log("[AUTH][GUARD] - user exists:", !!user);
+    console.log("[AUTH][GUARD] - token exists:", !!token);
+    console.log("============================================");
     return <Navigate to="/login" replace />;
   }
 
   // If user info exists but not authenticated, wait a bit for auth context to update
   if (!isAuthenticated() && hasUserInfo() && !loading) {
+    console.log("[AUTH][GUARD] ProtectedRoute: ⏳ Waiting for session restoration");
+    console.log("[AUTH][GUARD] Reason: User info exists but not authenticated yet");
+    console.log("[AUTH][GUARD] - hasUserInfo():", hasUserInfo());
+    console.log("[AUTH][GUARD] - isAuthenticated():", isAuthenticated());
+    console.log("[AUTH][GUARD] - loading:", loading);
+    console.log("============================================");
     // Give auth context time to restore session
     return (
       <Box minH="100vh" display="flex" alignItems="center" justifyContent="center">
@@ -175,6 +307,8 @@ export const ProtectedRoute = ({ children }) => {
     );
   }
 
+  console.log("[AUTH][GUARD] ProtectedRoute: ✅ Access granted");
+  console.log("============================================");
   return children;
 };
 

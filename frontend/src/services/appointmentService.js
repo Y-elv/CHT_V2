@@ -2,12 +2,13 @@
  * Appointment API Service
  * 
  * Handles API calls for patient appointments
- * Base URL: https://chtv2-bn.onrender.com/api/appointment
+ * Uses axios instance with baseURL configured
  */
 
 import axios from "../config/axiosConfig";
 
-const BASE_URL = "https://chtv2-bn.onrender.com/api/appointment";
+// Use relative URL since axios instance has baseURL configured
+const BASE_URL = "/api/appointment";
 
 /**
  * Get user appointments (for patients)

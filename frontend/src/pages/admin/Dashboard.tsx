@@ -56,11 +56,29 @@ const Dashboard: React.FC = () => {
 
   // Fetch initial data
   useEffect(() => {
+    // ============================================
+    // [AUTH][RENDER] AdminDashboard Mount
+    // ============================================
+    console.log("[AUTH][RENDER] AdminDashboard component mounted");
+    console.log("[AUTH][RENDER] Timestamp:", new Date().toISOString());
+    console.log("[AUTH][RENDER] Current URL:", window.location.href);
+    
+    // Check auth state
+    const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
+    const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
+    console.log("[AUTH][RENDER] AdminDashboard auth state:");
+    console.log("[AUTH][RENDER] - Token exists:", !!token);
+    console.log("[AUTH][RENDER] - UserInfo exists:", !!userInfo);
+    
     fetchDashboardStats();
     fetchConsultations();
     fetchDoctors();
     fetchRecentActivity();
     fetchHealthGameStats();
+    
+    return () => {
+      console.log("[AUTH][RENDER] AdminDashboard component unmounting");
+    };
   }, [
     fetchDashboardStats,
     fetchConsultations,
