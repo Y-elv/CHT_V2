@@ -17,7 +17,7 @@ import "./SideDrawer.css";
 
 import { Text } from "@chakra-ui/layout";
 import React, { useState } from "react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 
 import {
   Menu,
@@ -60,9 +60,6 @@ const SideDrawer = () => {
       });
       return;
     }
-    console.log("Search button clicked");
-    console.log("Token:", user.token);
-
     try {
       setLoading(true);
 
@@ -80,7 +77,6 @@ const SideDrawer = () => {
 
       setLoading(false);
       setSearchResult(data);
-      console.log("data:", data);
     } catch (error) {
       setLoading(false);
       // Extract error message from the API response
@@ -100,6 +96,25 @@ const SideDrawer = () => {
   const accessChat = async (userId) => {
     try {
       setLoadingChat(true);
+
+      // 1. Reuse existing 1-to-1 chat if it already exists in state
+      const existingChat =
+        chats &&
+        chats.find(
+          (chat) =>
+            !chat.isGroupChat &&
+            Array.isArray(chat.users) &&
+            chat.users.some((u) => u._id === userId)
+        );
+
+      if (existingChat) {
+        setSelectedChat(existingChat);
+        setLoadingChat(false);
+        onClose();
+        return;
+      }
+
+      // 2. Otherwise, ask backend to find-or-create the direct chat
       const config = {
         headers: {
           "Content-type": "application/json",
@@ -113,7 +128,11 @@ const SideDrawer = () => {
         config
       );
 
-      if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
+      // Merge into chat list only if this chat is not already present
+      if (!chats.find((c) => c._id === data._id)) {
+        setChats([data, ...chats]);
+      }
+
       setSelectedChat(data);
       setLoadingChat(false);
       onClose();
@@ -135,28 +154,33 @@ const SideDrawer = () => {
     }
   };
 
+  if (!user) return null;
+
   return (
     <>
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        bg="#B8C2D7"
+        bg="transparent"
         w="100%"
-        p="5px 10px 5px 10px"
-        borderWidth="5px"
+        p="8px 16px"
       >
         <Tooltip label="Search users to chat" hasArrow placement="bottom-end">
           <Button
-            variant="ghost"
+            variant="solid"
+            bg="white"
+            color="#F7941D"
             onClick={onOpen}
             display="flex"
             flexDirection="row"
             alignItems="center"
-            className="icon-text"
+            _hover={{ bg: "whiteAlpha.900", color: "#c0761a" }}
+            size="md"
+            borderRadius="lg"
+            leftIcon={<i className="fas fa-search" style={{ fontSize: "18px" }} />}
           >
-            <i className="fas fa-search"></i>
-            <Text display={{ base: "none", md: "flex" }} px="4">
+            <Text display={{ base: "none", md: "flex" }} px="2" fontWeight="semibold">
               Search User
             </Text>
           </Button>

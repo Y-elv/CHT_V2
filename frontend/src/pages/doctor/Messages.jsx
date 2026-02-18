@@ -40,13 +40,13 @@ import {
   RiCheckDoubleLine,
   RiCheckLine,
 } from "react-icons/ri";
-import axios from "../../config/axiosConfig";
-import { useAuth } from "../../contexts/AuthContext";
+import axios from "../../api/axios";
+import { useAuthStore } from "../../store/authStore";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Messages = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const toast = useToast();
   const messagesEndRef = useRef(null);
 

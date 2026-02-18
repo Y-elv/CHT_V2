@@ -3,7 +3,7 @@ import Footer from "../../layout/footer/footer";
 import "./animate.css";
 import { useNavigate, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 import { useToast } from "@chakra-ui/react";
 import Image1 from "../../assets/Background1.svg";
 import Image2 from "../../assets/Background2.svg";
@@ -12,7 +12,7 @@ import Kigali from "../../assets/Kigali city.jpeg";
 import { MdLocalPharmacy } from "react-icons/md";
 import { RiMentalHealthFill } from "react-icons/ri";
 import { MdHealthAndSafety } from "react-icons/md";
-import { useBadgeStore } from "../../zustandStore/store";
+import { useAuthStore } from "../../store/authStore";
 import {
   motion,
   useMotionValue,
@@ -27,7 +27,7 @@ import { FaPhoneAlt } from "react-icons/fa";
 const LandingPage = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const profile = useBadgeStore((state) => state.profile) || null;
+  const { user, isAuthenticated } = useAuthStore(); // ✅ Use cookie-based auth
   const ImageArray = [Image1, Image2, Image3];
   const ImageArray2 = [
     {
@@ -72,8 +72,19 @@ const LandingPage = () => {
   }, [ImageArray.length]);
 
   useEffect(() => {
-    if (profile) navigate("/profile");
-  }, []);
+    // ✅ Redirect authenticated users to their appropriate dashboard
+    if (isAuthenticated && user) {
+      const getRoleRedirectPath = () => {
+        if (user.role === "admin") return "/admin/dashboard";
+        if (user.role === "doctor" && user.doctorStatus === "approved") return "/doctor/dashboard";
+        if (user.role === "patient") return "/profile";
+        return "/profile";
+      };
+      
+      const redirectPath = getRoleRedirectPath();
+      navigate(redirectPath);
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

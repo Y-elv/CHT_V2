@@ -11,7 +11,7 @@ import {
 import React, { useState, useRef } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import "./signup.css";
@@ -88,22 +88,12 @@ const Signup = () => {
       return;
     }
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-        },
-      };
-      const { data } = await axios.post(
-        " https://chtv2-bn.onrender.com/api/v2/user/register",
-        {
-          name,
-          email,
-          password,
-        },
-        config
-      );
-      console.log("data are :", data);
-
+      // Use the new cookie-based axios instance
+      const { data } = await axios.post("/api/v2/user/register", {
+        name,
+        email,
+        password,
+      });
       toast({
         description: "Registration successfully! Please verify your email with the OTP code.",
         status: "success",
@@ -115,11 +105,6 @@ const Signup = () => {
       setLoading(false);
       history("/otp", { state: { email } });
     } catch (error) {
-      // Debug: Log the error structure to understand the format
-      console.log("Full error object:", error);
-      console.log("Error response:", error.response);
-      console.log("Error response data:", error.response?.data);
-
       // Check for password strength error in different possible formats
       const errorMessage =
         error.response?.data?.error || error.response?.data?.message || "";

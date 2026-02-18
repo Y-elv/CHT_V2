@@ -100,7 +100,7 @@ const Menu = () => {
       color: "#2B2F92",
     },
     {
-      to: "/chats",
+      to: "/chatpages",
       label: "Chats",
       icon: IoChatbubbleOutline,
       description: "Connect and chat with our health advisors",

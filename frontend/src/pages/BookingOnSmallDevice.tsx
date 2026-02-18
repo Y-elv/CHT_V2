@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import axios from "../config/axiosConfig";
+import axios from "../api/axios"; // ✅ Use cookie-based axios
 import { motion } from "framer-motion";
 import { useToast, Spinner, Box } from "@chakra-ui/react";
 import Navbar from "../components/navbar/navbar";
@@ -41,7 +41,6 @@ const BookingOnSmallDevice = () => {
 
   // Fetch approved doctors from API
   const fetchDoctors = async () => {
-    console.log("🔄 [Booking Mobile] Starting to fetch approved doctors...");
     setLoadingDoctors(true);
     try {
       const apiUrl = "https://chtv2-bn.onrender.com/api/admin/all-doctors";
@@ -50,23 +49,7 @@ const BookingOnSmallDevice = () => {
         limit: 100,
         status: "approved",
       };
-
-      console.log("📤 [Booking Mobile] API Request Details:");
-      console.log("   URL:", apiUrl);
-      console.log("   Params:", params);
-
-      const requestStartTime = Date.now();
       const response = await axios.get(apiUrl, { params });
-      const requestEndTime = Date.now();
-
-      console.log(
-        `⏱️ [Booking Mobile] Request completed in ${
-          requestEndTime - requestStartTime
-        }ms`
-      );
-      console.log("📥 [Booking Mobile] API Response received:");
-      console.log("   Status:", response.status);
-      console.log("   Response Data:", response.data);
 
       interface ApiResponse {
         doctors?: Doctor[];
@@ -76,9 +59,6 @@ const BookingOnSmallDevice = () => {
 
       if (apiResponse && apiResponse.doctors) {
         const doctorsList: Doctor[] = apiResponse.doctors;
-        console.log("✅ [Booking Mobile] Doctors array found in response");
-        console.log("   Total doctors:", doctorsList.length);
-
         setDoctors(doctorsList);
 
         // Extract unique specialties from doctors
@@ -108,7 +88,6 @@ const BookingOnSmallDevice = () => {
         ].sort();
 
         setSpecialties(allSpecialties);
-        console.log("✅ [Booking Mobile] Fetch completed successfully!");
       } else {
         setDoctors([]);
         setSpecialties([
@@ -118,7 +97,6 @@ const BookingOnSmallDevice = () => {
         ]);
       }
     } catch (error) {
-      console.error("❌ [Booking Mobile] Error fetching doctors:", error);
       toast({
         title: "Error",
         description: "Failed to load doctors. Please try again later.",

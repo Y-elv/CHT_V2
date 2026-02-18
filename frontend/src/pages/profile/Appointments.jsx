@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useToast, Avatar, Badge, Box, Spinner, VStack, HStack, Text, useColorModeValue } from "@chakra-ui/react";
+import { useToast, Avatar, Badge, Box, Spinner, VStack, HStack, Text, useColorModeValue, Button, IconButton } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { RiCalendarEventLine, RiVideoChatLine, RiHospitalLine, RiTimeLine, RiCheckboxCircleLine, RiCloseCircleLine, RiLoader4Line } from "react-icons/ri";
+import { IoChatbubbleOutline } from "react-icons/io5";
 import { getUserAppointments } from "../../services/appointmentService";
 import Navbar from "../../components/navbar/navbar";
-import { ChatState } from "../../components/Context/chatProvider";
-import { useBadgeStore } from "../../zustandStore/store";
-import { Link, useLocation } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from "../../api/axios";
 import {
   IoChatboxOutline,
   IoLogOut,
@@ -17,27 +18,28 @@ import { RiGamepadLine } from "react-icons/ri";
 import { FaUserMd } from "react-icons/fa";
 
 const Appointments = () => {
-  const { user, logoutHandler } = ChatState();
-  const profile = useBadgeStore((state) => state.profile) || null;
+  const { user, logout } = useAuthStore(); // ✅ Use cookie-based auth
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState(''); // '' for all, 'pending', 'approved', 'cancelled'
+  const [chatLoading, setChatLoading] = useState(false);
   const toast = useToast();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const textColor = useColorModeValue("gray.800", "gray.100");
   const subTextColor = useColorModeValue("gray.600", "gray.400");
 
-  const displayUser = profile || user;
+  const displayUser = user; // ✅ Use user from auth store
   const userName = displayUser?.name || "User";
 
   const sidebarItems = [
     { to: "/consultation", label: "Consultation", icon: FaUserMd },
-    { to: "/chats", label: "Chats", icon: IoChatboxOutline },
+    { to: "/chatpages", label: "Chats", icon: IoChatboxOutline },
     { to: "/game", label: "Game", icon: RiGamepadLine },
     { to: "/news", label: "News", icon: IoNewspaperOutline },
     { to: "/profile", label: "Settings", icon: IoSettingsOutline },
@@ -71,7 +73,6 @@ const Appointments = () => {
         setAppointments([]);
       }
     } catch (error) {
-      console.error("Error fetching appointments:", error);
       toast({
         title: "Error",
         description: error.response?.data?.message || "Failed to fetch appointments",
@@ -90,6 +91,67 @@ const Appointments = () => {
   useEffect(() => {
     setPage(1);
   }, [selectedStatus]);
+
+  // Handle chat with doctor
+  const handleChatWithDoctor = async (doctorId, doctorName) => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please login to chat with the doctor.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setChatLoading(true);
+    
+    try {
+      // First, try to get existing chat messages
+      const chatResponse = await axios.get(`/api/v2/message/direct/${doctorId}`);
+      
+      if (chatResponse.data && chatResponse.data.length > 0) {
+        // Chat exists, navigate to chat pages
+        const chatId = chatResponse.data[0].chat._id;
+        navigate(`/chatpages?chat=${chatId}&doctor=${doctorId}`);
+      } else {
+        // No existing chat, create a new one
+        const messageResponse = await axios.post('/api/v2/message/direct', {
+          recipientId: doctorId,
+          content: `Hello Dr. ${doctorName}, I'd like to discuss my appointment with you.`
+        });
+        
+        if (messageResponse.data && messageResponse.data.chat) {
+          const chatId = messageResponse.data.chat._id;
+          navigate(`/chatpages?chat=${chatId}&doctor=${doctorId}`);
+        }
+      }
+    } catch (error) {
+      // If getting chat fails, try to create a new chat
+      try {
+        const messageResponse = await axios.post('/api/v2/message/direct', {
+          recipientId: doctorId,
+          content: `Hello Dr. ${doctorName}, I'd like to discuss my appointment with you.`
+        });
+        
+        if (messageResponse.data && messageResponse.data.chat) {
+          const chatId = messageResponse.data.chat._id;
+          navigate(`/chatpages?chat=${chatId}&doctor=${doctorId}`);
+        }
+      } catch (createError) {
+        toast({
+          title: "Chat Error",
+          description: "Unable to start chat. Please try again later.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } finally {
+      setChatLoading(false);
+    }
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -180,9 +242,7 @@ const Appointments = () => {
                         whileHover={{ x: 4 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => {
-                          if (logoutHandler) {
-                            logoutHandler();
-                          }
+                          logout(); // ✅ Use cookie-based logout
                         }}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 text-slate-700 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
                       >
@@ -400,6 +460,29 @@ const Appointments = () => {
                                 <StatusIcon />
                                 {appointment.status?.charAt(0).toUpperCase() + appointment.status?.slice(1) || "Unknown"}
                               </Badge>
+                              
+                              {/* Chat Button for Approved Appointments */}
+                              {appointment.status === "approved" && appointment.doctor?._id && (
+                                <motion.div
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                >
+                                  <IconButton
+                                    aria-label="Chat with doctor"
+                                    icon={<IoChatbubbleOutline size={20} />}
+                                    colorScheme="blue"
+                                    size="md"
+                                    isLoading={chatLoading}
+                                    onClick={() => handleChatWithDoctor(appointment.doctor._id, appointment.doctor.name)}
+                                    style={{
+                                      background: "linear-gradient(135deg, #2B2F92 0%, #1E2266 100%)",
+                                      border: "none",
+                                      borderRadius: "12px",
+                                      boxShadow: "0 4px 12px rgba(43,47,146,0.3)",
+                                    }}
+                                  />
+                                </motion.div>
+                              )}
                               
                               {appointment.status === "approved" && appointment.appointmentType === "video" && appointment.callLink && (
                                 <a

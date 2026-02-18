@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios"; // ✅ Use cookie-based axios
 import {
   Modal,
   ModalOverlay,
@@ -51,7 +51,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
         config
       );
-      console.log(data);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {

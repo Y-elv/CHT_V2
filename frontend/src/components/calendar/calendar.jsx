@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./calendar.css";
 import Modal from "react-modal";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios"; // ✅ Use cookie-based axios
 import submit from "../../assets/submit.png";
 import { motion } from "framer-motion";
 import { useToast } from "@chakra-ui/react";
@@ -152,16 +152,6 @@ const CalendarInput = ({
     const formattedSelectedDays = formatSelectedDays();
     const formattedTime = formatTimeTo12Hour(selectedTime);
 
-    console.log("📅 [Calendar] Booking submission started:");
-    console.log("   Selected dates:", formattedSelectedDays);
-    console.log("   Selected time (24h):", selectedTime);
-    console.log("   Selected time (12h):", formattedTime);
-    console.log("   Doctor ID:", doctorId);
-    console.log("   Doctor:", professionalName);
-    console.log("   Appointment Type:", appointmentType);
-    console.log("   Reason:", reason);
-    console.log("   Notes:", notes);
-
     const requestBody = {
       doctorId: doctorId,
       date: formattedSelectedDays[0],
@@ -172,42 +162,15 @@ const CalendarInput = ({
     };
 
     try {
-      console.log("📤 [Calendar] Sending booking request...");
-      console.log("   Request body:", requestBody);
-
-      // Try multiple token sources
-      let token = localStorage.getItem("token");
-      if (!token) {
-        token = localStorage.getItem("cht_token");
-      }
-      if (!token) {
-        const user = JSON.parse(localStorage.getItem("userInfo") || "null");
-        if (user && user.token) {
-          token = user.token;
-        }
-      }
-
-      console.log("🔑 [Calendar] Token found:", !!token);
-
-      if (!token) {
-        throw new Error("No authentication token found. Please login again.");
-      }
-
       const response = await axios.post(
         "https://chtv2-bn.onrender.com/api/appointment/book",
         requestBody,
         {
           headers: {
             "Content-type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         }
       );
-
-      console.log("✅ [Calendar] Booking successful!");
-      console.log("   Response status:", response.status);
-      console.log("   Response data:", response.data);
-
       if (response.status >= 200 && response.status < 300) {
         setSelectedDays([]);
         setSelectedTime("");
@@ -228,23 +191,9 @@ const CalendarInput = ({
           position: "bottom",
         });
       } else {
-        console.error(
-          "❌ [Calendar] Unexpected response status:",
-          response.status
-        );
         throw new Error("Booking failed. Please try again.");
       }
     } catch (error) {
-      console.error("❌ [Calendar] Booking error:");
-      console.error("   Error type:", error.constructor.name);
-      console.error("   Error message:", error.message);
-      console.error("   Error code:", error.code);
-
-      if (error.response) {
-        console.error("   HTTP Status:", error.response.status);
-        console.error("   Response data:", error.response.data);
-      }
-
       toast({
         title: "Booking Failed",
         description:
@@ -258,7 +207,6 @@ const CalendarInput = ({
       });
     } finally {
       setIsSubmitting(false);
-      console.log("🏁 [Calendar] Booking process finished");
     }
   };
 
@@ -440,36 +388,26 @@ const CalendarInput = ({
               type="time"
               value={selectedTime}
               onChange={handleTimeChange}
-              onClick={(e) => {
-                e.target.showPicker?.();
-              }}
               required
               style={{
                 width: "100%",
                 padding: "12px 16px",
                 borderRadius: "12px",
                 border: "2px solid #e2e8f0",
-                fontSize: "16px",
-                backgroundColor: "#f8fafc",
+                fontSize: "18px",
+                fontWeight: 600,
+                backgroundColor: "#fff",
                 color: "#1e293b",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
                 outline: "none",
-                WebkitAppearance: "none",
-                MozAppearance: "textfield",
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = "#F7941D";
-                e.target.style.backgroundColor = "#fff";
-                e.target.style.boxShadow = "0 0 0 3px rgba(247,148,29,0.1)";
-                // Open time picker on focus for better UX
-                if (e.target.showPicker) {
-                  e.target.showPicker();
-                }
+                e.target.style.boxShadow = "0 0 0 3px rgba(247,148,29,0.2)";
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = "#e2e8f0";
-                e.target.style.backgroundColor = "#f8fafc";
                 e.target.style.boxShadow = "none";
               }}
             />

@@ -5,7 +5,7 @@
  * Uses axios instance with baseURL configured
  */
 
-import axios from "../config/axiosConfig";
+import axios from "../api/axios";
 
 // Use relative URL since axios instance has baseURL configured
 const BASE_URL = "/api/ask";
@@ -17,15 +17,9 @@ const BASE_URL = "/api/ask";
  */
 export const askQuestion = async (question) => {
   try {
-    console.log("🌐 API Call: POST", BASE_URL);
-    console.log("📦 Request body:", { question });
-    
     const response = await axios.post(BASE_URL, {
       question: question.trim(),
     });
-    
-    console.log("✅ Quick Assist Response:", response.data);
-    
     // Handle different response structures
     if (response.data) {
       return {
@@ -41,10 +35,6 @@ export const askQuestion = async (question) => {
       similarity: null,
     };
   } catch (error) {
-    console.error("❌ Error asking question:", error);
-    console.error("❌ Error response:", error.response);
-    console.error("❌ Error data:", error.response?.data);
-    
     const errorMessage = error.response?.data?.message || 
                         error.response?.data?.error || 
                         error.message || 

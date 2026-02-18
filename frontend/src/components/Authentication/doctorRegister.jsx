@@ -17,7 +17,7 @@ import {
 import React, { useState, useRef } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import "./signup.css";
@@ -67,10 +67,7 @@ const DoctorRegister = () => {
 
   // Upload image to Cloudinary
   const handleImageUpload = async () => {
-    console.log("🖼️ [Image Upload] Starting image upload process...");
-    
     if (!selectedImage) {
-      console.warn("⚠️ [Image Upload] No image selected!");
       toast({
         description: "Please select an image first!",
         status: "warning",
@@ -80,26 +77,10 @@ const DoctorRegister = () => {
       });
       return;
     }
-
-    console.log("📁 [Image Upload] Image file details:", {
-      name: selectedImage.name,
-      type: selectedImage.type,
-      size: `${(selectedImage.size / 1024).toFixed(2)} KB`,
-    });
-
-    console.log("🌐 [Image Upload] Checking network connectivity...");
     setUploadingImage(true);
-    
     try {
-      console.log("☁️ [Image Upload] Calling uploadImageToCloudinary function...");
       const imageUrl = await uploadImageToCloudinary(selectedImage);
-      
-      console.log("✅ [Image Upload] Image uploaded successfully!");
-      console.log("🔗 [Image Upload] Cloudinary URL received:", imageUrl);
-      
       setPic(imageUrl);
-      console.log("💾 [Image Upload] Image URL saved to state (pic):", imageUrl);
-      
       toast({
         description: "Image uploaded successfully!",
         status: "success",
@@ -108,16 +89,6 @@ const DoctorRegister = () => {
         position: "bottom",
       });
     } catch (error) {
-      console.error("❌ [Image Upload] Error occurred during upload:");
-      console.error("   Error object:", error);
-      console.error("   Error message:", error.message);
-      console.error("   Error stack:", error.stack);
-      
-      // Check for network errors
-      if (error.message.includes("fetch") || error.message.includes("network") || error.message.includes("Failed to fetch")) {
-        console.error("🌐 [Image Upload] Network error detected - check internet connection");
-      }
-      
       toast({
         description: error.message || "Failed to upload image. Please check your internet connection and try again.",
         status: "error",
@@ -126,7 +97,6 @@ const DoctorRegister = () => {
         position: "bottom",
       });
     } finally {
-      console.log("🏁 [Image Upload] Upload process completed");
       setUploadingImage(false);
     }
   };
@@ -161,45 +131,14 @@ const DoctorRegister = () => {
   };
 
   const submitHandler = async () => {
-    console.log("🚀 [Registration] Starting registration process...");
-    console.log("📋 [Registration] Form data:", {
-      name,
-      email,
-      password: "***",
-      specialty,
-      bio: bio.substring(0, 50) + "...",
-      certificateUrl,
-      licenseNumber,
-      yearsOfExperience,
-      hospital,
-      consultationFee,
-      pic: pic ? "✅ Image URL set" : "❌ No image",
-      selectedImage: selectedImage ? "✅ Image selected" : "❌ No image",
-    });
-    
     setLoading(true);
-    
-    // If image is selected but not uploaded, upload it first
     if (selectedImage && !pic) {
-      console.log("📤 [Registration] Image selected but not uploaded. Uploading now...");
       try {
         setUploadingImage(true);
-        console.log("☁️ [Registration] Uploading image to Cloudinary...");
         const imageUrl = await uploadImageToCloudinary(selectedImage);
-        console.log("✅ [Registration] Image uploaded successfully:", imageUrl);
         setPic(imageUrl);
-        console.log("💾 [Registration] Image URL saved to state");
         setUploadingImage(false);
       } catch (error) {
-        console.error("❌ [Registration] Image upload failed:");
-        console.error("   Error:", error);
-        console.error("   Error message:", error.message);
-        
-        // Check for network errors
-        if (error.message.includes("fetch") || error.message.includes("network") || error.message.includes("Failed to fetch")) {
-          console.error("🌐 [Registration] Network error detected during image upload");
-        }
-        
         toast({
           description: error.message || "Failed to upload image. Please check your internet connection and try again.",
           status: "error",
@@ -211,29 +150,9 @@ const DoctorRegister = () => {
         setUploadingImage(false);
         return;
       }
-    } else if (pic) {
-      console.log("✅ [Registration] Image already uploaded:", pic);
-    } else {
-      console.log("ℹ️ [Registration] No image selected, using default avatar");
     }
-    
-    // Validation
-    console.log("✔️ [Registration] Validating form fields...");
-    if (!name || !email || !password || !specialty || !bio || !certificateUrl || 
+    if (!name || !email || !password || !specialty || !bio || !certificateUrl ||
         !licenseNumber || !yearsOfExperience || !hospital || !consultationFee) {
-      console.warn("⚠️ [Registration] Validation failed - missing required fields");
-      console.warn("   Missing fields:", {
-        name: !name,
-        email: !email,
-        password: !password,
-        specialty: !specialty,
-        bio: !bio,
-        certificateUrl: !certificateUrl,
-        licenseNumber: !licenseNumber,
-        yearsOfExperience: !yearsOfExperience,
-        hospital: !hospital,
-        consultationFee: !consultationFee,
-      });
       toast({
         description: "Please fill all required fields!",
         status: "warning",
@@ -244,12 +163,8 @@ const DoctorRegister = () => {
       setLoading(false);
       return;
     }
-    console.log("✅ [Registration] All required fields validated");
-
-    console.log("🔐 [Registration] Validating password format...");
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
-      console.warn("⚠️ [Registration] Password validation failed");
       toast({
         description: "Password must be at least 8 characters with uppercase, lowercase, number, and special character",
         status: "warning",
@@ -260,11 +175,7 @@ const DoctorRegister = () => {
       setLoading(false);
       return;
     }
-    console.log("✅ [Registration] Password format validated");
-
-    console.log("🔢 [Registration] Validating numeric fields...");
     if (isNaN(yearsOfExperience) || parseInt(yearsOfExperience) < 0) {
-      console.warn("⚠️ [Registration] Invalid years of experience:", yearsOfExperience);
       toast({
         description: "Years of experience must be a valid number",
         status: "warning",
@@ -277,7 +188,6 @@ const DoctorRegister = () => {
     }
 
     if (isNaN(consultationFee) || parseFloat(consultationFee) < 0) {
-      console.warn("⚠️ [Registration] Invalid consultation fee:", consultationFee);
       toast({
         description: "Consultation fee must be a valid number",
         status: "warning",
@@ -288,22 +198,13 @@ const DoctorRegister = () => {
       setLoading(false);
       return;
     }
-    console.log("✅ [Registration] Numeric fields validated");
-
     try {
-      console.log("🌐 [Registration] Checking network connectivity...");
-      console.log("📡 [Registration] Preparing API request...");
-      
       const config = {
         headers: {
           "Content-type": "application/json",
         },
-        timeout: 60000, // 60 seconds timeout for registration (longer for image processing)
+        timeout: 60000,
       };
-      console.log("📋 [Registration] Request headers:", config.headers);
-      console.log("⏱️ [Registration] Request timeout set to:", config.timeout, "ms");
-
-      // Prepare registration data with Cloudinary URL
       const registrationData = {
         name: name.trim(),
         email: email.trim().toLowerCase(),
@@ -317,40 +218,11 @@ const DoctorRegister = () => {
         hospital: hospital.trim(),
         consultationFee: parseFloat(consultationFee),
       };
-
-      // Validate data types before sending
-      console.log("📤 [Registration] Sending registration request to API...");
-      console.log("   URL: https://chtv2-bn.onrender.com/api/doctor/register");
-      console.log("   Method: POST");
-      console.log("   Data:", {
-        ...registrationData,
-        password: "***", // Don't log password
-      });
-      console.log("   Pic URL:", registrationData.pic);
-      console.log("   Data types check:");
-      console.log("     - yearsOfExperience:", typeof registrationData.yearsOfExperience, registrationData.yearsOfExperience);
-      console.log("     - consultationFee:", typeof registrationData.consultationFee, registrationData.consultationFee);
-      console.log("     - All strings trimmed:", Object.keys(registrationData).filter(k => k !== 'password' && k !== 'pic').every(k => typeof registrationData[k] === 'string' ? registrationData[k] === registrationData[k].trim() : true));
-
-      const requestStartTime = Date.now();
-      console.log("⏱️ [Registration] Request start time:", new Date().toISOString());
-
       const { data } = await axios.post(
         "https://chtv2-bn.onrender.com/api/doctor/register",
         registrationData,
         config
       );
-
-      const requestEndTime = Date.now();
-      const requestDuration = requestEndTime - requestStartTime;
-      console.log("⏱️ [Registration] Request completed in", requestDuration, "ms");
-      console.log("✅ [Registration] API response received successfully");
-      console.log("📦 [Registration] Response data:", data);
-
-      // Show success toast with API message
-      console.log("🎉 [Registration] Registration successful!");
-      console.log("📝 [Registration] Success message:", data.message);
-      
       toast({
         title: "Registration Successful!",
         description: data.message || "Doctor registration successful! Your account is pending admin approval. You will be notified once approved.",
@@ -361,68 +233,8 @@ const DoctorRegister = () => {
       });
 
       setLoading(false);
-      console.log("🔄 [Registration] Redirecting to login page in 2 seconds...");
-      
-      // Redirect to login after a short delay
-      setTimeout(() => {
-        console.log("➡️ [Registration] Navigating to /login");
-        history("/login");
-      }, 2000);
+      setTimeout(() => history("/login"), 2000);
     } catch (error) {
-      const requestEndTime = Date.now();
-      console.error("❌ [Registration] Error occurred during registration");
-      console.error("   Error type:", error.constructor.name);
-      console.error("   Error message:", error.message);
-      console.error("   Error code:", error.code);
-      console.error("   Error stack:", error.stack);
-      
-      // Network error detection
-      if (error.message === "Network Error" || 
-          error.message.includes("Network") || 
-          error.message.includes("network") ||
-          error.message.includes("Failed to fetch") ||
-          error.message.includes("fetch") ||
-          error.code === "ERR_NETWORK" ||
-          error.code === "ECONNABORTED") {
-        console.error("🌐 [Registration] NETWORK ERROR DETECTED:");
-        console.error("   - This usually means:");
-        console.error("     1. No internet connection");
-        console.error("     2. Server is down or unreachable");
-        console.error("     3. CORS issue");
-        console.error("     4. Firewall blocking the request");
-        console.error("   - Check your internet connection");
-        console.error("   - Verify the API endpoint is accessible");
-      }
-      
-      // Timeout error
-      if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
-        console.error("⏱️ [Registration] REQUEST TIMEOUT:");
-        console.error("   - The request took too long to complete");
-        console.error("   - Server might be slow or overloaded");
-      }
-      
-      // HTTP error responses
-      if (error.response) {
-        console.error("📡 [Registration] HTTP Error Response:");
-        console.error("   Status:", error.response.status);
-        console.error("   Status Text:", error.response.statusText);
-        console.error("   Headers:", error.response.headers);
-        console.error("   Data:", error.response.data);
-        
-        // Log validation errors if present
-        if (error.response.data?.errors) {
-          console.error("   Validation Errors:", error.response.data.errors);
-        }
-        if (error.response.data?.details) {
-          console.error("   Error Details:", error.response.data.details);
-        }
-      } else if (error.request) {
-        console.error("📡 [Registration] Request was made but no response received:");
-        console.error("   Request:", error.request);
-        console.error("   - This usually indicates a network issue");
-      }
-      
-      // Extract error message from API response with more details
       let errorMessage = "An error occurred during registration. Please check your internet connection and try again.";
       
       if (error.response?.data) {
@@ -446,9 +258,6 @@ const DoctorRegister = () => {
       } else if (error.message) {
         errorMessage = error.message;
       }
-
-      console.error("💬 [Registration] Error message to display:", errorMessage);
-
       toast({
         title: "Registration Failed",
         description: errorMessage,
@@ -457,9 +266,7 @@ const DoctorRegister = () => {
         isClosable: true,
         position: "bottom",
       });
-      
       setLoading(false);
-      console.log("🏁 [Registration] Registration process ended with error");
     }
   };
 

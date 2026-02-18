@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 import { FormControl, useDisclosure, useToast } from "@chakra-ui/react";
 import {
   Modal,
@@ -47,7 +47,6 @@ const GroupChatModal = ({ children }) => {
 
         config
       );
-      console.log(data);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
@@ -142,38 +141,50 @@ const GroupChatModal = ({ children }) => {
     <>
       <span onClick={onOpen}>{children}</span>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
+      <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
+        <ModalOverlay bg="blackAlpha.500" />
+        <ModalContent
+          bg="white"
+          border="2px solid"
+          borderColor="orange.200"
+          borderRadius="xl"
+          boxShadow="0 8px 32px rgba(247,148,29,0.2)"
+        >
           <ModalHeader
-            fontSize="35px"
+            fontSize="28px"
             fontFamily="work sans"
             display="flex"
             justifyContent="center"
+            bg="linear-gradient(90deg, #F7941D 0%, #FFA84D 100%)"
+            color="white"
+            borderTopRadius="xl"
+            py={4}
           >
             Create Group Chat
           </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody display="flex" flexDir="column" alignItems="center">
-            <FormControl>
+          <ModalCloseButton color="white" _hover={{ bg: "whiteAlpha.300" }} />
+          <ModalBody display="flex" flexDir="column" alignItems="center" py={6}>
+            <FormControl mb={3}>
               <Input
-                placeholder="Chat Name "
-                mb={3}
+                placeholder="Chat Name"
                 onChange={(e) => setGroupChatName(e.target.value)}
+                borderColor="orange.200"
+                _focus={{ borderColor: "#F7941D", boxShadow: "0 0 0 1px #F7941D" }}
               />
             </FormControl>
 
-            <FormControl>
+            <FormControl mb={3}>
               <Input
-                placeholder="Add Users eg: anne, anita , ely "
-                mb={1}
+                placeholder="Add Users e.g. anne, anita, ely"
                 onChange={(e) => handleSearch(e.target.value)}
+                borderColor="orange.200"
+                _focus={{ borderColor: "#F7941D", boxShadow: "0 0 0 1px #F7941D" }}
               />
             </FormControl>
-            <Box w="100%" display="flex" flexWrap="wrap">
+            <Box w="100%" display="flex" flexWrap="wrap" gap={2} mb={3}>
               {selectedUsers.map((u) => (
                 <UserBadgetItem
-                  key={user._id}
+                  key={u._id}
                   user={u}
                   handleFunction={() => handleDelete(u)}
                 />
@@ -181,23 +192,28 @@ const GroupChatModal = ({ children }) => {
             </Box>
 
             {loading ? (
-              <div>loading..</div>
+              <Box py={4}>Loading...</Box>
             ) : (
               searchResult
                 ?.slice(0, 4)
-                .map((user) => (
+                .map((u) => (
                   <UserListItem
-                    key={user._id}
-                    user={user}
-                    handleFunction={() => handleGroup(user)}
+                    key={u._id}
+                    user={u}
+                    handleFunction={() => handleGroup(u)}
                   />
                 ))
             )}
           </ModalBody>
 
-          <ModalFooter>
-            <Button colorScheme="blue" onClick={handleSubmit}>
-              create group
+          <ModalFooter bg="orange.50" borderBottomRadius="xl">
+            <Button
+              bg="linear-gradient(90deg, #F7941D 0%, #FFA84D 100%)"
+              color="white"
+              _hover={{ opacity: 0.9 }}
+              onClick={handleSubmit}
+            >
+              Create group
             </Button>
           </ModalFooter>
         </ModalContent>

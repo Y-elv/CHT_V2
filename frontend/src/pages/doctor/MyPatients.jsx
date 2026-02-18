@@ -16,6 +16,7 @@ import {
   Avatar,
   Badge,
   Button,
+  Flex,
   Input,
   InputGroup,
   InputLeftElement,
@@ -33,6 +34,7 @@ const MyPatients = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const cardBg = useColorModeValue("white", "gray.800");
+  const subtitleColor = useColorModeValue("gray.600", "gray.400");
 
   const patients = [
     {
@@ -112,30 +114,28 @@ const MyPatients = () => {
       <Box ml={{ base: 0, md: "250px" }}>
         <Header onToggleSidebar={onOpen} />
         <Box p={0}>
-          <Container maxW="full" p={6}>
+          <Container maxW="full" px={{ base: 3, md: 6 }} py={6}>
             <VStack align="stretch" spacing={6}>
-              <HStack justify="space-between">
-                <Box>
-                  <Heading size="2xl" mb={2}>
-                    My Patients
-                  </Heading>
-                  <Text color={useColorModeValue("gray.600", "gray.400")}>
-                    Manage your patient records and appointments.
-                  </Text>
-                </Box>
-              </HStack>
+              <Box>
+                <Heading size={{ base: "xl", md: "2xl" }} mb={2}>
+                  My Patients
+                </Heading>
+                <Text color={subtitleColor} fontSize={{ base: "sm", md: "md" }}>
+                  Manage your patient records and appointments.
+                </Text>
+              </Box>
 
-              <HStack>
-                <InputGroup maxW="400px">
-                  <InputLeftElement pointerEvents="none">
-                    <RiSearchLine color="gray.300" />
-                  </InputLeftElement>
+              <Flex direction={{ base: "column", sm: "row" }} gap={3} flexWrap="wrap">
+                <InputGroup maxW={{ base: "100%", sm: "400px" }}>
+<InputLeftElement pointerEvents="none">
+                  <Box as={RiSearchLine} color="gray.400" boxSize={5} />
+                </InputLeftElement>
                   <Input placeholder="Search patients..." />
                 </InputGroup>
-                <Button colorScheme="blue" leftIcon={<RiUserHeartLine />}>
+                <Button colorScheme="blue" leftIcon={<RiUserHeartLine />} size={{ base: "sm", md: "md" }}>
                   Add Patient
                 </Button>
-              </HStack>
+              </Flex>
 
               <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
                 {patients.map((patient) => (

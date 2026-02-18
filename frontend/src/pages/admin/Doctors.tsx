@@ -28,9 +28,19 @@ import {
   Tag,
   TagLabel,
   TagLeftIcon,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Textarea,
 } from "@chakra-ui/react";
 import { RiStethoscopeLine, RiCheckLine, RiCloseLine } from "react-icons/ri";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios"; // ✅ Use cookie-based axios
 
 interface ApiDoctor {
   _id: string;
@@ -62,12 +72,8 @@ const DoctorsPage: React.FC = () => {
     setLoading(true);
     try {
       const [allRes, pendingRes] = await Promise.all([
-        axios.get(
-          "https://chtv2-bn.onrender.com/api/admin/all-doctors?page=1&limit=20"
-        ),
-        axios.get(
-          "https://chtv2-bn.onrender.com/api/admin/pending-doctors?page=1&limit=20"
-        ),
+        axios.get("/api/admin/all-doctors?page=1&limit=20"),
+        axios.get("/api/admin/pending-doctors?page=1&limit=20"),
       ]);
 
       const rawAll = allRes.data;
@@ -138,9 +144,7 @@ const DoctorsPage: React.FC = () => {
   const handleApprove = async (doctorId: string) => {
     setApprovingId(doctorId);
     try {
-      await axios.post(
-        `https://chtv2-bn.onrender.com/api/admin/approve-doctor/${doctorId}`
-      );
+      await axios.post(`/api/admin/approve-doctor/${doctorId}`);
       toast({
         description: "Doctor approved successfully",
         status: "success",
@@ -166,19 +170,33 @@ const DoctorsPage: React.FC = () => {
     }
   };
 
-  const handleReject = async (doctorId: string) => {
-    setRejectingId(doctorId);
+  const [rejectReason, setRejectReason] = useState("");
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [doctorToReject, setDoctorToReject] = useState<string | null>(null);
+
+  const handleRejectClick = (doctorId: string) => {
+    setDoctorToReject(doctorId);
+    setRejectReason("");
+    setRejectModalOpen(true);
+  };
+
+  const handleRejectConfirm = async () => {
+    if (!doctorToReject) return;
+    setRejectingId(doctorToReject);
     try {
       await axios.post(
-        `https://chtv2-bn.onrender.com/api/admin/reject-doctor/${doctorId}`
+        `/api/admin/reject-doctor/${doctorToReject}`,
+        { reason: rejectReason || "Invalid license number" }
       );
       toast({
         description: "Doctor rejected successfully",
-        status: "info",
+        status: "success",
         duration: 4000,
         isClosable: true,
         position: "bottom",
       });
+      setRejectModalOpen(false);
+      setDoctorToReject(null);
       await fetchDoctors();
     } catch (error: any) {
       const msg =
@@ -303,7 +321,7 @@ const DoctorsPage: React.FC = () => {
                         variant="outline"
                         w="full"
                         isLoading={rejectingId === doctor._id}
-                        onClick={() => handleReject(doctor._id)}
+                        onClick={() => handleRejectClick(doctor._id)}
                       >
                         Reject
                       </Button>
@@ -372,6 +390,39 @@ const DoctorsPage: React.FC = () => {
           )}
         </VStack>
       </Container>
+
+      <Modal isOpen={rejectModalOpen} onClose={() => setRejectModalOpen(false)} size="md">
+        <ModalOverlay />
+        <ModalContent bg={cardBg}>
+          <ModalHeader borderBottomWidth="1px" borderColor={borderColor}>
+            Reject doctor
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody py={4}>
+            <FormControl>
+              <FormLabel>Reason for rejection (optional)</FormLabel>
+              <Textarea
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder="e.g. Invalid license number"
+                rows={3}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter borderTopWidth="1px" borderColor={borderColor}>
+            <Button variant="ghost" mr={3} onClick={() => setRejectModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              colorScheme="red"
+              onClick={handleRejectConfirm}
+              isLoading={!!rejectingId}
+            >
+              Reject
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

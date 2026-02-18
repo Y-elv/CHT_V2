@@ -8,18 +8,7 @@
  * - Integrates with backend notification APIs
  * - Supports optimistic UI updates
  * - Handles real-time notification additions
- * - Manages unread count and notification list
- */
-
-import { create } from "zustand";
-import {
-  getNotifications,
-  getUnreadCount,
-  markNotificationAsRead,
-} from "../services/notificationService";
-
-/**
- * Notification object structure:
+ * - Manages unread count and notification structure:
  * {
  *   _id: string,
  *   title: string,
@@ -31,6 +20,10 @@ import {
  *   ...other fields
  * }
  */
+
+import { create } from "zustand";
+import { getNotifications, getUnreadCount, markNotificationAsRead } from "../services/notificationService";
+import { handleAuthError } from "../utils/authErrorHandler";
 
 const useNotificationStore = create((set, get) => ({
   // State
@@ -50,29 +43,27 @@ const useNotificationStore = create((set, get) => ({
   fetchNotifications: async (page = 1, limit = 20) => {
     set({ loading: true, error: null });
     try {
-      console.log("📡 Fetching notifications from API...");
       const result = await getNotifications(page, limit);
-      console.log("📥 API Response:", result);
-      console.log("📋 Notifications array:", result.notifications);
-      console.log("📊 Total notifications:", result.notifications?.length || 0);
-      
+      const list = result.notifications || [];
+      const unread = list.filter(
+        (n) => n.isRead === false || n.read === false || (n.isRead === undefined && n.read === undefined)
+      ).length;
       set({
-        notifications: result.notifications || [],
+        notifications: list,
+        unreadCount: unread,
         loading: false,
         lastFetched: new Date().toISOString(),
       });
       return result;
     } catch (error) {
       // ============================================
-      // EXPOSE FULL AXIOS ERROR
+      // HANDLE AUTHENTICATION ERRORS GLOBALLY
       // ============================================
-      console.error("🟥 RAW AXIOS ERROR:", error);
-      console.error("🟥 AXIOS RESPONSE:", error.response);
-      console.error("🟥 AXIOS STATUS:", error.response?.status);
-      console.error("🟥 AXIOS DATA:", error.response?.data);
-      console.error("❌ Failed to fetch notifications:", error);
-      console.error("Error response:", error.response?.data);
-      console.error("Error status:", error.response?.status);
+      if (handleAuthError(error, "notification fetch")) {
+        // Auth error was handled globally
+        set({ loading: false, error: null });
+        return;
+      }
       
       set({
         loading: false,
@@ -100,25 +91,11 @@ const useNotificationStore = create((set, get) => ({
    */
   fetchUnreadCount: async () => {
     try {
-      console.log("🔴 Fetching unread count from API...");
       const count = await getUnreadCount();
-      console.log("🔴 Unread count received:", count);
       set({ unreadCount: count || 0 });
       return count || 0;
     } catch (error) {
-      // ============================================
-      // EXPOSE FULL AXIOS ERROR
-      // ============================================
-      console.error("🟥 RAW AXIOS ERROR:", error);
-      console.error("🟥 AXIOS RESPONSE:", error.response);
-      console.error("🟥 AXIOS STATUS:", error.response?.status);
-      console.error("🟥 AXIOS DATA:", error.response?.data);
-      console.error("❌ Failed to fetch unread count:", error);
-      console.error("Error response:", error.response?.data);
-      // Don't throw, just log - we'll use the current state
-      const currentCount = get().unreadCount;
-      console.log("Using current unread count:", currentCount);
-      return currentCount;
+      return get().unreadCount;
     }
   },
 
@@ -155,14 +132,6 @@ const useNotificationStore = create((set, get) => ({
     try {
       await markNotificationAsRead(notificationId);
     } catch (error) {
-      // ============================================
-      // EXPOSE FULL AXIOS ERROR
-      // ============================================
-      console.error("🟥 RAW AXIOS ERROR:", error);
-      console.error("🟥 AXIOS RESPONSE:", error.response);
-      console.error("🟥 AXIOS STATUS:", error.response?.status);
-      console.error("🟥 AXIOS DATA:", error.response?.data);
-      console.error("Failed to mark notification as read:", error);
       // Revert optimistic update on error
       set({
         notifications,
@@ -182,6 +151,19 @@ const useNotificationStore = create((set, get) => ({
         throw enhancedError;
       }
     }
+  },
+
+  /**
+   * Clear all notifications (for cleanup)
+   */
+  clearNotifications: () => {
+    set({
+      notifications: [],
+      unreadCount: 0,
+      loading: false,
+      error: null,
+      lastFetched: null,
+    });
   },
 
   /**
@@ -236,4 +218,3 @@ const useNotificationStore = create((set, get) => ({
 }));
 
 export default useNotificationStore;
-

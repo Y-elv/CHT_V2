@@ -11,7 +11,7 @@ import {
 import React, { useState, useRef } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import logo from "../../assets/LOGO FULL.png";
@@ -103,24 +103,12 @@ const ForgotPassword = () => {
     }
 
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-        },
-      };
-
-      const { data } = await axios.post(
-        "https://chtv2-bn.onrender.com/api/v2/user/reset",
-        {
-          email,
-          newPassword,
-          confirmPassword,
-        },
-        config
-      );
-
-      console.log("Data received from password reset endpoint:", data);
-
+      // Use the new cookie-based axios instance
+      const { data } = await axios.post("/api/v2/user/reset", {
+        email,
+        newPassword,
+        confirmPassword,
+      });
       toast({
         description: "Password reset successful!",
         status: "success",
@@ -132,8 +120,6 @@ const ForgotPassword = () => {
       setLoading(false);
       history("/login");
     } catch (error) {
-      console.error("Error during password reset:", error);
-
       const errorMessage = error.response?.data?.message || "An error occurred";
 
       toast({

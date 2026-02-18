@@ -6,6 +6,7 @@ import {
   Heading,
   VStack,
   HStack,
+  Flex,
   Text,
   useDisclosure,
   useColorModeValue,
@@ -91,18 +92,16 @@ const QuickActions = () => {
       <Box ml={{ base: 0, md: "250px" }}>
         <Header onToggleSidebar={onOpen} />
         <Box p={0}>
-          <Container maxW="full" p={6}>
+          <Container maxW="full" px={{ base: 3, md: 6 }} py={6}>
             <VStack align="stretch" spacing={6}>
-              <HStack justify="space-between">
-                <Box>
-                  <Heading size="2xl" mb={2}>
-                    Quick Actions
-                  </Heading>
-                  <Text color={useColorModeValue("gray.600", "gray.400")}>
-                    Common tasks and shortcuts for efficient workflow.
-                  </Text>
-                </Box>
-              </HStack>
+              <Box>
+                <Heading size={{ base: "xl", md: "2xl" }} mb={2}>
+                  Quick Actions
+                </Heading>
+                <Text color={useColorModeValue("gray.600", "gray.400")} fontSize={{ base: "sm", md: "md" }}>
+                  Common tasks and shortcuts for efficient workflow.
+                </Text>
+              </Box>
 
               <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
                 {quickActions.map((action, index) => (
@@ -123,7 +122,7 @@ const QuickActions = () => {
                       </HStack>
                     </CardHeader>
                     <CardBody pt={0}>
-                      <HStack justify="space-between">
+                      <Flex direction={{ base: "column", sm: "row" }} justify="space-between" align={{ base: "stretch", sm: "center" }} gap={2}>
                         <Text fontSize="sm" color="gray.600">
                           {action.count} items
                         </Text>
@@ -134,7 +133,7 @@ const QuickActions = () => {
                         >
                           Open
                         </Button>
-                      </HStack>
+                      </Flex>
                     </CardBody>
                   </Card>
                 ))}

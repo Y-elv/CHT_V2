@@ -24,17 +24,11 @@ export const useRealTimeUpdates = () => {
 
     socketRef.current = socket;
 
-    socket.on("connect", () => {
-      console.log("Connected to Socket.io server");
-    });
+    socket.on("connect", () => {});
 
-    socket.on("disconnect", () => {
-      console.log("Disconnected from Socket.io server");
-    });
+    socket.on("disconnect", () => {});
 
-    // Listen for new consultations
     socket.on("consultation:new", (consultation) => {
-      console.log("New consultation:", consultation);
       fetchConsultations();
       fetchDashboardStats();
 
@@ -47,15 +41,11 @@ export const useRealTimeUpdates = () => {
       });
     });
 
-    // Listen for consultation status updates
-    socket.on("consultation:updated", (consultation) => {
-      console.log("Consultation updated:", consultation);
+    socket.on("consultation:updated", () => {
       fetchConsultations();
     });
 
-    // Listen for urgent mental health alerts
     socket.on("alert:mental-health", (alert) => {
-      console.log("Mental health alert:", alert);
       fetchDashboardStats();
 
       toast({
@@ -69,22 +59,15 @@ export const useRealTimeUpdates = () => {
       });
     });
 
-    // Listen for new user registrations
-    socket.on("user:registered", (user) => {
-      console.log("New user registered:", user);
+    socket.on("user:registered", () => {
       fetchDashboardStats();
     });
 
-    // Listen for doctor availability changes
-    socket.on("doctor:availability", (doctor) => {
-      console.log("Doctor availability changed:", doctor);
+    socket.on("doctor:availability", () => {
       fetchDoctors();
     });
 
-    // Listen for new messages
     socket.on("message:new", (message) => {
-      console.log("New message:", message);
-
       if (message.priority === "urgent") {
         toast({
           title: "Urgent Message",
@@ -96,9 +79,7 @@ export const useRealTimeUpdates = () => {
       }
     });
 
-    // Listen for game achievements
-    socket.on("game:achievement", (achievement) => {
-      console.log("Game achievement:", achievement);
+    socket.on("game:achievement", () => {
       fetchRecentActivity();
       fetchDashboardStats();
     });

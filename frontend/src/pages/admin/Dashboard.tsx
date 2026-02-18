@@ -17,7 +17,7 @@ import {
   RiUserLine,
   RiVideoChatLine,
   RiAlertLine,
-  RiGamepadLine,
+  RiQuestionLine,
 } from "react-icons/ri";
 import { useAdminStore } from "../../store/adminStore";
 import { useRealTimeUpdates } from "../../hooks/useRealTimeUpdates";
@@ -25,7 +25,6 @@ import StatsCard from "../../components/admin/StatsCard";
 import ConsultationTable from "../../components/admin/ConsultationTable";
 import DoctorCard from "../../components/admin/DoctorCard";
 import RecentActivity from "../../components/admin/RecentActivity";
-import HealthGameAnalytics from "../../components/admin/HealthGameAnalytics";
 import MessagingOverview from "../../components/admin/MessagingOverview";
 
 const Dashboard: React.FC = () => {
@@ -38,17 +37,15 @@ const Dashboard: React.FC = () => {
     totalUsers,
     activeConsultations,
     mentalHealthAlerts,
-    gameEngagement,
+    faqCount,
     consultations,
     doctors,
     recentActivity,
-    healthGameStats,
     isLoading,
     fetchDashboardStats,
     fetchConsultations,
     fetchDoctors,
     fetchRecentActivity,
-    fetchHealthGameStats,
   } = useAdminStore();
 
   // Enable real-time updates
@@ -56,35 +53,15 @@ const Dashboard: React.FC = () => {
 
   // Fetch initial data
   useEffect(() => {
-    // ============================================
-    // [AUTH][RENDER] AdminDashboard Mount
-    // ============================================
-    console.log("[AUTH][RENDER] AdminDashboard component mounted");
-    console.log("[AUTH][RENDER] Timestamp:", new Date().toISOString());
-    console.log("[AUTH][RENDER] Current URL:", window.location.href);
-    
-    // Check auth state
-    const token = localStorage.getItem("token") || localStorage.getItem("cht_token");
-    const userInfo = localStorage.getItem("userInfo") || localStorage.getItem("cht_user");
-    console.log("[AUTH][RENDER] AdminDashboard auth state:");
-    console.log("[AUTH][RENDER] - Token exists:", !!token);
-    console.log("[AUTH][RENDER] - UserInfo exists:", !!userInfo);
-    
     fetchDashboardStats();
     fetchConsultations();
     fetchDoctors();
     fetchRecentActivity();
-    fetchHealthGameStats();
-    
-    return () => {
-      console.log("[AUTH][RENDER] AdminDashboard component unmounting");
-    };
   }, [
     fetchDashboardStats,
     fetchConsultations,
     fetchDoctors,
     fetchRecentActivity,
-    fetchHealthGameStats,
   ]);
 
   if (isLoading && !consultations.length) {
@@ -116,10 +93,9 @@ const Dashboard: React.FC = () => {
             <StatsCard
               label="Total Active Users"
               value={totalUsers}
-              trend={12}
               icon={<RiUserLine size={20} />}
-              gradient="linear(to-br, blue.400, blue.600)"
-              subtitle="Young people registered"
+              gradient="linear(to-br, #F7941D, orange.600)"
+              subtitle="Registered users"
               onClick={() =>
                 toast({ title: "Viewing all users", status: "info" })
               }
@@ -128,8 +104,8 @@ const Dashboard: React.FC = () => {
               label="Active Consultations"
               value={activeConsultations}
               icon={<RiVideoChatLine size={20} />}
-              gradient="linear(to-br, green.400, green.600)"
-              subtitle="24 ongoing, 156 completed this week"
+              gradient="linear(to-br, orange.400, orange.600)"
+              subtitle="Total consultations"
             />
             <StatsCard
               label="Mental Health Alerts"
@@ -145,11 +121,11 @@ const Dashboard: React.FC = () => {
               }
             />
             <StatsCard
-              label="Health Game Players"
-              value={gameEngagement}
-              icon={<RiGamepadLine size={20} />}
-              gradient="linear(to-br, purple.400, purple.600)"
-              subtitle="892 active now"
+              label="FAQs"
+              value={faqCount}
+              icon={<RiQuestionLine size={20} />}
+              gradient="linear(to-br, orange.300, orange.600)"
+              subtitle="Published FAQs"
             />
           </SimpleGrid>
 
@@ -232,17 +208,30 @@ const Dashboard: React.FC = () => {
               </Box>
             </GridItem>
 
-            {/* Health Game Analytics */}
-            {healthGameStats && (
-              <GridItem>
-                <Box bg={cardBg} p={6} borderRadius="xl" shadow="sm">
-                  <Heading size="md" mb={4}>
-                    Health Game Analytics
-                  </Heading>
-                  <HealthGameAnalytics stats={healthGameStats} />
+            {/* FAQ summary (completion-style card) */}
+            <GridItem>
+              <Box
+                bg={cardBg}
+                p={6}
+                borderRadius="xl"
+                shadow="sm"
+                bgGradient="linear(to-br, white, orange.50)"
+                borderWidth="1px"
+                borderColor="orange.100"
+              >
+                <Heading size="md" mb={4} color="gray.700">
+                  FAQs
+                </Heading>
+                <Box>
+                  <Text fontSize="3xl" fontWeight="bold" color="orange.600">
+                    {faqCount}
+                  </Text>
+                  <Text fontSize="sm" color="gray.600">
+                    Published FAQs. Manage from FAQ section.
+                  </Text>
                 </Box>
-              </GridItem>
-            )}
+              </Box>
+            </GridItem>
 
             {/* Messaging Overview */}
             <GridItem>

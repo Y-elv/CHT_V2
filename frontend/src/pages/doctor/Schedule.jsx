@@ -41,7 +41,7 @@ import {
 } from "@chakra-ui/react";
 import DoctorSidebar from "../../components/admin/DoctorSidebar";
 import Header from "../../components/admin/Header";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios"; // ✅ Use cookie-based axios
 import {
   RiCalendarLine,
   RiTimeLine,
@@ -82,46 +82,20 @@ const Schedule = () => {
   const [processing, setProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
 
-  // Get token from localStorage
-  const getToken = () => {
-    let token = localStorage.getItem("token");
-    if (!token) {
-      token = localStorage.getItem("cht_token");
-    }
-    if (!token) {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-      if (userInfo && userInfo.token) {
-        token = userInfo.token;
-      }
-    }
-    return token;
-  };
-
-  // Fetch appointments for logged-in doctor
+  // Fetch appointments for logged-in doctor (cookie-based auth)
   const fetchAppointments = async () => {
-    console.log("🔄 [Schedule] Fetching appointments...");
     setLoading(true);
     try {
-      const token = getToken();
-      if (!token) {
-        throw new Error("No authentication token found. Please login again.");
-      }
-
+      // Cookie-based auth - axios instance already configured with withCredentials: true
       const response = await axios.get(
-        "https://chtv2-bn.onrender.com/api/appointment/doctor",
+        "/api/appointment/doctor",
         {
           params: {
             page: 1,
             limit: 100,
           },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
-
-      console.log("✅ [Schedule] Appointments fetched:", response.data);
-      
       if (response.data && response.data.appointments) {
         setAppointments(response.data.appointments);
       } else if (Array.isArray(response.data)) {
@@ -139,7 +113,6 @@ const Schedule = () => {
         position: "top-right",
       });
     } catch (error) {
-      console.error("❌ [Schedule] Error fetching appointments:", error);
       toast({
         title: "Error Loading Appointments",
         description:
@@ -264,29 +237,12 @@ const Schedule = () => {
 
     setProcessing(true);
     try {
-      const token = getToken();
-      if (!token) {
-        throw new Error("No authentication token found.");
-      }
-
-      console.log("📤 [Schedule] Approving appointment:", selectedAppointment._id);
-      console.log("   Call Link:", callLink);
-
       const response = await axios.post(
-        `https://chtv2-bn.onrender.com/api/appointment/approve/${selectedAppointment._id}`,
+        `/api/appointment/approve/${selectedAppointment._id}`,
         {
           callLink: callLink.trim(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
         }
       );
-
-      console.log("✅ [Schedule] Appointment approved:", response.data);
-
       toast({
         title: "Appointment Approved",
         description: "The appointment has been approved successfully.",
@@ -301,7 +257,6 @@ const Schedule = () => {
       setSelectedAppointment(null);
       fetchAppointments(); // Refresh appointments
     } catch (error) {
-      console.error("❌ [Schedule] Error approving appointment:", error);
       toast({
         title: "Approval Failed",
         description:
@@ -340,29 +295,12 @@ const Schedule = () => {
 
     setProcessing(true);
     try {
-      const token = getToken();
-      if (!token) {
-        throw new Error("No authentication token found.");
-      }
-
-      console.log("📤 [Schedule] Cancelling appointment:", selectedAppointment._id);
-      console.log("   Reason:", cancellationReason);
-
       const response = await axios.post(
-        `https://chtv2-bn.onrender.com/api/appointment/cancel/${selectedAppointment._id}`,
+        `/api/appointment/cancel/${selectedAppointment._id}`,
         {
           cancellationReason: cancellationReason.trim(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
         }
       );
-
-      console.log("✅ [Schedule] Appointment cancelled:", response.data);
-
       toast({
         title: "Appointment Cancelled",
         description: "The appointment has been cancelled successfully.",
@@ -377,7 +315,6 @@ const Schedule = () => {
       setSelectedAppointment(null);
       fetchAppointments(); // Refresh appointments
     } catch (error) {
-      console.error("❌ [Schedule] Error cancelling appointment:", error);
       toast({
         title: "Cancellation Failed",
         description:

@@ -37,7 +37,7 @@ const UserNavbar = () => {
         marginTop: "0",
         padding: "0",
         boxShadow: "0px 8px 8px rgba(0, 0, 0, 0.2)",
-        background: "#B8C2D7",
+        background: "linear-gradient(135deg, #fff 0%, #fff5eb 50%, #ffedd5 100%)",
       }}
     >
       <div className="container-fluid px-10">
@@ -70,7 +70,7 @@ const UserNavbar = () => {
             <Link className="nav-link text-black text-sm" to="/Consultation">
               Consultation
             </Link>
-            <Link className="nav-link text-black text-sm" to="/chats">
+            <Link className="nav-link text-black text-sm" to="/chatpages">
               Chats
             </Link>
             <Link className="nav-link text-black text-sm" to="/game">

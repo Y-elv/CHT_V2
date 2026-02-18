@@ -1,3 +1,6 @@
+import { useState, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
 import {
   FormControl,
   Input,
@@ -5,36 +8,30 @@ import {
   InputRightElement,
   InputLeftElement,
   VStack,
-  Box,
   Image,
+  Box,
+  Button,
 } from "@chakra-ui/react";
-import { useState, useRef, useEffect } from "react";
-import { Button } from "@chakra-ui/button";
-import { useToast } from "@chakra-ui/react";
-import axios from "../../config/axiosConfig";
-import { useNavigate, Link } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import "./login.css";
-import logo from "../../assets/LOGO FULL.png";
+import { useAuthStore } from "../store/authStore";
+import logo from "../assets/LOGO FULL.png";
 import { CgMail } from "react-icons/cg";
 import { BiSolidLockAlt } from "react-icons/bi";
-import { FcGoogle } from "react-icons/fc";
-import { useBadgeStore } from "../../zustandStore/store";
-import { useAuth } from "../../contexts/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [show, SetShow] = useState(false);
-  const [loading, setLoading] = useState();
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
   const toast = useToast();
-  const setProfile = useBadgeStore((state) => state.setProfile);
-  const profile = useBadgeStore((state) => state.profile);
-  const setIsLoggedIn = useBadgeStore((state) => state.setIsLoggedIn);
-  const { login: authLogin } = useAuth();
-  const handleClick = () => SetShow(!show);
+  
+  // Form state
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
+  
+  // Auth store
+  const { login, loading } = useAuthStore();
+
+  const handleClick = () => setShow(!show);
 
   // 3D card rotation effects
   const cardRef = useRef(null);
@@ -65,98 +62,72 @@ const Login = () => {
     y.set(0);
   };
 
-
-  // Handle Google login button click
-  const handleGoogleLogin = () => {
-    // ============================================
-    // [AUTH][GOOGLE OAUTH] Google Login Initiated
-    // ============================================
-    console.log("============================================");
-    console.log("[AUTH][GOOGLE OAUTH] handleGoogleLogin() called");
-    console.log("[AUTH][GOOGLE OAUTH] Timestamp:", new Date().toISOString());
-    console.log("[AUTH][GOOGLE OAUTH] Current URL:", window.location.href);
-    setGoogleLoading(true);
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     
-    // Determine the redirect URL based on environment
-    const isDevelopment = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-    const redirectUrl = isDevelopment
-      ? `${window.location.origin}/auth-verification`
-      : "https://funhealth.netlify.app/auth-verification";
-    
-    console.log("[AUTH][GOOGLE OAUTH] Environment:", isDevelopment ? "Development" : "Production");
-    console.log("[AUTH][GOOGLE OAUTH] Redirect URL:", redirectUrl);
-    
-    // Redirect to backend Google OAuth endpoint with redirect_url parameter
-    const googleAuthUrl = `https://chtv2-bn.onrender.com/auth/google?redirect_url=${encodeURIComponent(redirectUrl)}`;
-    
-    console.log("[AUTH][GOOGLE OAUTH] Full Google Auth URL:", googleAuthUrl);
-    console.log("[AUTH][GOOGLE OAUTH] Redirecting to Google OAuth...");
-    console.log("[AUTH][GOOGLE OAUTH] Setting window.location.href");
-    console.log("============================================");
-    
-    window.location.href = googleAuthUrl;
-  };
-
-  const submitHandler = async () => {
-    setLoading(true);
+    // Basic validation
     if (!email || !password) {
       toast({
-        description: "Please fill all fields!",
+        description: "Please fill in all fields!",
         status: "warning",
         duration: 5000,
         isClosable: true,
         position: "bottom",
       });
-      setLoading(false);
       return;
     }
-    try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-        },
-      };
-      const { data } = await axios.post(
-        " https://chtv2-bn.onrender.com/api/v2/user/login",
-        {
-          email,
-          password,
-        },
-        config
-      );
-      console.log("Data received from login endpoint:", data);
 
-      setLoading(false);
-      
-      // Redirect to auth-verification page with token and user data
-      const token = data.token;
-      const userData = JSON.stringify(data);
-      
-      // Encode user data for URL
-      const encodedUser = encodeURIComponent(userData);
-      const encodedMessage = encodeURIComponent(data.message || "Login successful");
-      
-      // Navigate to auth-verification page
-      navigate(`/auth-verification?token=${token}&user=${encodedUser}&message=${encodedMessage}`);
-    } catch (error) {
-      console.log("Login error:", error);
-      console.log("Error response:", error.response);
-      console.log("Error response data:", error.response?.data);
-
-      // Extract error message from the API response
-      const errorMessage = error.response?.data?.message || "An error occurred";
-
+    // Attempt login
+    const result = await login({ email, password });
+    
+    if (result.success) {
       toast({
-        description: errorMessage,
+        title: "Login Successful",
+        description: `Welcome back, ${result.user.name}!`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      
+      // Role-based redirect to dashboard
+      setTimeout(() => {
+        const getRoleRedirectPath = () => {
+          if (!result.user) return "/profile";
+          if (result.user.role === "admin") return "/admin/dashboard";
+          if (result.user.role === "doctor" && result.user.doctorStatus === "approved") return "/doctor/dashboard";
+          if (result.user.role === "patient") return "/profile";
+          return "/profile";
+        };
+        
+        const redirectPath = getRoleRedirectPath();
+        navigate(redirectPath);
+      }, 1000);
+      
+    } else {
+      toast({
+        title: "Login Failed",
+        description: result.error || "Invalid email or password",
         status: "error",
         duration: 5000,
         isClosable: true,
         position: "bottom",
       });
-      setLoading(false);
     }
   };
-  console.log("Zus Profile", profile);
+
+  // Handle Google login
+  const handleGoogleLogin = () => {
+    // For now, redirect to backend Google OAuth
+    const isDevelopment = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    const redirectUrl = isDevelopment
+      ? `${window.location.origin}/auth-verification`
+      : "https://funhealth.netlify.app/auth-verification";
+    
+    const googleAuthUrl = `https://chtv2-bn.onrender.com/auth/google?redirect_url=${encodeURIComponent(redirectUrl)}`;
+    
+    window.location.href = googleAuthUrl;
+  };
 
   // Container variants for page animations
   const containerVariants = {
@@ -262,7 +233,7 @@ const Login = () => {
               className="text-slate-600 dark:text-slate-300 mt-2 text-sm sm:text-base"
               variants={itemVariants}
             >
-              Sign in to continue your journey
+              Sign in to your account
             </motion.p>
           </motion.div>
 
@@ -270,10 +241,7 @@ const Login = () => {
             {/* Email Input */}
             <motion.div variants={itemVariants}>
               <FormControl id="email" isRequired>
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
+                <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }}>
                   <InputGroup className="group">
                     <InputLeftElement pointerEvents="none" className="pl-3">
                       <Box
@@ -282,7 +250,8 @@ const Login = () => {
                       />
                     </InputLeftElement>
                     <Input
-                      placeholder="Email"
+                      type="email"
+                      placeholder="Email Address"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 dark:hover:shadow-blue-400/10 placeholder:text-slate-400 dark:placeholder:text-slate-500"
@@ -302,10 +271,7 @@ const Login = () => {
             {/* Password Input */}
             <motion.div variants={itemVariants}>
               <FormControl id="password" isRequired>
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
+                <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }}>
                   <InputGroup className="group">
                     <InputLeftElement pointerEvents="none" className="pl-3">
                       <Box
@@ -345,17 +311,7 @@ const Login = () => {
               </FormControl>
             </motion.div>
 
-            {/* Forgot Password Link */}
-            <motion.div variants={itemVariants} className="text-right">
-              <Link
-                to="/forgot-password"
-                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors duration-200 hover:underline"
-              >
-                Forgot Password?
-              </Link>
-            </motion.div>
-
-            {/* Login Button */}
+            {/* Sign In Button */}
             <motion.div variants={itemVariants}>
               <motion.div
                 whileHover={{ scale: 1.02, y: -2 }}
@@ -363,91 +319,69 @@ const Login = () => {
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 <Button
-                  onClick={submitHandler}
+                  onClick={handleSubmit}
                   width="100%"
                   isLoading={loading}
                   className="h-12 rounded-xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white font-semibold text-base shadow-lg shadow-blue-500/30 dark:shadow-blue-400/20 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/40 dark:hover:shadow-blue-400/30"
                   style={{
-                    background:
-                      "linear-gradient(to right, #2563eb, #9333ea, #db2777)",
+                    background: "linear-gradient(to right, #2563eb, #9333ea, #db2777)",
                   }}
                   _hover={{
-                    background:
-                      "linear-gradient(to right, #1d4ed8, #7e22ce, #be185d)",
+                    background: "linear-gradient(to right, #1d4ed8, #7e22ce, #be185d)",
                     transform: "translateY(-2px)",
-                    boxShadow:
-                      "0 20px 25px -5px rgba(59, 130, 246, 0.4), 0 10px 10px -5px rgba(59, 130, 246, 0.2)",
+                    boxShadow: "0 20px 25px -5px rgba(59, 130, 246, 0.4), 0 10px 10px -5px rgba(59, 130, 246, 0.2)",
                   }}
                   _loading={{
                     opacity: 0.7,
                   }}
                 >
-                  {loading ? "Signing in..." : "Sign In"}
+                  {loading ? "Signing In..." : "Sign In"}
                 </Button>
               </motion.div>
             </motion.div>
 
-            {/* Divider */}
-            <motion.div variants={itemVariants}>
-              <div className="relative flex items-center justify-center my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-300 dark:border-slate-600"></div>
-                </div>
-                <div className="relative bg-white dark:bg-slate-800 px-4">
-                  <span className="text-sm text-slate-500 dark:text-slate-400">or</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Google Login Button */}
+            {/* Google Sign In Button */}
             <motion.div variants={itemVariants}>
               <motion.div
-                whileHover={{ scale: 1.02, y: -2 }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 <Button
-                  onClick={handleGoogleLogin}
+                  leftIcon={<FcGoogle />}
                   width="100%"
-                  isLoading={googleLoading}
-                  className="h-12 rounded-xl bg-white dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 text-slate-700 dark:text-slate-200 font-semibold text-base shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-3"
+                  onClick={handleGoogleLogin}
+                  className="h-12 rounded-xl bg-white dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-400 text-slate-700 dark:text-slate-300 font-semibold text-base shadow-md transition-all duration-300 hover:shadow-lg"
                   _hover={{
-                    bg: "gray.50",
-                    borderColor: "gray.400",
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-                  }}
-                  _dark={{
-                    _hover: {
-                      bg: "slate.600",
-                      borderColor: "slate.500",
-                    },
-                  }}
-                  _loading={{
-                    opacity: 0.7,
+                    borderColor: "blue.300",
+                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
                   }}
                 >
-                  {googleLoading ? (
-                    "Connecting to Google..."
-                  ) : (
-                    <>
-                      <FcGoogle className="text-2xl" />
-                      <span>Continue with Google</span>
-                    </>
-                  )}
+                  Continue with Google
                 </Button>
               </motion.div>
             </motion.div>
 
-            {/* Register Link */}
+            {/* Links */}
             <motion.div variants={itemVariants} className="text-center mt-2">
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                New here?{" "}
+                Don't have an account?{" "}
                 <Link
-                  to="/register"
+                  to="/signup"
                   className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors duration-200 hover:underline"
                 >
-                  Register
+                  Sign Up
+                </Link>
+              </p>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="text-center mt-2">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                <Link
+                  to="/forgot-password"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors duration-200 hover:underline"
+                >
+                  Forgot Password?
                 </Link>
               </p>
             </motion.div>

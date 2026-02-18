@@ -38,10 +38,21 @@ export const isSameUser = (messages, m, i) => {
   return i > 0 && messages[i - 1].sender._id === m.sender._id;
 };
 
+// Normalize id for comparison (backend may use _id or id)
+const sameUser = (u, loggedUser) => {
+  if (!u || !loggedUser) return false;
+  const uid = u._id ?? u.id;
+  const lid = loggedUser._id ?? loggedUser.id;
+  return uid && lid && uid === lid;
+};
+
 export const getSender = (loggedUser, users) => {
-  return users[0]?._id === loggedUser?._id ? users[1].name : users[0].name;
+  if (!users || users.length < 2) return "User";
+  const otherUser = sameUser(users[0], loggedUser) ? users[1] : users[0];
+  return otherUser?.name || "User";
 };
 
 export const getSenderFull = (loggedUser, users) => {
-  return users[0]._id === loggedUser._id ? users[1] : users[0];
+  if (!users || users.length < 2) return null;
+  return sameUser(users[0], loggedUser) ? users[1] : users[0];
 };

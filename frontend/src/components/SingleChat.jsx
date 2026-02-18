@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChatState } from "./Context/chatProvider";
-import axios from "../config/axiosConfig";
+import axios from "../api/axios";
 import "../components/css/styles.css";
 import {
   Box,
@@ -46,8 +46,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           authorization: `${user.token}`,
         },
       };
-      console.log("User Token:", user.token);
-
       setLoading(true);
 
       const { data } = await axios.get(
@@ -115,9 +113,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           config
         );
-
-        console.log("from single chat", data);
-
         socket.emit("new message", data);
 
         setMessages([...messages, data]);
@@ -147,29 +142,37 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     <>
       {selectedChat ? (
         <>
-          <Text
-            fontSize={{ base: "28px", md: "30px" }}
+          <Box
+            fontSize={{ base: "18px", md: "20px" }}
             pb={3}
-            px={2}
+            px={3}
+            py={2}
             w="100%"
             fontFamily="work sans"
             display="flex"
             justifyContent={{ base: "space-between" }}
             alignItems="center"
+            bg="linear-gradient(90deg, #F7941D 0%, #FFA84D 100%)"
+            borderRadius="lg"
+            color="white"
           >
             <IconButton
               display={{ base: "flex", md: "none" }}
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat("")}
+              aria-label="Back"
+              colorScheme="whiteAlpha"
+              color="white"
+              _hover={{ bg: "whiteAlpha.300" }}
             />
             {!selectedChat.isGroupChat ? (
               <>
-                {getSender(user, selectedChat.users)}
+                <Text fontWeight="semibold">{getSender(user, selectedChat.users)}</Text>
                 <ProfileModal user={getSenderFull(user, selectedChat.users)} />
               </>
             ) : (
               <>
-                {selectedChat.chatName}
+                <Text fontWeight="semibold">{selectedChat.chatName}</Text>
                 <UpdateGroupChatModal
                   fetchAgain={fetchAgain}
                   setFetchAgain={setFetchAgain}
@@ -177,13 +180,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 />
               </>
             )}
-          </Text>
+          </Box>
           <Box
             display="flex"
             flexDir="column"
             justifyContent="flex-end"
             p={3}
-            bg="#E8E8E8"
+            bg="#fffbf7"
             w="100%"
             h="100%"
             borderRadius="lg"
@@ -205,10 +208,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
               <Input
                 variant="filled"
-                bg="#E8E8E8"
+                bg="white"
+                border="1px solid"
+                borderColor="orange.200"
+                color="gray.800"
                 placeholder="Enter a message ..."
                 onChange={typingHandler}
                 value={newMessage}
+                _placeholder={{ color: "gray.500" }}
+                _hover={{ bg: "white", borderColor: "orange.300" }}
+                _focus={{ bg: "white", borderColor: "#F7941D", boxShadow: "0 0 0 1px #F7941D" }}
               />
             </FormControl>
           </Box>

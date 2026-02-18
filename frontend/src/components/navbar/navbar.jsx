@@ -10,7 +10,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChatState } from "../Context/chatProvider";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthStore } from "../../store/authStore";
 import {
   Menu,
   MenuButton,
@@ -22,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import useNotificationStore from "../../zustandStore/notificationStore";
+import { handleAuthError, initAuthErrorHandler } from "../../utils/authErrorHandler";
 
 const Navbar = ({ active }) => {
   const [showMenu, setShowMenu] = useState(false);
@@ -35,26 +36,12 @@ const Navbar = ({ active }) => {
   const chatContext = ChatState();
   const { user: chatUser = null, chats = [], logoutHandler: chatLogoutHandler } = chatContext || {};
   
-  // Get AuthContext for immediate user state updates
-  const { user: authUser, logout: authLogout, isAuthenticated } = useAuth();
+  // Get AuthStore for immediate user state updates
+  const { user: authUser } = useAuthStore();
   
   // Use authUser if available, otherwise fall back to chatUser
   const user = authUser || chatUser;
-  
-  // Debug logging
-  useEffect(() => {
-    console.log("🔍 Navbar: User state check");
-    console.log("   - authUser:", authUser);
-    console.log("   - chatUser:", chatUser);
-    console.log("   - Final user:", user);
-    if (user) {
-      console.log("   - User.name:", user.name);
-      console.log("   - User.email:", user.email);
-      console.log("   - User.pic:", user.pic);
-      console.log("   - User.role:", user.role);
-    }
-  }, [authUser, chatUser, user]);
-  
+
   const logoutHandler = () => {
     if (authLogout) authLogout();
     if (chatLogoutHandler) chatLogoutHandler();
@@ -81,13 +68,13 @@ const Navbar = ({ active }) => {
       // Fetch notifications and unread count on component mount
       refresh().catch((error) => {
         // ============================================
-        // EXPOSE FULL AXIOS ERROR
+        // HANDLE AUTHENTICATION ERRORS GLOBALLY
         // ============================================
-        console.error("🟥 RAW AXIOS ERROR:", error);
-        console.error("🟥 AXIOS RESPONSE:", error.response);
-        console.error("🟥 AXIOS STATUS:", error.response?.status);
-        console.error("🟥 AXIOS DATA:", error.response?.data);
-        console.error("Failed to fetch notifications:", error);
+        if (handleAuthError(error, "navbar notification fetch")) {
+          // Auth error was handled globally
+          return;
+        }
+        
       });
     }
   }, [user, shouldShowNotifications]); // Only fetch when user is available and not on home page
@@ -125,16 +112,7 @@ const Navbar = ({ active }) => {
     if (isUnread && notificationId) {
       try {
         await markAsRead(notificationId);
-      } catch (error) {
-        // ============================================
-        // EXPOSE FULL AXIOS ERROR
-        // ============================================
-        console.error("🟥 RAW AXIOS ERROR:", error);
-        console.error("🟥 AXIOS RESPONSE:", error.response);
-        console.error("🟥 AXIOS STATUS:", error.response?.status);
-        console.error("🟥 AXIOS DATA:", error.response?.data);
-        console.error("Failed to mark notification as read:", error);
-      }
+      } catch (_error) {}
     }
 
     // Navigate if link is provided
@@ -142,7 +120,7 @@ const Navbar = ({ active }) => {
       navigate(notification.link);
       setShowNotifications(false);
     } else if (notification.type === "message" || notification.chatId) {
-      navigate("/chats");
+      navigate("/chatpages");
       setShowNotifications(false);
     } else {
       setShowNotifications(false);
@@ -271,7 +249,7 @@ const Navbar = ({ active }) => {
               Updates
             </Link>
             <Link
-              to="/our-teamm"
+              to="/consultation"
               className={`nav-link relative text-slate-700 dark:text-slate-300 hover:text-[#F7941D] dark:hover:text-[#F7941D] font-medium transition-colors duration-200 px-2 py-1 ${
                 active === "ourTeam" ? "text-[#F7941D] dark:text-[#F7941D]" : ""
               }`}
@@ -425,16 +403,7 @@ const Navbar = ({ active }) => {
                           onClick={async () => {
                             try {
                               await refresh();
-                            } catch (error) {
-                              // ============================================
-                              // EXPOSE FULL AXIOS ERROR
-                              // ============================================
-                              console.error("🟥 RAW AXIOS ERROR:", error);
-                              console.error("🟥 AXIOS RESPONSE:", error.response);
-                              console.error("🟥 AXIOS STATUS:", error.response?.status);
-                              console.error("🟥 AXIOS DATA:", error.response?.data);
-                              console.error("Failed to refresh notifications:", error);
-                            }
+                            } catch (_error) {}
                           }}
                           className="block w-full text-center text-sm font-medium text-[#2B2F92] dark:text-[#F7941D] hover:text-[#F7941D] dark:hover:text-[#FFA84D] transition-colors duration-200"
                         >
@@ -658,15 +627,15 @@ const Navbar = ({ active }) => {
                     >
                       {[
                         { to: "/our-news", label: "Updates" },
-                        { to: "/our-teamm", label: "Our Team" },
+                        { to: "/consultation", label: "Our Team" },
                         { to: "/menu", label: "Menu" },
                         { to: "/consultation", label: "Consultation" },
-                        { to: "/chats", label: "Chats" },
+                        { to: "/chatpages", label: "Chats" },
                         { to: "/game", label: "Game" },
                         { to: "/news", label: "News" },
                       ].map((link, index) => (
                         <motion.div
-                          key={link.to}
+                          key={`${link.to}-${index}`}
                           custom={index}
                           variants={itemVariants}
                         >
