@@ -24,8 +24,6 @@ const Profile = () => {
   const [pic, setPic] = useState();
   const location = useLocation();
 
-  console.log("🍪 [PROFILE] User from cookie-based auth:", user);
-
   const handleImageClick = () => {
     setIsPopupOpen(true);
   };
@@ -77,15 +75,9 @@ const Profile = () => {
       );
 
       const cloudinaryData = await cloudinaryResponse.json();
-      console.log("Image URL:", cloudinaryData.url);
-
-      // Update profile using cookie-based auth
       const updateApiResponse = await axios.patch("/api/v2/user/updateProfile", {
         pic: cloudinaryData.url
       });
-
-      console.log("Update API Response:", updateApiResponse.data);
-
       await setPic(cloudinaryData.url.toString());
 
       toast({
@@ -98,8 +90,6 @@ const Profile = () => {
 
       setLoading(false);
     } catch (error) {
-      console.error("Error:", error);
-
       const errorMessage =
         error.response?.data?.message ||
         "An error occurred while uploading the image.";
@@ -117,7 +107,6 @@ const Profile = () => {
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
-    console.log("here is the file", file);
     setSelectedImage(file);
   };
 

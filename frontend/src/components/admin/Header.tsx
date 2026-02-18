@@ -204,37 +204,9 @@ const Header: React.FC<HeaderProps> = ({
   // Get auth user from cookie-based auth store
   const { user, logout } = useAuthStore();
 
-  // Log notifications state changes
-  useEffect(() => {
-    console.log("📊 Notification State Update:");
-    console.log("  - Notifications:", notifications);
-    console.log("  - Notifications Count:", notifications?.length || 0);
-    console.log("  - Unread Count:", unreadCount);
-    console.log("  - Loading:", notificationsLoading);
-  }, [notifications, unreadCount, notificationsLoading]);
-
   // Auto-fetch notifications on mount (cookie-based auth)
   useEffect(() => {
-    console.log("🔔 Header: Auto-fetching notifications...");
-    console.log("👤 Authenticated User:", user);
-
-    if (user) {
-      refresh()
-        .then(() => {
-          console.log("✅ Notifications fetched successfully");
-        })
-        .catch((error) => {
-          console.error("❌ Failed to fetch notifications:", error);
-          console.error(
-            "Error details:",
-            error.response?.data || error.message
-          );
-        });
-    } else {
-      console.warn(
-        "⚠️ No authenticated user found, skipping notification fetch"
-      );
-    }
+    if (user) refresh().catch(() => {});
   }, [refresh, user]);
 
   // Format notification time
@@ -272,9 +244,7 @@ const Header: React.FC<HeaderProps> = ({
     if (isUnread && notificationId) {
       try {
         await markAsRead(notificationId);
-      } catch (error) {
-        console.error("Failed to mark notification as read:", error);
-      }
+      } catch (_error) {}
     }
 
     // Navigate if link is provided
@@ -741,37 +711,6 @@ const Header: React.FC<HeaderProps> = ({
                     </Text>
                   </Box>
 
-                  {(() => {
-                    console.log("🎨 Rendering notification dropdown:");
-                    console.log("  - Loading:", notificationsLoading);
-                    console.log("  - Notifications array:", notifications);
-                    console.log(
-                      "  - Notifications type:",
-                      Array.isArray(notifications)
-                        ? "Array"
-                        : typeof notifications
-                    );
-                    console.log(
-                      "  - Notifications length:",
-                      notifications?.length || 0
-                    );
-                    if (notifications && notifications.length > 0) {
-                      console.log("  - First notification:", notifications[0]);
-                      console.log(
-                        "  - First notification keys:",
-                        Object.keys(notifications[0] || {})
-                      );
-                      console.log(
-                        "  - First notification.isRead:",
-                        notifications[0]?.isRead
-                      );
-                      console.log(
-                        "  - First notification.read:",
-                        notifications[0]?.read
-                      );
-                    }
-                    return null;
-                  })()}
                   {notificationsLoading && notifications.length === 0 ? (
                     <Box p={4} textAlign="center">
                       <Text fontSize="sm" color="gray.500">

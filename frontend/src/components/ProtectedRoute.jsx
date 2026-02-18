@@ -30,16 +30,11 @@ export const AdminProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    console.log("[PROTECTED ROUTE] Admin route - Not authenticated, redirecting to login");
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-
   if (user?.role !== "admin") {
-    console.log("[PROTECTED ROUTE] Admin route - User not admin, redirecting");
     return <Navigate to="/" replace />;
   }
-
-  console.log("[PROTECTED ROUTE] Admin route - Access granted");
   return children;
 };
 
@@ -53,21 +48,14 @@ export const DoctorProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    console.log("[PROTECTED ROUTE] Doctor route - Not authenticated, redirecting to login");
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-
   if (user?.role !== "doctor") {
-    console.log("[PROTECTED ROUTE] Doctor route - User not doctor, redirecting");
     return <Navigate to="/" replace />;
   }
-
   if (user?.doctorStatus !== "approved") {
-    console.log("[PROTECTED ROUTE] Doctor route - Doctor not approved, redirecting");
     return <Navigate to="/login" replace />;
   }
-
-  console.log("[PROTECTED ROUTE] Doctor route - Access granted");
   return children;
 };
 
@@ -81,16 +69,11 @@ export const PatientProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    console.log("[PROTECTED ROUTE] Patient route - Not authenticated, redirecting to login");
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-
   if (user?.role !== "patient") {
-    console.log("[PROTECTED ROUTE] Patient route - User not patient, redirecting");
     return <Navigate to="/" replace />;
   }
-
-  console.log("[PROTECTED ROUTE] Patient route - Access granted");
   return children;
 };
 
@@ -104,10 +87,7 @@ export const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    console.log("[PROTECTED ROUTE] General route - Not authenticated, redirecting to login");
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-
-  console.log("[PROTECTED ROUTE] General route - Access granted");
   return children;
 };

@@ -46,8 +46,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           authorization: `${user.token}`,
         },
       };
-      console.log("User Token:", user.token);
-
       setLoading(true);
 
       const { data } = await axios.get(
@@ -115,9 +113,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           config
         );
-
-        console.log("from single chat", data);
-
         socket.emit("new message", data);
 
         setMessages([...messages, data]);

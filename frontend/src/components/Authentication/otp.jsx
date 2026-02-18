@@ -155,7 +155,6 @@ const OTP = () => {
       // Navigate to verification success page
       navigate("/verification-success", { state: { email } });
     } catch (error) {
-      console.log("OTP verification error:", error);
       const errorMessage = error.response?.data?.message || "Invalid OTP. Please try again.";
       toast({
         description: errorMessage,
@@ -198,7 +197,6 @@ const OTP = () => {
       setResendCooldown(60); // 60 second cooldown
       setIsResending(false);
     } catch (error) {
-      console.log("Resend OTP error:", error);
       const errorMessage = error.response?.data?.message || "Failed to resend OTP. Please try again.";
       toast({
         description: errorMessage,

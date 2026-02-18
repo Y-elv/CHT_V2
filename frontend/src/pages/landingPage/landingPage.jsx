@@ -82,7 +82,6 @@ const LandingPage = () => {
       };
       
       const redirectPath = getRoleRedirectPath();
-      console.log("🎯 [LANDING PAGE] Redirecting authenticated user to:", redirectPath);
       navigate(redirectPath);
     }
   }, [isAuthenticated, user, navigate]);

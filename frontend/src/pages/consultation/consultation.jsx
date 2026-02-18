@@ -162,61 +162,20 @@ const Consultation = () => {
 
   // Fetch approved doctors from API
   const fetchDoctors = async () => {
-    console.log("🔄 [Consultation] Starting to fetch approved doctors...");
     setLoadingDoctors(true);
     try {
       const apiUrl = "https://chtv2-bn.onrender.com/api/admin/all-doctors";
       const params = {
         page: 1,
-        limit: 100, // Get more doctors
+        limit: 100,
         status: "approved",
       };
-
-      console.log("📤 [Consultation] API Request Details:");
-      console.log("   URL:", apiUrl);
-      console.log("   Params:", params);
-      console.log("   Method: GET");
-
-      const requestStartTime = Date.now();
       const response = await axios.get(apiUrl, { params });
-      const requestEndTime = Date.now();
-
-      console.log(
-        `⏱️ [Consultation] Request completed in ${
-          requestEndTime - requestStartTime
-        }ms`
-      );
-      console.log("📥 [Consultation] API Response received:");
-      console.log("   Status:", response.status);
-      console.log("   Status Text:", response.statusText);
-      console.log("   Response Data:", response.data);
 
       if (response.data && response.data.doctors) {
         const doctorsList = response.data.doctors;
-        console.log("✅ [Consultation] Doctors array found in response");
-        console.log("   Total doctors:", doctorsList.length);
-        console.log("   Doctors list:", doctorsList);
-
-        // Log each doctor's details
-        doctorsList.forEach((doctor, index) => {
-          console.log(`   Doctor ${index + 1}:`, {
-            id: doctor._id,
-            name: doctor.name,
-            email: doctor.email,
-            specialty: doctor.specialty,
-            status: doctor.doctorStatus,
-            hospital: doctor.hospital,
-          });
-        });
-
         setDoctors(doctorsList);
-        console.log(
-          "✅ [Consultation] Doctors state updated:",
-          doctorsList.length,
-          "doctors"
-        );
 
-        // Extract unique specialties from doctors
         const uniqueSpecialties = [
           ...new Set(
             doctorsList
@@ -224,44 +183,17 @@ const Consultation = () => {
               .filter((specialty) => specialty && specialty.trim() !== "")
           ),
         ];
-
-        console.log("🔍 [Consultation] Extracting specialties...");
-        console.log("   Unique specialties from API:", uniqueSpecialties);
-
-        // Add default specialties if not present
         const defaultSpecialties = [
           "Mental Health",
           "Sexual Advice",
           "Counseling and Therapy",
         ];
-
         const allSpecialties = [
           ...defaultSpecialties,
           ...uniqueSpecialties.filter((s) => !defaultSpecialties.includes(s)),
         ].sort();
-
-        console.log(
-          "✅ [Consultation] Final specialties list:",
-          allSpecialties
-        );
-        console.log("   Total specialties:", allSpecialties.length);
-
         setSpecialties(allSpecialties);
-        console.log("✅ [Consultation] Specialties state updated");
-
-        // Summary log
-        console.log("🎉 [Consultation] Fetch completed successfully!");
-        console.log("   Summary:");
-        console.log("   - Doctors fetched:", doctorsList.length);
-        console.log("   - Specialties available:", allSpecialties.length);
-        console.log(
-          "   - Request duration:",
-          requestEndTime - requestStartTime,
-          "ms"
-        );
       } else {
-        console.warn("⚠️ [Consultation] No doctors found in response");
-        console.warn("   Response data:", response.data);
         setDoctors([]);
         setSpecialties([
           "Mental Health",
@@ -270,21 +202,6 @@ const Consultation = () => {
         ]);
       }
     } catch (error) {
-      console.error("❌ [Consultation] Error fetching doctors:");
-      console.error("   Error type:", error.constructor.name);
-      console.error("   Error message:", error.message);
-      console.error("   Error code:", error.code);
-
-      if (error.response) {
-        console.error("   HTTP Status:", error.response.status);
-        console.error("   Response data:", error.response.data);
-      } else if (error.request) {
-        console.error("   No response received");
-        console.error("   Request:", error.request);
-      }
-
-      console.error("   Full error:", error);
-
       toast({
         title: "Error",
         description: "Failed to load doctors. Please try again later.",
@@ -303,7 +220,6 @@ const Consultation = () => {
       ]);
     } finally {
       setLoadingDoctors(false);
-      console.log("🏁 [Consultation] Fetch process finished");
     }
   };
 
@@ -357,11 +273,6 @@ const Consultation = () => {
       });
       return;
     }
-
-    console.log("Selected Doctor:", selectedDoctorData);
-    console.log("Doctor's Email:", selectedDoctorData?.email);
-    console.log("Selected District:", selectedDistrict);
-    console.log("Selected Service:", selectedService);
 
     setIsCalendarOpen(true);
     setIsModalOpen(false);

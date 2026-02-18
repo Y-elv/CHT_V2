@@ -50,7 +50,6 @@ const AdminNotifications: React.FC = () => {
         setNotifications([]);
       }
     } catch (error) {
-      console.error("Error fetching notifications:", error);
       toast({
         title: "Error",
         description: "Failed to fetch notifications",

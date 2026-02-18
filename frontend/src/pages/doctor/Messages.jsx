@@ -91,7 +91,6 @@ const Messages = () => {
       const list = response.data || [];
       setConversations(deduplicateByEmail(list));
     } catch (error) {
-      console.error('Error fetching conversations:', error);
       toast({
         title: "Error loading conversations",
         description: "Unable to load your conversations. Please try again.",
@@ -112,7 +111,6 @@ const Messages = () => {
       setMessages(response.data);
       scrollToBottom();
     } catch (error) {
-      console.error('Error fetching messages:', error);
       toast({
         title: "Error loading messages",
         description: "Unable to load conversation. Please try again.",
@@ -150,7 +148,6 @@ const Messages = () => {
         isClosable: true,
       });
     } catch (error) {
-      console.error('Error sending message:', error);
       toast({
         title: "Error sending message",
         description: "Unable to send message. Please try again.",

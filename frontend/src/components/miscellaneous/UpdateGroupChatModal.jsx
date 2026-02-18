@@ -51,7 +51,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
         config
       );
-      console.log(data);
       setLoading(false);
       setSearchResult(data);
     } catch (error) {

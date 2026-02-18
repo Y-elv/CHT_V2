@@ -16,6 +16,7 @@ import {
   Avatar,
   Badge,
   Button,
+  Flex,
   Input,
   InputGroup,
   InputLeftElement,

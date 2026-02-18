@@ -14,7 +14,6 @@ let toastInstance = null;
  */
 export const initAuthErrorHandler = (toast) => {
   toastInstance = toast;
-  console.log("🔒 [AUTH ERROR HANDLER] Initialized with toast instance");
 };
 
 /**
@@ -23,12 +22,7 @@ export const initAuthErrorHandler = (toast) => {
  * @param {string} context - Context where error occurred (optional)
  */
 export const handleAuthError = (error, context = "application") => {
-  console.log(`🔒 [AUTH ERROR HANDLER] Processing auth error in ${context}:`, error);
-  
-  // Check if it's an authentication error
   if (error?.isAuthError || error?.status === 401 || error?.requiresReauth) {
-    console.log("🔒 [AUTH ERROR HANDLER] Detected authentication error");
-    
     // Show professional toast notification
     if (toastInstance) {
       toastInstance({
@@ -58,25 +52,16 @@ export const handleAuthError = (error, context = "application") => {
  * Clear authentication state and redirect to login
  */
 const clearAuthAndRedirect = () => {
-  console.log("🔒 [AUTH ERROR HANDLER] Clearing auth and redirecting");
-  
-  // Clear auth store
   try {
     const { useAuthStore } = require("../store/authStore");
     const authStore = useAuthStore.getState();
     authStore.logout();
-  } catch (error) {
-    console.error("Failed to clear auth store:", error);
-  }
-  
-  // Clear notification store
+  } catch (_err) {}
   try {
     const { useNotificationStore } = require("../zustandStore/notificationStore");
     const notificationStore = useNotificationStore.getState();
     notificationStore.clearNotifications?.();
-  } catch (error) {
-    console.error("Failed to clear notification store:", error);
-  }
+  } catch (_err) {}
   
   // Redirect to login page
   setTimeout(() => {

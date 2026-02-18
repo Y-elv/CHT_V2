@@ -89,7 +89,6 @@ const DoctorDashboard = () => {
       if (handleAuthError(error, "doctor dashboard profile completion")) {
         return; // Auth error handled globally
       }
-      console.error('Error fetching profile completion:', error);
       setProfileCompletion(0);
     }
   };
@@ -110,7 +109,6 @@ const DoctorDashboard = () => {
       if (handleAuthError(error, "doctor dashboard conversations")) {
         return; // Auth error handled globally
       }
-      console.error('Error fetching conversations:', error);
     }
   };
 
@@ -143,7 +141,6 @@ const DoctorDashboard = () => {
       if (handleAuthError(error, "doctor dashboard appointments")) {
         return; // Auth error handled globally
       }
-      console.error('Error fetching appointments:', error);
       toast({
         title: "Error loading appointments",
         description: "Unable to load your appointment data.",
@@ -167,9 +164,6 @@ const DoctorDashboard = () => {
     fetchConversations();
     fetchProfileCompletion();
     
-    return () => {
-      console.log("DoctorDashboard component unmounting");
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -305,70 +299,49 @@ const DoctorDashboard = () => {
                   <Button 
                     colorScheme="blue" 
                     variant="solid"
-                    onClick={() => {
-                      console.log('Quick Action: Start Consultation - Redirecting to /doctor/schedule');
-                      navigate('/doctor/schedule');
-                    }}
+                    onClick={() => navigate('/doctor/schedule')}
                   >
                     Start Consultation
                   </Button>
                   <Button 
                     colorScheme="purple" 
                     variant="solid"
-                    onClick={() => {
-                      console.log('Quick Action: Check Messages - Redirecting to /doctor/messages');
-                      navigate('/doctor/messages');
-                    }}
+                    onClick={() => navigate('/doctor/messages')}
                   >
                     Check Messages
                   </Button>
                   <Button 
                     colorScheme="green" 
                     variant="solid"
-                    onClick={() => {
-                      console.log('Quick Action: View Patients - Redirecting to /doctor/patients');
-                      navigate('/doctor/patients');
-                    }}
+                    onClick={() => navigate('/doctor/patients')}
                   >
                     View Patients
                   </Button>
                   <Button 
                     colorScheme="red" 
                     variant="solid"
-                    onClick={() => {
-                      console.log('Quick Action: Notifications - Redirecting to /doctor/notifications');
-                      navigate('/doctor/notifications');
-                    }}
+                    onClick={() => navigate('/doctor/notifications')}
                   >
                     Notifications
                   </Button>
                   <Button 
                     colorScheme="orange" 
                     variant="solid"
-                    onClick={() => {
-                      console.log('Quick Action: Profile - Redirecting to /doctor/profile');
-                      navigate('/doctor/profile');
-                    }}
+                    onClick={() => navigate('/doctor/profile')}
                   >
                     Profile
                   </Button>
                   <Button 
                     colorScheme="gray" 
                     variant="solid"
-                    onClick={() => {
-                      console.log('Quick Action: Settings - Redirecting to /doctor/settings');
-                      navigate('/doctor/settings');
-                    }}
+                    onClick={() => navigate('/doctor/settings')}
                   >
                     Settings
                   </Button>
                   <Button 
                     colorScheme="teal" 
                     variant="solid"
-                    onClick={() => {
-                      console.log('Quick Action: Analytics - Redirecting to /doctor/analytics');
-                      navigate('/doctor/analytics');
-                    }}
+                    onClick={() => navigate('/doctor/analytics')}
                   >
                     Analytics
                   </Button>

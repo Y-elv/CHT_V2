@@ -31,25 +31,10 @@ const AuthVerification = () => {
   // Role-based redirect: admin → admin dashboard, doctor (approved) → doctor dashboard, patient → profile
   // Accept optional user so we can use the profile response (userData) before store updates
   const getRoleRedirectPath = (userForRedirect = user) => {
-    console.log("[AUTH VERIFICATION] Step 1: Now checking the role to redirect our Google auth");
-    console.log("[AUTH VERIFICATION] Step 2: User for redirect:", userForRedirect ? { role: userForRedirect.role, doctorStatus: userForRedirect.doctorStatus, name: userForRedirect.name } : null);
-    if (!userForRedirect) {
-      console.log("[AUTH VERIFICATION] Step 3: No user → redirect to /login");
-      return "/login";
-    }
-    if (userForRedirect.role === "admin") {
-      console.log("[AUTH VERIFICATION] Step 3: Role is admin → redirect to /admin/dashboard");
-      return "/admin/dashboard";
-    }
-    if (userForRedirect.role === "doctor" && userForRedirect.doctorStatus === "approved") {
-      console.log("[AUTH VERIFICATION] Step 3: Role is doctor (approved) → redirect to /doctor/dashboard");
-      return "/doctor/dashboard";
-    }
-    if (userForRedirect.role === "patient") {
-      console.log("[AUTH VERIFICATION] Step 3: Role is patient → redirect to /profile");
-      return "/profile";
-    }
-    console.log("[AUTH VERIFICATION] Step 3: Default → redirect to /profile");
+    if (!userForRedirect) return "/login";
+    if (userForRedirect.role === "admin") return "/admin/dashboard";
+    if (userForRedirect.role === "doctor" && userForRedirect.doctorStatus === "approved") return "/doctor/dashboard";
+    if (userForRedirect.role === "patient") return "/profile";
     return "/profile";
   };
 
@@ -87,43 +72,18 @@ const AuthVerification = () => {
   };
 
   useEffect(() => {
-    console.log("🍪 [AUTH VERIFICATION] Component mounted - checking cookie-based auth");
-    console.log("[AUTH VERIFICATION] Timestamp:", new Date().toISOString());
-    console.log("[AUTH VERIFICATION] Current user:", user);
-    console.log("[AUTH VERIFICATION] Is authenticated:", isAuthenticated);
-    
-    // Prevent multiple executions - but if user is already in store, still redirect by role
     if (processingStartedRef.current) {
-      console.log("[AUTH VERIFICATION] ⚠️ Processing already started, skipping duplicate execution");
       if (isAuthenticated && user) {
-        console.log("[AUTH VERIFICATION] User already in store → now checking the role to redirect our Google auth (skip path)");
         const redirectPath = getRoleRedirectPath(user);
-        console.log("[AUTH VERIFICATION] Step 4: Final redirect path (skip path):", redirectPath);
         navigate(redirectPath);
       }
       return;
     }
-
     processingStartedRef.current = true;
-    
+
     const processAuthCallback = async () => {
       try {
-        console.log("🔄 [AUTH VERIFICATION] Starting authentication callback processing...");
-        console.log("[AUTH VERIFICATION] Timestamp:", new Date().toISOString());
-        console.log("[AUTH VERIFICATION] Full URL:", window.location.href);
-        console.log("[AUTH VERIFICATION] Pathname:", window.location.pathname);
-        console.log("[AUTH VERIFICATION] Search params:", window.location.search);
-        console.log("[AUTH VERIFICATION] Hash:", window.location.hash);
-        
-        // Extract URL parameters (only for error handling)
-        console.log("[AUTH VERIFICATION] Extracting URL parameters...");
-        const messageParam = searchParams.get("message");
         const error = searchParams.get("error");
-
-        console.log("[AUTH VERIFICATION] URL Parameters Extracted:");
-        console.log("[AUTH VERIFICATION] - Message:", messageParam);
-        console.log("[AUTH VERIFICATION] - Error:", error);
-
         // Handle error case
         if (error) {
           setStatus("error");
@@ -142,26 +102,14 @@ const AuthVerification = () => {
           return;
         }
 
-        // If we have a user already authenticated via cookies, redirect to appropriate dashboard
         if (isAuthenticated && user) {
-          console.log("✅ [AUTH VERIFICATION] User already authenticated via cookies");
-          console.log("[AUTH VERIFICATION] Now checking the role to redirect our Google auth (from store)");
           setStatus("success");
           setMessage(`Welcome back, ${user.name}!`);
-          
           const redirectPath = getRoleRedirectPath();
-          console.log("[AUTH VERIFICATION] Step 4: Final redirect path:", redirectPath);
-          
-          setTimeout(() => {
-            navigate(redirectPath);
-          }, 2000);
+          setTimeout(() => navigate(redirectPath), 2000);
           return;
         }
 
-        // Handle cookie-based authentication (for OAuth callbacks)
-        // For cookie-based OAuth, backend sets cookie and redirects here
-        // We just need to verify the cookie works by calling profile endpoint
-        console.log("🍪 [AUTH VERIFICATION] Verifying cookie-based authentication");
         setStatus("processing");
         setMessage("Verifying your session...");
         
@@ -174,26 +122,15 @@ const AuthVerification = () => {
           
           if (response.ok) {
             const userData = await response.json();
-            console.log("✅ [AUTH VERIFICATION] Cookie authentication successful:", userData);
-            console.log("[AUTH VERIFICATION] Now checking the role to redirect our Google auth (from profile response)");
-
             setStatus("success");
             setMessage(`Welcome back, ${userData.name}!`);
-
             setProfile(userData);
-
-            // Use userData for redirect so we don't rely on store update (which is async)
             const redirectPath = getRoleRedirectPath(userData);
-            console.log("[AUTH VERIFICATION] Step 4: Final redirect path:", redirectPath);
-
-            setTimeout(() => {
-              navigate(redirectPath);
-            }, 2000);
+            setTimeout(() => navigate(redirectPath), 2000);
           } else {
             throw new Error('Cookie validation failed');
           }
         } catch (authError) {
-          console.error("❌ [AUTH VERIFICATION] Cookie authentication failed:", authError);
           setStatus("error");
           setMessage("Authentication failed. Please try logging in again.");
           
@@ -202,7 +139,6 @@ const AuthVerification = () => {
           }, 3000);
         }
       } catch (error) {
-        console.error("❌ [AUTH VERIFICATION] Callback processing failed:", error);
         setStatus("error");
         setMessage("An error occurred during authentication. Please try again.");
         

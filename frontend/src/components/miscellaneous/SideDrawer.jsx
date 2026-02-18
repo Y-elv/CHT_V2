@@ -60,9 +60,6 @@ const SideDrawer = () => {
       });
       return;
     }
-    console.log("Search button clicked");
-    console.log("Token:", user.token);
-
     try {
       setLoading(true);
 
@@ -80,7 +77,6 @@ const SideDrawer = () => {
 
       setLoading(false);
       setSearchResult(data);
-      console.log("data:", data);
     } catch (error) {
       setLoading(false);
       // Extract error message from the API response

@@ -63,7 +63,6 @@ const Notifications = () => {
         setNotifications([]);
       }
     } catch (error) {
-      console.error("Error fetching notifications:", error);
       toast({
         title: "Error",
         description: "Failed to fetch notifications",
@@ -98,7 +97,6 @@ const Notifications = () => {
         isClosable: true,
       });
     } catch (error) {
-      console.error("Error marking notification as read:", error);
       toast({
         title: "Error",
         description: "Failed to mark notification as read",
@@ -126,7 +124,6 @@ const Notifications = () => {
         isClosable: true,
       });
     } catch (error) {
-      console.error("Error marking all notifications as read:", error);
       toast({
         title: "Error",
         description: "Failed to mark all notifications as read",
@@ -213,7 +210,6 @@ const Notifications = () => {
         });
       }
     } catch (error) {
-      console.error("Error performing bulk action:", error);
       toast({
         title: "Error",
         description: "Failed to perform action",

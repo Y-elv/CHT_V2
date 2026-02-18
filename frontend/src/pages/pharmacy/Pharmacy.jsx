@@ -8,7 +8,7 @@ import {
   IoCallOutline, 
   IoMedicalOutline,
   IoShieldCheckmarkOutline,
-  IoPillOutline,
+  IoFlaskOutline,
   IoCartOutline,
   IoTimeOutline
 } from "react-icons/io5";
@@ -61,7 +61,7 @@ const Pharmacy = () => {
       email: "milapharmacy.org",
       phone: "+250788786699",
       description: "Mila Pharmacy is your go-to destination for sexual health needs, offering a discreet and comprehensive range of services. From contraception pills to condoms, we provide access to essential products that promote safe and responsible sexual practices. Our knowledgeable pharmacists offer personalized consultations, ensuring you receive the right guidance and support.",
-      icon: IoPillOutline,
+      icon: IoFlaskOutline,
       color: "#F7941D",
       features: ["Contraception Pills", "Condoms", "Private Consultations", "Expert Guidance"]
     },
