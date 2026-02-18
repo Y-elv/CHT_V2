@@ -64,7 +64,7 @@ function OffCanvasProfile() {
           </Offcanvas.Header>
           <Offcanvas.Body className="text-center">
           {/* <Link to="/consultation" className="d-block mb-2 text-black">Consultation</Link> */}
-          <Link to="/chats" className="d-block mb-2 text-black">Chat</Link>
+          <Link to="/chatpages" className="d-block mb-2 text-black">Chat</Link>
 
           <Link  className="d-block mb-2 text-black">
           

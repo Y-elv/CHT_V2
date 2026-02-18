@@ -1,6 +1,5 @@
 import "./profile.css";
 import { Link, useLocation } from "react-router-dom";
-import { ChatState } from "../../components/Context/chatProvider";
 import { useState, useEffect } from "react";
 import { useToast, Avatar, Box } from "@chakra-ui/react";
 import Navbar from "../../components/navbar/navbar";
@@ -11,37 +10,22 @@ import {
   IoSettingsOutline,
 } from "react-icons/io5";
 import { RiGamepadLine, RiCalendarEventLine } from "react-icons/ri";
-import { useBadgeStore } from "../../zustandStore/store";
+import { useAuthStore } from "../../store/authStore";
 import { FaUserMd } from "react-icons/fa";
 import { motion } from "framer-motion";
+import axios from "../../api/axios";
 
 const Profile = () => {
-  const { user, logoutHandler } = ChatState();
+  const { user, logout } = useAuthStore(); // ✅ Use cookie-based auth
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [myUser, setMyUser] = useState(null);
-  const profile = useBadgeStore((state) => state.profile) || null;
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const [pic, setPic] = useState();
   const location = useLocation();
 
-  console.log("Zustand profile: ", profile);
+  console.log("🍪 [PROFILE] User from cookie-based auth:", user);
 
-  console.log("User Info from localStorage yyy:", user);
-  const getUser = async () => {
-    if (!profile) {
-      setMyUser(user);
-    }
-
-    setMyUser(profile);
-  };
-
-  useEffect(() => {
-    getUser();
-  }, []);
-
-  console.log("User in setUser:", myUser);
   const handleImageClick = () => {
     setIsPopupOpen(true);
   };
@@ -83,8 +67,7 @@ const Profile = () => {
     data.append("cloud_name", "dmzieqsir");
 
     try {
-      const user = await JSON.parse(localStorage.getItem("userInfo"));
-      const token = user.token;
+      // Upload to Cloudinary
       const cloudinaryResponse = await fetch(
         "https://api.cloudinary.com/v1_1/dmzieqsir/image/upload",
         {
@@ -96,29 +79,12 @@ const Profile = () => {
       const cloudinaryData = await cloudinaryResponse.json();
       console.log("Image URL:", cloudinaryData.url);
 
-      const updateApiUrl =
-        "https://chtv2-bn.onrender.com/api/v2/user/updateProfile";
-
-      const updateApiResponse = await fetch(updateApiUrl, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${token}`,
-        },
-        body: JSON.stringify({ pic: cloudinaryData.url }),
+      // Update profile using cookie-based auth
+      const updateApiResponse = await axios.patch("/api/v2/user/updateProfile", {
+        pic: cloudinaryData.url
       });
 
-      const updateApiData = await updateApiResponse.json();
-
-      console.log("Update API Response:", updateApiData);
-
-      localStorage.setItem(
-        "userInfo",
-        JSON.stringify({
-          ...user,
-          pic: cloudinaryData.url,
-        })
-      );
+      console.log("Update API Response:", updateApiResponse.data);
 
       await setPic(cloudinaryData.url.toString());
 
@@ -155,13 +121,13 @@ const Profile = () => {
     setSelectedImage(file);
   };
 
-  const displayUser = profile || user || myUser;
+  const displayUser = user; // ✅ Use user from auth store
   const userName = displayUser?.name || "User";
   const userPic = displayUser?.pic || "";
 
   const sidebarItems = [
     { to: "/consultation", label: "Consultation", icon: FaUserMd },
-    { to: "/chats", label: "Chats", icon: IoChatboxOutline },
+    { to: "/chatpages", label: "Chats", icon: IoChatboxOutline },
     { to: "/game", label: "Game", icon: RiGamepadLine },
     { to: "/news", label: "News", icon: IoNewspaperOutline },
     { to: "/profile", label: "Settings", icon: IoSettingsOutline },
@@ -192,9 +158,7 @@ const Profile = () => {
                         whileHover={{ x: 4 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => {
-                          if (logoutHandler) {
-                            logoutHandler();
-                          }
+                          logout(); // ✅ Use cookie-based logout
                         }}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 text-slate-700 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400"
                       >
@@ -370,7 +334,7 @@ const Profile = () => {
                       <p>Games played: 12</p>
                     </div>
                     <Link
-                      to="/chats"
+                      to="/chatpages"
                       className="block mt-4 text-sm text-[#2B2F92] dark:text-[#F7941D] hover:text-[#F7941D] dark:hover:text-[#FFA84D] font-medium transition-colors"
                     >
                       View All Activity →
@@ -433,7 +397,7 @@ const Profile = () => {
                     </span>
                   </Link>
                   <Link
-                    to="/chats"
+                    to="/chatpages"
                     className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-br from-[#2B2F92]/10 to-[#1e2266]/10 hover:from-[#2B2F92]/20 hover:to-[#1e2266]/20 transition-all duration-300 border border-[#2B2F92]/20"
                   >
                     <IoChatboxOutline className="text-3xl text-[#2B2F92] mb-2" />

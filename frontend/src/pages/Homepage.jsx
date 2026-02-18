@@ -1,48 +1,24 @@
-import React, { useEffect } from "react";
-import {
-  Box,
-  Container,
-  Tabs,
-  Text,
-  Tab,
-  TabList,
-  TabPanels,
-  TabPanel,
-} from "@chakra-ui/react";
-import Login from "../components/Authentication/login";
-import Signup from "../components/Authentication/signup";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
 const Homepage = () => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userInfo"));
+  const { user } = useAuthStore();
 
-    if (user) navigate("/chats");
-  }, [navigate]);
-  return (
-    <Container maxW="xl" centerContent>
-      <Box>
-        <Text>welcome to my chat app have fun </Text>
-      </Box>
-      <Box>
-        <Tabs variant="soft-rounded" colorScheme="green">
-          <TabList mb="1em">
-            <Tab>Login</Tab>
-            <Tab>Signup</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <Login />
-            </TabPanel>
-            <TabPanel>
-              <Signup />
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </Box>
-    </Container>
-  );
+  // Redirect authenticated users to their appropriate dashboard
+  if (user) {
+    const getRoleRedirectPath = () => {
+      if (user.role === "admin") return "/admin/dashboard";
+      if (user.role === "doctor" && user.doctorStatus === "approved") return "/doctor/dashboard";
+      if (user.role === "patient") return "/profile";
+      return "/profile";
+    };
+    
+    return <Navigate to={getRoleRedirectPath()} replace />;
+  }
+
+  // Redirect unauthenticated users to the main landing page
+  return <Navigate to="/landing" replace />;
 };
 
 export default Homepage;

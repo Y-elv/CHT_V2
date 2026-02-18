@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./calendar.css";
 import Modal from "react-modal";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios"; // ✅ Use cookie-based axios
 import submit from "../../assets/submit.png";
 import { motion } from "framer-motion";
 import { useToast } from "@chakra-ui/react";

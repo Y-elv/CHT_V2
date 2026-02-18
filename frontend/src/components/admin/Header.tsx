@@ -37,7 +37,7 @@ import {
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import useNotificationStore from "../../zustandStore/notificationStore";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthStore } from "../../store/authStore";
 
 const MotionBox = motion(Box);
 
@@ -204,17 +204,21 @@ const Header: React.FC<HeaderProps> = ({
   // Get auth user (with error handling)
   let user, logout;
   try {
-    const auth = useAuth();
+    const auth = useAuthStore();
     user = auth.user;
     logout = auth.logout;
   } catch (error) {
-    console.warn("AuthContext not available:", error);
-    // Fallback to localStorage
+    console.warn("useAuthStore not available:", error);
+    // Fallback to cookie-based auth
     try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-      user = userInfo;
+      const { user } = useAuthStore();
+      if (user) {
+        // User is authenticated via cookies
+        return user;
+      }
     } catch (e) {
-      console.error("Failed to get user from localStorage:", e);
+      console.error("Failed to get user from authStore:", e);
+      return null;
     }
   }
 

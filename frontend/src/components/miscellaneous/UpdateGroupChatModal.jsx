@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios"; // ✅ Use cookie-based axios
 import {
   Modal,
   ModalOverlay,

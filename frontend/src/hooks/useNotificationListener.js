@@ -32,23 +32,12 @@ export const useNotificationListener = () => {
     // Check if token exists using SINGLE source
     const token = localStorage.getItem("token");
     if (token) {
-      console.log("[AUTH][STORAGE] Token found on mount, fetching notifications");
-      console.log("[AUTH][STORAGE] Token length:", token.length);
       // Fetch notifications and unread count
       refresh().catch((error) => {
-        // ============================================
-        // EXPOSE FULL AXIOS ERROR
-        // ============================================
-        console.error("🟥 RAW AXIOS ERROR:", error);
-        console.error("🟥 AXIOS RESPONSE:", error.response);
-        console.error("🟥 AXIOS STATUS:", error.response?.status);
-        console.error("🟥 AXIOS DATA:", error.response?.data);
-        console.error("[AUTH][RESPONSE][401] Failed to fetch notifications on mount:", error);
+        console.error("Failed to fetch notifications on mount:", error);
       });
-    } else {
-      console.log("[AUTH][STORAGE] No token found, skipping notification fetch");
     }
-  }, []); // Only run once on mount
+  }, [refresh]); // Only run once on mount
 
   // Listen for new notifications and show toast
   useEffect(() => {
@@ -89,14 +78,7 @@ export const useNotificationListener = () => {
       const token = localStorage.getItem("token");
       if (token) {
         fetchUnreadCount().catch((error) => {
-          // ============================================
-          // EXPOSE FULL AXIOS ERROR
-          // ============================================
-          console.error("🟥 RAW AXIOS ERROR:", error);
-          console.error("🟥 AXIOS RESPONSE:", error.response);
-          console.error("🟥 AXIOS STATUS:", error.response?.status);
-          console.error("🟥 AXIOS DATA:", error.response?.data);
-          console.error("[AUTH][RESPONSE][401] Failed to poll unread count:", error);
+          console.error("Failed to poll unread count:", error);
         });
       }
     }, 30000); // Poll every 30 seconds

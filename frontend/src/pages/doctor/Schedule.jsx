@@ -41,7 +41,7 @@ import {
 } from "@chakra-ui/react";
 import DoctorSidebar from "../../components/admin/DoctorSidebar";
 import Header from "../../components/admin/Header";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios"; // ✅ Use cookie-based axios
 import {
   RiCalendarLine,
   RiTimeLine,

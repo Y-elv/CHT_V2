@@ -17,7 +17,7 @@ import "./SideDrawer.css";
 
 import { Text } from "@chakra-ui/layout";
 import React, { useState } from "react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 
 import {
   Menu,

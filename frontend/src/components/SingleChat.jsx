@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChatState } from "./Context/chatProvider";
-import axios from "../config/axiosConfig";
+import axios from "../api/axios";
 import "../components/css/styles.css";
 import {
   Box,

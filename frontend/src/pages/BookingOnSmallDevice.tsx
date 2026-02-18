@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import axios from "../config/axiosConfig";
+import axios from "../api/axios"; // ✅ Use cookie-based axios
 import { motion } from "framer-motion";
 import { useToast, Spinner, Box } from "@chakra-ui/react";
 import Navbar from "../components/navbar/navbar";

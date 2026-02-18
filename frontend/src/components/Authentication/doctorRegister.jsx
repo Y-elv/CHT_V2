@@ -17,7 +17,7 @@ import {
 import React, { useState, useRef } from "react";
 import { Button } from "@chakra-ui/button";
 import { useToast } from "@chakra-ui/react";
-import axios from "../../config/axiosConfig";
+import axios from "../../api/axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import "./signup.css";

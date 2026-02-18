@@ -48,7 +48,7 @@ function OffCanvasButton() {
         <Offcanvas.Body className="text-center">
           {user ? (
             <>
-              <Link to="/chats" className="d-block mb-2 text-black">
+              <Link to="/chatpages" className="d-block mb-2 text-black">
                 Chats
               </Link>
               <Link to="/game" className="d-block mb-2 text-black">
