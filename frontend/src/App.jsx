@@ -36,6 +36,7 @@ const Service = React.lazy(() => import("./pages/service/service"));
 const Chatpages = React.lazy(() => import("./pages/Chatpages"));
 
 // Doctor components
+const QuickActions = React.lazy(() => import("./pages/doctor/QuickActions"));
 const DoctorMessages = React.lazy(() => import("./pages/doctor/Messages"));
 const DoctorSchedule = React.lazy(() => import("./pages/doctor/Schedule"));
 const DoctorPatients = React.lazy(() => import("./pages/doctor/MyPatients"));
@@ -48,6 +49,10 @@ const DoctorPatientRecords = React.lazy(() => import("./pages/doctor/PatientReco
 
 // Admin components
 const AdminDoctors = React.lazy(() => import("./pages/admin/Doctors"));
+const AdminUsers = React.lazy(() => import("./pages/admin/AdminUsers"));
+const AdminConsultations = React.lazy(() => import("./pages/admin/AdminConsultations"));
+const AdminFAQ = React.lazy(() => import("./pages/admin/AdminFAQ"));
+const AdminNotifications = React.lazy(() => import("./pages/admin/AdminNotifications"));
 const AdminLayout = React.lazy(() => import("./pages/admin/AdminLayout"));
 
 // Extend Chakra theme
@@ -144,6 +149,14 @@ function App() {
             }
           />
           <Route
+            path="/chats"
+            element={
+              <ProtectedRoute>
+                <Chatpages />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/chatpages"
             element={
               <PatientProtectedRoute>
@@ -154,14 +167,21 @@ function App() {
 
           {/* Doctor Protected Routes */}
           <Route
-            path="/doctor/*"
+            path="/doctor/dashboard"
             element={
               <DoctorProtectedRoute>
                 <DoctorDashboard />
               </DoctorProtectedRoute>
             }
           />
-          {/* Individual Doctor Routes for Navigation */}
+          <Route
+            path="/doctor/consultations"
+            element={
+              <DoctorProtectedRoute>
+                <QuickActions />
+              </DoctorProtectedRoute>
+            }
+          />
           <Route
             path="/doctor/messages"
             element={
@@ -245,32 +265,23 @@ function App() {
             }
           />
 
-          {/* Admin Protected Routes */}
+          {/* Admin Protected Routes - Using AdminLayout wrapper */}
           <Route
             path="/admin/*"
-            element={
-              <AdminProtectedRoute>
-                <AdminDashboard />
-              </AdminProtectedRoute>
-            }
-          />
-          {/* Individual Admin Routes */}
-          <Route
-            path="/admin/doctors"
-            element={
-              <AdminProtectedRoute>
-                <AdminDoctors />
-              </AdminProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/layout"
             element={
               <AdminProtectedRoute>
                 <AdminLayout />
               </AdminProtectedRoute>
             }
-          />
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="consultations" element={<AdminConsultations />} />
+            <Route path="doctors" element={<AdminDoctors />} />
+            <Route path="faq" element={<AdminFAQ />} />
+            <Route path="notifications" element={<AdminNotifications />} />
+          </Route>
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

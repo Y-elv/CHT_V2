@@ -37,6 +37,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import logo from "../../assets/LOGO FULL.png";
+import { useAuthStore } from "../../store/authStore";
 
 interface NavItem {
   icon: React.ElementType;
@@ -60,6 +61,7 @@ const DoctorSidebar: React.FC<DoctorSidebarProps> = ({
   const { colorMode, toggleColorMode } = useColorMode();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuthStore(); // ✅ Use cookie-based auth store
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const hoverBg = useColorModeValue("gray.50", "gray.700");
@@ -99,7 +101,7 @@ const DoctorSidebar: React.FC<DoctorSidebarProps> = ({
     {
       icon: RiFileTextLine,
       label: "Patient Records",
-      path: "/doctor/records",
+      path: "/doctor/patient-records",
     },
     {
       icon: RiTimeLine,
@@ -173,23 +175,25 @@ const DoctorSidebar: React.FC<DoctorSidebarProps> = ({
       <Divider />
 
       {/* Doctor Profile */}
-      <Box
-        p={3}
-        borderRadius="lg"
-        bg={useColorModeValue("gray.50", "gray.700")}
-      >
-        <HStack>
-          <Avatar size="sm" name="Dr. Smith" />
-          <Box flex="1">
-            <Text fontWeight="semibold" fontSize="sm">
-              Dr. Smith
-            </Text>
-            <Text fontSize="xs" color="gray.500">
-              General Practitioner
-            </Text>
-          </Box>
-        </HStack>
-      </Box>
+      {user && (
+        <Box
+          p={3}
+          borderRadius="lg"
+          bg={useColorModeValue("gray.50", "gray.700")}
+        >
+          <HStack>
+            <Avatar size="sm" src={user.pic} name={user.name || "Doctor"} />
+            <Box flex="1">
+              <Text fontWeight="semibold" fontSize="sm">
+                {user.name || "Doctor"}
+              </Text>
+              <Text fontSize="xs" color="gray.500">
+                {user.specialty || user.role || "General Practitioner"}
+              </Text>
+            </Box>
+          </HStack>
+        </Box>
+      )}
 
       <Divider />
 

@@ -11,20 +11,27 @@ const ChatProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
   
-  // Get auth store functions
-  const { fetchProfile, logout } = useAuthStore();
+  // Get auth store state + actions
+  const { user: authUser, fetchProfile, logout } = useAuthStore();
 
-  // Initialize user state from auth store
+  // Initialize user state from auth store / backend
   useEffect(() => {
     console.log("🔄 [CHAT PROVIDER] Initializing user state from auth store");
     
-    // Try to fetch user profile if not in store
+    // If auth store already has a user (from login with cookies), trust that first
+    if (authUser) {
+      console.log("✅ [CHAT PROVIDER] Using user from auth store:", authUser);
+      setUser(authUser);
+      return;
+    }
+    
+    // Otherwise try to fetch profile from backend
     const initializeAuth = async () => {
       try {
         const result = await fetchProfile();
         
         if (result.success && result.user) {
-          console.log("✅ [CHAT PROVIDER] User authenticated:", result.user);
+          console.log("✅ [CHAT PROVIDER] User authenticated via profile:", result.user);
           setUser(result.user);
         } else {
           console.log("⚠️ [CHAT PROVIDER] User not authenticated");
@@ -33,20 +40,24 @@ const ChatProvider = ({ children }) => {
       } catch (error) {
         console.log("❌ [CHAT PROVIDER] Auth initialization failed:", error);
         
-        // Handle authentication errors globally
+        // Handle authentication errors globally (401 etc.)
         if (handleAuthError(error, "chat provider initialization")) {
-          // Auth error was handled globally
           setUser(null);
           return;
         }
         
-        // For other errors, just set user to null
+        // For pure network issues, don't force logout; just leave user as null
+        if (error.isNetworkError) {
+          console.log("🌐 [CHAT PROVIDER] Network error while fetching profile; keeping existing auth store state.");
+          return;
+        }
+        
         setUser(null);
       }
     };
     
     initializeAuth();
-  }, [fetchProfile]);
+  }, [authUser, fetchProfile]);
 
   // Logout handler
   const logoutHandler = async () => {

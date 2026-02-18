@@ -1,6 +1,8 @@
 // utils/formatters.ts
 export const formatDate = (date: string | Date): string => {
+  if (date == null || date === "") return "—";
   const d = typeof date === "string" ? new Date(date) : date;
+  if (Number.isNaN(d.getTime())) return "—";
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
@@ -11,7 +13,9 @@ export const formatDate = (date: string | Date): string => {
 };
 
 export const formatRelativeTime = (date: string | Date): string => {
+  if (date == null || date === "") return "—";
   const d = typeof date === "string" ? new Date(date) : date;
+  if (Number.isNaN(d.getTime())) return "—";
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000);
 
@@ -49,10 +53,16 @@ export const getStatusColor = (status: string): string => {
   const colors: Record<string, string> = {
     scheduled: "blue",
     "in-progress": "green",
+    in_progress: "green",
     completed: "gray",
     cancelled: "red",
+    pending: "yellow",
+    approved: "green",
+    rejected: "red",
+    active: "green",
+    blocked: "red",
   };
-  return colors[status] || "gray";
+  return colors[status?.toLowerCase()] || "gray";
 };
 
 export const getAvailabilityColor = (availability: string): string => {

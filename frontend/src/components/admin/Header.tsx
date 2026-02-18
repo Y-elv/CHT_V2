@@ -201,26 +201,8 @@ const Header: React.FC<HeaderProps> = ({
     refresh,
   } = useNotificationStore();
 
-  // Get auth user (with error handling)
-  let user, logout;
-  try {
-    const auth = useAuthStore();
-    user = auth.user;
-    logout = auth.logout;
-  } catch (error) {
-    console.warn("useAuthStore not available:", error);
-    // Fallback to cookie-based auth
-    try {
-      const { user } = useAuthStore();
-      if (user) {
-        // User is authenticated via cookies
-        return user;
-      }
-    } catch (e) {
-      console.error("Failed to get user from authStore:", e);
-      return null;
-    }
-  }
+  // Get auth user from cookie-based auth store
+  const { user, logout } = useAuthStore();
 
   // Log notifications state changes
   useEffect(() => {
@@ -231,13 +213,12 @@ const Header: React.FC<HeaderProps> = ({
     console.log("  - Loading:", notificationsLoading);
   }, [notifications, unreadCount, notificationsLoading]);
 
-  // Auto-fetch notifications on mount
+  // Auto-fetch notifications on mount (cookie-based auth)
   useEffect(() => {
     console.log("🔔 Header: Auto-fetching notifications...");
     console.log("👤 Authenticated User:", user);
-    console.log("👤 User Token:", user?.token ? "✅ Present" : "❌ Missing");
 
-    if (user && user.token) {
+    if (user) {
       refresh()
         .then(() => {
           console.log("✅ Notifications fetched successfully");

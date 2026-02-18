@@ -46,7 +46,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Messages = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user } = useAuth();
+  const { user } = useAuthStore(); // ✅ Use cookie-based auth store
   const toast = useToast();
   const messagesEndRef = useRef(null);
   
@@ -65,12 +65,31 @@ const Messages = () => {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Deduplicate conversations by user email (one chat per user)
+  const deduplicateByEmail = (list) => {
+    if (!Array.isArray(list) || list.length === 0) return list;
+    const byKey = new Map();
+    list.forEach((conv) => {
+      const email = (conv.email || "").toLowerCase().trim();
+      const key = email || conv._id || conv.id || "";
+      if (!key) return;
+      const existing = byKey.get(key);
+      const convUpdated = new Date(conv.updatedAt || 0).getTime();
+      const existingUpdated = existing ? new Date(existing.updatedAt || 0).getTime() : 0;
+      if (!existing || convUpdated >= existingUpdated) {
+        byKey.set(key, conv);
+      }
+    });
+    return Array.from(byKey.values());
+  };
+
   // Fetch conversations
   const fetchConversations = async () => {
     try {
       setLoading(true);
       const response = await axios.get('/api/v2/message/conversations');
-      setConversations(response.data);
+      const list = response.data || [];
+      setConversations(deduplicateByEmail(list));
     } catch (error) {
       console.error('Error fetching conversations:', error);
       toast({

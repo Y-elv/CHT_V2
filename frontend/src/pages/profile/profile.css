@@ -14,7 +14,7 @@ width: 50%;
 height: 100vh;
 }
 .profile-right{
-    background-color: #B8C2D7;
+    background: linear-gradient(135deg, #fff 0%, #fff5eb 50%, #ffedd5 100%);
     width: 70%;
     height: 100vh;
     display: flex;

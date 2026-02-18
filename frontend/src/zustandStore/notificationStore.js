@@ -49,8 +49,13 @@ const useNotificationStore = create((set, get) => ({
       console.log("📋 Notifications array:", result.notifications);
       console.log("📊 Total notifications:", result.notifications?.length || 0);
       
+      const list = result.notifications || [];
+      const unread = list.filter(
+        (n) => n.isRead === false || n.read === false || (n.isRead === undefined && n.read === undefined)
+      ).length;
       set({
-        notifications: result.notifications || [],
+        notifications: list,
+        unreadCount: unread,
         loading: false,
         lastFetched: new Date().toISOString(),
       });

@@ -675,7 +675,7 @@ const Navbar = ({ active }) => {
                         { to: "/news", label: "News" },
                       ].map((link, index) => (
                         <motion.div
-                          key={link.to}
+                          key={`${link.to}-${index}`}
                           custom={index}
                           variants={itemVariants}
                         >

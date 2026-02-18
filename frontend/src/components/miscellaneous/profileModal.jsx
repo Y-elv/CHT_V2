@@ -25,6 +25,10 @@ const ProfileModal = ({ user, children }) => {
           display={{ base: "flex" }}
           icon={<ViewIcon />}
           onClick={onOpen}
+          aria-label="View profile"
+          color="white"
+          bg="whiteAlpha.300"
+          _hover={{ bg: "whiteAlpha.500" }}
         />
       )}
       <Modal si="lg" isOpen={isOpen} onClose={onClose}>
