@@ -50,21 +50,21 @@ const Settings = () => {
       <Box ml={{ base: 0, md: "250px" }}>
         <Header onToggleSidebar={onOpen} />
         <Box p={0}>
-          <Container maxW="full" p={6}>
+          <Container maxW="full" px={{ base: 3, md: 6 }} py={6}>
             <VStack align="stretch" spacing={6}>
-              <HStack justify="space-between">
+              <Stack direction={{ base: "column", sm: "row" }} justify="space-between" align={{ base: "stretch", sm: "center" }} spacing={4}>
                 <Box>
-                  <Heading size="2xl" mb={2}>
+                  <Heading size={{ base: "xl", md: "2xl" }} mb={2}>
                     Settings
                   </Heading>
-                  <Text color={useColorModeValue("gray.600", "gray.400")}>
+                  <Text color={useColorModeValue("gray.600", "gray.400")} fontSize={{ base: "sm", md: "md" }}>
                     Configure your account preferences and system settings.
                   </Text>
                 </Box>
-                <Button colorScheme="blue" leftIcon={<RiSaveLine />}>
+                <Button colorScheme="blue" leftIcon={<RiSaveLine />} size={{ base: "sm", md: "md" }}>
                   Save All Changes
                 </Button>
-              </HStack>
+              </Stack>
 
               <Alert status="info">
                 <AlertIcon />

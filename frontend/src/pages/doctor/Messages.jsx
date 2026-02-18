@@ -220,28 +220,28 @@ const Messages = () => {
       <Box ml={{ base: 0, md: "250px" }}>
         <Header onToggleSidebar={onOpen} />
         <Box p={0}>
-          <Container maxW="full" p={6}>
+          <Container maxW="full" px={{ base: 3, md: 6 }} py={6}>
             <VStack align="stretch" spacing={6}>
-              <HStack justify="space-between">
+              <Flex direction={{ base: "column", sm: "row" }} justify="space-between" align={{ base: "stretch", sm: "center" }} gap={4}>
                 <Box>
-                  <Heading size="2xl" mb={2}>
+                  <Heading size={{ base: "xl", md: "2xl" }} mb={2}>
                     Messages
                   </Heading>
-                  <Text color={useColorModeValue("gray.600", "gray.400")}>
+                  <Text color={useColorModeValue("gray.600", "gray.400")} fontSize={{ base: "sm", md: "md" }}>
                     Patient communications and inquiries.
                   </Text>
                 </Box>
                 {unreadCount > 0 && (
-                  <Badge colorScheme="red" fontSize="lg" px={3} py={1} borderRadius="full">
+                  <Badge colorScheme="red" fontSize={{ base: "sm", md: "lg" }} px={3} py={1} borderRadius="full" alignSelf={{ base: "flex-start", sm: "center" }}>
                     {unreadCount} Unread
                   </Badge>
                 )}
-              </HStack>
+              </Flex>
 
               {!selectedConversation ? (
                 <>
-                  <HStack>
-                    <InputGroup maxW="400px">
+                  <Flex direction={{ base: "column", sm: "row" }} gap={3} flexWrap="wrap">
+                    <InputGroup maxW={{ base: "100%", sm: "400px" }}>
                       <InputLeftElement pointerEvents="none">
                         <RiSearchLine color="gray.300" />
                       </InputLeftElement>
@@ -251,10 +251,10 @@ const Messages = () => {
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
                     </InputGroup>
-                    <Button colorScheme="blue" leftIcon={<RiMessage3Line />}>
+                    <Button colorScheme="blue" leftIcon={<RiMessage3Line />} size={{ base: "sm", md: "md" }}>
                       New Message
                     </Button>
-                  </HStack>
+                  </Flex>
 
                   {loading ? (
                     <Flex justify="center" py={12}>

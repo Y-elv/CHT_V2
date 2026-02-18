@@ -6,6 +6,7 @@ import {
   Heading,
   VStack,
   HStack,
+  Flex,
   Text,
   useDisclosure,
   useColorModeValue,
@@ -46,21 +47,21 @@ const Profile = () => {
       <Box ml={{ base: 0, md: "250px" }}>
         <Header onToggleSidebar={onOpen} />
         <Box p={0}>
-          <Container maxW="full" p={6}>
+          <Container maxW="full" px={{ base: 3, md: 6 }} py={6}>
             <VStack align="stretch" spacing={6}>
-              <HStack justify="space-between">
+              <Flex direction={{ base: "column", sm: "row" }} justify="space-between" align={{ base: "stretch", sm: "center" }} gap={4}>
                 <Box>
-                  <Heading size="2xl" mb={2}>
+                  <Heading size={{ base: "xl", md: "2xl" }} mb={2}>
                     Profile
                   </Heading>
-                  <Text color={useColorModeValue("gray.600", "gray.400")}>
+                  <Text color={useColorModeValue("gray.600", "gray.400")} fontSize={{ base: "sm", md: "md" }}>
                     Manage your professional profile and settings.
                   </Text>
                 </Box>
-                <Button colorScheme="blue" leftIcon={<RiSaveLine />}>
+                <Button colorScheme="blue" leftIcon={<RiSaveLine />} size={{ base: "sm", md: "md" }}>
                   Save Changes
                 </Button>
-              </HStack>
+              </Flex>
 
               <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={6}>
                 {/* Profile Picture & Basic Info */}
