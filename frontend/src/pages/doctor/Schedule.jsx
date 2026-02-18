@@ -82,40 +82,18 @@ const Schedule = () => {
   const [processing, setProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
 
-  // Get token from localStorage
-  const getToken = () => {
-    let token = localStorage.getItem("token");
-    if (!token) {
-      token = localStorage.getItem("cht_token");
-    }
-    if (!token) {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-      if (userInfo && userInfo.token) {
-        token = userInfo.token;
-      }
-    }
-    return token;
-  };
-
-  // Fetch appointments for logged-in doctor
+  // Fetch appointments for logged-in doctor (cookie-based auth)
   const fetchAppointments = async () => {
     console.log("🔄 [Schedule] Fetching appointments...");
     setLoading(true);
     try {
-      const token = getToken();
-      if (!token) {
-        throw new Error("No authentication token found. Please login again.");
-      }
-
+      // Cookie-based auth - axios instance already configured with withCredentials: true
       const response = await axios.get(
-        "https://chtv2-bn.onrender.com/api/appointment/doctor",
+        "/api/appointment/doctor",
         {
           params: {
             page: 1,
             limit: 100,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -264,24 +242,14 @@ const Schedule = () => {
 
     setProcessing(true);
     try {
-      const token = getToken();
-      if (!token) {
-        throw new Error("No authentication token found.");
-      }
-
       console.log("📤 [Schedule] Approving appointment:", selectedAppointment._id);
       console.log("   Call Link:", callLink);
 
+      // Cookie-based auth - axios instance already configured
       const response = await axios.post(
-        `https://chtv2-bn.onrender.com/api/appointment/approve/${selectedAppointment._id}`,
+        `/api/appointment/approve/${selectedAppointment._id}`,
         {
           callLink: callLink.trim(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
         }
       );
 
@@ -340,24 +308,14 @@ const Schedule = () => {
 
     setProcessing(true);
     try {
-      const token = getToken();
-      if (!token) {
-        throw new Error("No authentication token found.");
-      }
-
       console.log("📤 [Schedule] Cancelling appointment:", selectedAppointment._id);
       console.log("   Reason:", cancellationReason);
 
+      // Cookie-based auth - axios instance already configured
       const response = await axios.post(
-        `https://chtv2-bn.onrender.com/api/appointment/cancel/${selectedAppointment._id}`,
+        `/api/appointment/cancel/${selectedAppointment._id}`,
         {
           cancellationReason: cancellationReason.trim(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
         }
       );
 

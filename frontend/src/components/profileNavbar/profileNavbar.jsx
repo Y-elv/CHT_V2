@@ -34,7 +34,7 @@ const ProfileNavbar = () => {
             </li>
             <li className="nav-item">
               <Link to="/chatpages" className="nav-link mx-3">
-                Chat
+                Chats
               </Link>
             </li>
             <li className="nav-item">

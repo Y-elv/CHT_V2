@@ -175,31 +175,13 @@ const CalendarInput = ({
       console.log("📤 [Calendar] Sending booking request...");
       console.log("   Request body:", requestBody);
 
-      // Try multiple token sources
-      let token = localStorage.getItem("token");
-      if (!token) {
-        token = localStorage.getItem("cht_token");
-      }
-      if (!token) {
-        const user = JSON.parse(localStorage.getItem("userInfo") || "null");
-        if (user && user.token) {
-          token = user.token;
-        }
-      }
-
-      console.log("🔑 [Calendar] Token found:", !!token);
-
-      if (!token) {
-        throw new Error("No authentication token found. Please login again.");
-      }
-
+      // Cookie-based auth: axios sends credentials automatically
       const response = await axios.post(
         "https://chtv2-bn.onrender.com/api/appointment/book",
         requestBody,
         {
           headers: {
             "Content-type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -440,36 +422,26 @@ const CalendarInput = ({
               type="time"
               value={selectedTime}
               onChange={handleTimeChange}
-              onClick={(e) => {
-                e.target.showPicker?.();
-              }}
               required
               style={{
                 width: "100%",
                 padding: "12px 16px",
                 borderRadius: "12px",
                 border: "2px solid #e2e8f0",
-                fontSize: "16px",
-                backgroundColor: "#f8fafc",
+                fontSize: "18px",
+                fontWeight: 600,
+                backgroundColor: "#fff",
                 color: "#1e293b",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
                 outline: "none",
-                WebkitAppearance: "none",
-                MozAppearance: "textfield",
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = "#F7941D";
-                e.target.style.backgroundColor = "#fff";
-                e.target.style.boxShadow = "0 0 0 3px rgba(247,148,29,0.1)";
-                // Open time picker on focus for better UX
-                if (e.target.showPicker) {
-                  e.target.showPicker();
-                }
+                e.target.style.boxShadow = "0 0 0 3px rgba(247,148,29,0.2)";
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = "#e2e8f0";
-                e.target.style.backgroundColor = "#f8fafc";
                 e.target.style.boxShadow = "none";
               }}
             />

@@ -6,6 +6,7 @@ import {
   Heading,
   VStack,
   HStack,
+  Flex,
   Text,
   useDisclosure,
   useColorModeValue,
@@ -106,33 +107,33 @@ const PatientRecords = () => {
       <Box ml={{ base: 0, md: "250px" }}>
         <Header onToggleSidebar={onOpen} />
         <Box p={0}>
-          <Container maxW="full" p={6}>
+          <Container maxW="full" px={{ base: 3, md: 6 }} py={6}>
             <VStack align="stretch" spacing={6}>
-              <HStack justify="space-between">
+              <Flex direction={{ base: "column", sm: "row" }} justify="space-between" align={{ base: "stretch", sm: "center" }} gap={4}>
                 <Box>
-                  <Heading size="2xl" mb={2}>
+                  <Heading size={{ base: "xl", md: "2xl" }} mb={2}>
                     Patient Records
                   </Heading>
-                  <Text color={useColorModeValue("gray.600", "gray.400")}>
+                  <Text color={useColorModeValue("gray.600", "gray.400")} fontSize={{ base: "sm", md: "md" }}>
                     Access and manage patient medical records.
                   </Text>
                 </Box>
-                <Button colorScheme="blue" leftIcon={<RiFileTextLine />}>
+                <Button colorScheme="blue" leftIcon={<RiFileTextLine />} size={{ base: "sm", md: "md" }}>
                   Add Record
                 </Button>
-              </HStack>
+              </Flex>
 
-              <HStack>
-                <InputGroup maxW="400px">
+              <Flex direction={{ base: "column", sm: "row" }} gap={3} flexWrap="wrap">
+                <InputGroup maxW={{ base: "100%", sm: "400px" }}>
                   <InputLeftElement pointerEvents="none">
                     <RiSearchLine color="gray.300" />
                   </InputLeftElement>
                   <Input placeholder="Search records..." />
                 </InputGroup>
-                <Button colorScheme="green" leftIcon={<RiDownloadLine />}>
+                <Button colorScheme="green" leftIcon={<RiDownloadLine />} size={{ base: "sm", md: "md" }}>
                   Export All
                 </Button>
-              </HStack>
+              </Flex>
 
               <Tabs variant="enclosed">
                 <TabList>

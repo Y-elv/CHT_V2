@@ -10,213 +10,181 @@ import {
   HealthGameStats,
 } from "../types/admin";
 
+// API response types
+export interface ApiUser {
+  _id: string;
+  name: string;
+  email: string;
+  pic?: string;
+  role: string;
+  isAdmin?: boolean;
+  doctorStatus?: string | null;
+  status?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ApiConsultation {
+  _id: string;
+  patient: { _id: string; name: string; email: string; pic?: string } | null;
+  doctor: {
+    _id: string;
+    name: string;
+    email: string;
+    pic?: string;
+    specialty?: string;
+  } | null;
+  date: string;
+  time: string;
+  appointmentType: string;
+  status: string;
+  callLink?: string | null;
+  reason?: string;
+  notes?: string;
+  cancellationReason?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ApiDoctor {
+  _id: string;
+  name: string;
+  email: string;
+  pic?: string;
+  role: string;
+  doctorStatus?: string;
+  specialty?: string;
+  bio?: string;
+  yearsOfExperience?: number;
+  hospital?: string;
+  consultationFee?: number;
+  status?: string;
+}
+
+export interface ApiFaq {
+  _id: string;
+  question: string;
+  answer: string;
+  category: string;
+  isActive?: boolean;
+  createdBy?: { _id: string; name: string; email: string } | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface AdminState {
-  // Stats
   totalUsers: number;
   activeConsultations: number;
   mentalHealthAlerts: number;
-  gameEngagement: number;
+  faqCount: number;
   dashboardStats: DashboardStats | null;
 
-  // Data
   consultations: Consultation[];
+  apiConsultations: ApiConsultation[];
+  consultationsTotal: number;
+  consultationsPage: number;
+  totalPagesConsultations: number;
+
   doctors: Doctor[];
+  apiDoctors: ApiDoctor[];
+  doctorsTotal: number;
+
+  users: ApiUser[];
+  usersTotal: number;
+  usersPage: number;
+  usersTotalPages: number;
+
+  faqs: ApiFaq[];
+  faqsTotal: number;
+  faqsPage: number;
+  faqsTotalPages: number;
+
   recentActivity: Activity[];
   healthGameStats: HealthGameStats | null;
-
-  // Filters
   consultationFilters: ConsultationFilters;
 
-  // Loading states
   isLoading: boolean;
   error: string | null;
 
-  // Actions
   fetchDashboardStats: () => Promise<void>;
-  fetchConsultations: (filters?: ConsultationFilters) => Promise<void>;
+  fetchConsultations: (page?: number, limit?: number) => Promise<void>;
   updateConsultationStatus: (id: string, status: string) => Promise<void>;
-  fetchDoctors: () => Promise<void>;
+  fetchDoctors: (page?: number, limit?: number) => Promise<void>;
+  fetchUsers: (page?: number, limit?: number) => Promise<void>;
+  blockUser: (userId: string) => Promise<void>;
+  unblockUser: (userId: string) => Promise<void>;
+  fetchFaqs: (page?: number, limit?: number) => Promise<void>;
+  createFaq: (payload: { question: string; answer: string; category: string }) => Promise<ApiFaq | null>;
+  updateFaq: (id: string, payload: { question?: string; answer?: string; category?: string }) => Promise<void>;
+  deleteFaq: (id: string) => Promise<void>;
   fetchRecentActivity: () => Promise<void>;
   fetchHealthGameStats: () => Promise<void>;
   setConsultationFilters: (filters: ConsultationFilters) => void;
-
-  // Real-time updates
   subscribeToUpdates: () => void;
   unsubscribeFromUpdates: () => void;
 }
 
-// Dummy data generators
-const generateDummyConsultations = (): Consultation[] => {
-  return [
-    {
-      id: "1",
-      userId: "u1",
-      userName: "Alice Johnson",
-      userAge: 19,
-      userAvatar: "https://i.pravatar.cc/150?img=1",
-      doctorId: "d1",
-      doctorName: "Dr. Sarah Williams",
-      doctorSpecialty: "mental-health",
-      type: "video",
-      topic: "anxiety",
-      status: "in-progress",
-      priority: "urgent",
-      scheduledAt: new Date().toISOString(),
-      startedAt: new Date(Date.now() - 10 * 60000).toISOString(),
-      duration: 10,
-    },
-    {
-      id: "2",
-      userId: "u2",
-      userName: "Bob Smith",
-      userAge: 20,
-      userAvatar: "https://i.pravatar.cc/150?img=2",
-      doctorId: "d2",
-      doctorName: "Dr. Michael Chen",
-      doctorSpecialty: "sexual-health",
-      type: "chat",
-      topic: "sexual-health",
-      status: "scheduled",
-      priority: "normal",
-      scheduledAt: new Date(Date.now() + 2 * 3600000).toISOString(),
-    },
-    {
-      id: "3",
-      userId: "u3",
-      userName: "Charlie Brown",
-      userAge: 18,
-      userAvatar: "https://i.pravatar.cc/150?img=3",
-      doctorId: "d3",
-      doctorName: "Dr. Emma Davis",
-      doctorSpecialty: "mental-health",
-      type: "urgent",
-      topic: "depression",
-      status: "completed",
-      priority: "high",
-      scheduledAt: new Date(Date.now() - 24 * 3600000).toISOString(),
-      completedAt: new Date(Date.now() - 23.5 * 3600000).toISOString(),
-      duration: 30,
-    },
-    {
-      id: "4",
-      userId: "u4",
-      userName: "Diana Prince",
-      userAge: 21,
-      userAvatar: "https://i.pravatar.cc/150?img=4",
-      doctorId: "d1",
-      doctorName: "Dr. Sarah Williams",
-      doctorSpecialty: "mental-health",
-      type: "video",
-      topic: "mental-health",
-      status: "scheduled",
-      priority: "normal",
-      scheduledAt: new Date(Date.now() + 4 * 3600000).toISOString(),
-    },
-  ];
-};
+const mapApiConsultationToConsultation = (c: ApiConsultation): Consultation => ({
+  id: c._id,
+  userId: c.patient?._id ?? "",
+  userName: c.patient?.name ?? "—",
+  userAge: 0,
+  userAvatar: c.patient?.pic,
+  doctorId: c.doctor?._id ?? "",
+  doctorName: c.doctor?.name ?? "—",
+  doctorSpecialty: (c.doctor?.specialty as any) ?? "general",
+  type: (c.appointmentType === "video" ? "video" : c.appointmentType === "chat" ? "chat" : "urgent") as Consultation["type"],
+  topic: "general",
+  status: (c.status === "pending" ? "scheduled" : c.status === "approved" ? "in-progress" : c.status === "cancelled" ? "cancelled" : "completed") as Consultation["status"],
+  priority: "normal",
+  scheduledAt: c.date || c.createdAt,
+});
 
-const generateDummyDoctors = (): Doctor[] => {
-  return [
-    {
-      id: "d1",
-      name: "Dr. Sarah Williams",
-      email: "sarah.williams@healthplatform.com",
-      avatar: "https://i.pravatar.cc/150?img=5",
-      specialty: "mental-health",
-      credentials: ["MD", "Psychiatry"],
-      isVerified: true,
-      isOnline: true,
-      availability: "available",
-      rating: 4.8,
-      reviewCount: 127,
-      currentConsultations: 2,
-      totalConsultations: 450,
-      languages: ["English", "French"],
-      bio: "Experienced psychiatrist specializing in youth mental health.",
-    },
-    {
-      id: "d2",
-      name: "Dr. Michael Chen",
-      email: "michael.chen@healthplatform.com",
-      avatar: "https://i.pravatar.cc/150?img=6",
-      specialty: "sexual-health",
-      credentials: ["MD", "Gynecology"],
-      isVerified: true,
-      isOnline: true,
-      availability: "busy",
-      rating: 4.9,
-      reviewCount: 203,
-      currentConsultations: 3,
-      totalConsultations: 520,
-      languages: ["English", "Chinese"],
-      bio: "Passionate about adolescent reproductive health education.",
-    },
-    {
-      id: "d3",
-      name: "Dr. Emma Davis",
-      email: "emma.davis@healthplatform.com",
-      avatar: "https://i.pravatar.cc/150?img=7",
-      specialty: "mental-health",
-      credentials: ["PsyD", "Clinical Psychology"],
-      isVerified: true,
-      isOnline: false,
-      availability: "offline",
-      rating: 4.7,
-      reviewCount: 89,
-      currentConsultations: 0,
-      totalConsultations: 312,
-      languages: ["English", "Spanish"],
-      bio: "Specialized in cognitive behavioral therapy for teens.",
-    },
-  ];
-};
-
-const generateDummyActivity = (): Activity[] => {
-  return [
-    {
-      id: "a1",
-      type: "consultation-booked",
-      timestamp: new Date(Date.now() - 5 * 60000).toISOString(),
-      userId: "u1",
-      userName: "Alice Johnson",
-      userAvatar: "https://i.pravatar.cc/150?img=1",
-      doctorId: "d1",
-      doctorName: "Dr. Sarah Williams",
-      description:
-        "Alice Johnson booked a consultation with Dr. Sarah Williams",
-      priority: "high",
-    },
-    {
-      id: "a2",
-      type: "message-sent",
-      timestamp: new Date(Date.now() - 12 * 60000).toISOString(),
-      userId: "u2",
-      userName: "Bob Smith",
-      userAvatar: "https://i.pravatar.cc/150?img=2",
-      description: "Bob Smith sent an urgent message",
-      priority: "urgent",
-    },
-    {
-      id: "a3",
-      type: "game-achievement",
-      timestamp: new Date(Date.now() - 25 * 60000).toISOString(),
-      userId: "u3",
-      userName: "Charlie Brown",
-      userAvatar: "https://i.pravatar.cc/150?img=3",
-      description: "Charlie Brown completed mental health awareness quiz",
-      priority: "low",
-    },
-  ];
-};
+const mapApiDoctorToDoctor = (d: ApiDoctor): Doctor => ({
+  id: d._id,
+  name: d.name,
+  email: d.email,
+  avatar: d.pic,
+  specialty: (d.specialty as any) ?? "general",
+  credentials: [],
+  isVerified: (d.doctorStatus || d.status) === "approved",
+  isOnline: false,
+  availability: "available",
+  rating: 0,
+  reviewCount: 0,
+  currentConsultations: 0,
+  totalConsultations: 0,
+  languages: [],
+  bio: d.bio,
+});
 
 export const useAdminStore = create<AdminState>((set, get) => ({
-  totalUsers: 1247,
-  activeConsultations: 24,
-  mentalHealthAlerts: 8,
-  gameEngagement: 892,
+  totalUsers: 0,
+  activeConsultations: 0,
+  mentalHealthAlerts: 0,
+  faqCount: 0,
   dashboardStats: null,
+
   consultations: [],
+  apiConsultations: [],
+  consultationsTotal: 0,
+  consultationsPage: 1,
+  totalPagesConsultations: 1,
+
   doctors: [],
+  apiDoctors: [],
+  doctorsTotal: 0,
+
+  users: [],
+  usersTotal: 0,
+  usersPage: 1,
+  usersTotalPages: 1,
+
+  faqs: [],
+  faqsTotal: 0,
+  faqsPage: 1,
+  faqsTotalPages: 1,
+
   recentActivity: [],
   healthGameStats: null,
   consultationFilters: {},
@@ -226,57 +194,71 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   fetchDashboardStats: async () => {
     set({ isLoading: true, error: null });
     try {
-      // Simulate API call with dummy data
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const [usersRes, consultationsRes, faqRes] = await Promise.all([
+        axios.get("/api/admin/users?page=1&limit=1"),
+        axios.get("/api/admin/consultations?page=1&limit=1"),
+        axios.get("/api/admin/faq?page=1&limit=1"),
+      ]);
+
+      const totalUsers = usersRes.data?.total ?? 0;
+      const consultationsTotal = consultationsRes.data?.total ?? 0;
+      const faqCount = faqRes.data?.total ?? 0;
 
       const stats: DashboardStats = {
-        totalUsers: 1247,
-        activeConsultations: 24,
-        mentalHealthAlerts: 8,
-        gameEngagement: 892,
-        totalConsultationsToday: 45,
-        completedThisWeek: 156,
-        averageSessionTime: 18,
-        activeGamePlayers: 892,
+        totalUsers,
+        activeConsultations: consultationsTotal,
+        mentalHealthAlerts: 0,
+        gameEngagement: faqCount,
+        totalConsultationsToday: 0,
+        completedThisWeek: 0,
+        averageSessionTime: 0,
+        activeGamePlayers: faqCount,
       };
 
       set({
-        ...stats,
+        totalUsers,
+        activeConsultations: consultationsTotal,
+        mentalHealthAlerts: 0,
+        faqCount,
         dashboardStats: stats,
         isLoading: false,
       });
     } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+      set({
+        error: error.response?.data?.message || error.message,
+        isLoading: false,
+      });
     }
   },
 
-  fetchConsultations: async (filters) => {
+  fetchConsultations: async (page = 1, limit = 20) => {
     set({ isLoading: true, error: null });
     try {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      const consultations = generateDummyConsultations();
-
-      // Apply filters
-      let filtered = consultations;
-      if (filters?.status) {
-        filtered = filtered.filter((c) => c.status === filters.status);
-      }
-      if (filters?.type) {
-        filtered = filtered.filter((c) => c.type === filters.type);
-      }
-      if (filters?.priority) {
-        filtered = filtered.filter((c) => c.priority === filters.priority);
-      }
-
-      set({ consultations: filtered, isLoading: false });
+      const res = await axios.get(
+        `/api/admin/consultations?page=${page}&limit=${limit}`
+      );
+      const list: ApiConsultation[] = res.data?.consultations ?? [];
+      const total = res.data?.total ?? 0;
+      const totalPages = res.data?.totalPages ?? 1;
+      const consultations = list.map(mapApiConsultationToConsultation);
+      set({
+        apiConsultations: list,
+        consultations,
+        consultationsTotal: total,
+        consultationsPage: page,
+        totalPagesConsultations: totalPages,
+        isLoading: false,
+      });
     } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+      set({
+        error: error.response?.data?.message || error.message,
+        isLoading: false,
+      });
     }
   },
 
   updateConsultationStatus: async (id, status) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const consultations = get().consultations.map((c) =>
         c.id === id ? { ...c, status: status as any } : c
       );
@@ -286,23 +268,151 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     }
   },
 
-  fetchDoctors: async () => {
+  fetchDoctors: async (page = 1, limit = 20) => {
     set({ isLoading: true, error: null });
     try {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      const doctors = generateDummyDoctors();
-      set({ doctors, isLoading: false });
+      const res = await axios.get(
+        `/api/admin/all-doctors?page=${page}&limit=${limit}`
+      );
+      const list: ApiDoctor[] = res.data?.doctors ?? [];
+      const total = res.data?.total ?? 0;
+      const doctors = list.map(mapApiDoctorToDoctor);
+      set({
+        apiDoctors: list,
+        doctors,
+        doctorsTotal: total,
+        isLoading: false,
+      });
     } catch (error: any) {
-      set({ error: error.message, isLoading: false });
+      set({
+        error: error.response?.data?.message || error.message,
+        isLoading: false,
+      });
+    }
+  },
+
+  fetchUsers: async (page = 1, limit = 20) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await axios.get(
+        `/api/admin/users?page=${page}&limit=${limit}`
+      );
+      const list: ApiUser[] = res.data?.users ?? [];
+      const total = res.data?.total ?? 0;
+      const totalPages = res.data?.totalPages ?? 1;
+      set({
+        users: list,
+        usersTotal: total,
+        usersPage: page,
+        usersTotalPages: totalPages,
+        isLoading: false,
+      });
+    } catch (error: any) {
+      set({
+        error: error.response?.data?.message || error.message,
+        isLoading: false,
+      });
+    }
+  },
+
+  blockUser: async (userId: string) => {
+    try {
+      await axios.post(`/api/admin/users/${userId}/block`);
+      const users = get().users.map((u) =>
+        u._id === userId ? { ...u, status: "blocked" } : u
+      );
+      set({ users });
+    } catch (e: any) {
+      throw new Error(e.response?.data?.message || e.message || "Failed to block");
+    }
+  },
+
+  unblockUser: async (userId: string) => {
+    try {
+      await axios.post(`/api/admin/users/${userId}/unblock`);
+      const users = get().users.map((u) =>
+        u._id === userId ? { ...u, status: "active" } : u
+      );
+      set({ users });
+    } catch (e: any) {
+      throw new Error(e.response?.data?.message || e.message || "Failed to unblock");
+    }
+  },
+
+  fetchFaqs: async (page = 1, limit = 20) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await axios.get(
+        `/api/admin/faq?page=${page}&limit=${limit}`
+      );
+      const list: ApiFaq[] = res.data?.faqs ?? [];
+      const total = res.data?.total ?? 0;
+      const totalPages = res.data?.totalPages ?? 1;
+      set({
+        faqs: list,
+        faqsTotal: total,
+        faqsPage: page,
+        faqsTotalPages: totalPages,
+        isLoading: false,
+      });
+    } catch (error: any) {
+      set({
+        error: error.response?.data?.message || error.message,
+        isLoading: false,
+      });
+    }
+  },
+
+  createFaq: async (payload) => {
+    try {
+      const res = await axios.post("/api/admin/faq", payload);
+      const faq = res.data?.faq ?? null;
+      if (faq) {
+        const total = get().faqsTotal + 1;
+        const faqCount = get().faqCount + 1;
+        set((s) => ({
+          faqs: [faq, ...s.faqs],
+          faqsTotal: total,
+          faqCount,
+        }));
+      }
+      return faq;
+    } catch (e: any) {
+      throw new Error(e.response?.data?.message || e.message || "Failed to create FAQ");
+    }
+  },
+
+  updateFaq: async (id, payload) => {
+    try {
+      const res = await axios.put(`/api/admin/faq/${id}`, payload);
+      const updated = res.data?.faq;
+      if (updated) {
+        set((s) => ({
+          faqs: s.faqs.map((f) => (f._id === id ? { ...f, ...updated } : f)),
+        }));
+      }
+    } catch (e: any) {
+      throw new Error(e.response?.data?.message || e.message || "Failed to update FAQ");
+    }
+  },
+
+  deleteFaq: async (id: string) => {
+    try {
+      await axios.delete(`/api/admin/faq/${id}`);
+      set((s) => ({
+        faqs: s.faqs.filter((f) => f._id !== id),
+        faqsTotal: Math.max(0, s.faqsTotal - 1),
+        faqCount: Math.max(0, s.faqCount - 1),
+      }));
+    } catch (e: any) {
+      throw new Error(e.response?.data?.message || e.message || "Failed to delete FAQ");
     }
   },
 
   fetchRecentActivity: async () => {
     set({ isLoading: true, error: null });
     try {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      const activity = generateDummyActivity();
-      set({ recentActivity: activity, isLoading: false });
+      set({ recentActivity: [], isLoading: false });
     } catch (error: any) {
       set({ error: error.message, isLoading: false });
     }
@@ -311,43 +421,14 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   fetchHealthGameStats: async () => {
     set({ isLoading: true, error: null });
     try {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      const stats: HealthGameStats = {
-        activePlayers: 892,
-        totalPlayers: 1247,
-        averageSessionTime: 18,
-        popularTopics: [
-          { topic: "Mental Health Awareness", plays: 342 },
-          { topic: "Sexual Health Basics", plays: 289 },
-          { topic: "Stress Management", plays: 156 },
-          { topic: "Building Confidence", plays: 89 },
-        ],
-        rewardsDistributed: 1247,
-        topPerformers: [
-          { userId: "u1", userName: "Alice Johnson", score: 950 },
-          { userId: "u2", userName: "Bob Smith", score: 920 },
-          { userId: "u3", userName: "Charlie Brown", score: 890 },
-        ],
-      };
-
-      set({ healthGameStats: stats, isLoading: false });
+      set({ healthGameStats: null, isLoading: false });
     } catch (error: any) {
       set({ error: error.message, isLoading: false });
     }
   },
 
-  setConsultationFilters: (filters) => {
-    set({ consultationFilters: filters });
-  },
+  setConsultationFilters: (filters) => set({ consultationFilters: filters }),
 
-  subscribeToUpdates: () => {
-    // Socket.io subscription logic will be implemented here
-    console.log("Subscribing to real-time updates");
-  },
-
-  unsubscribeFromUpdates: () => {
-    // Socket.io cleanup
-    console.log("Unsubscribing from real-time updates");
-  },
+  subscribeToUpdates: () => {},
+  unsubscribeFromUpdates: () => {},
 }));

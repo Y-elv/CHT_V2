@@ -6,7 +6,7 @@
 .menu-container{
     display: flex;
    
-    background-color:#B8C2D7 ;
+    background: linear-gradient(135deg, #fff 0%, #fff5eb 50%, #ffedd5 100%);
     width: 100vw;
     height: 100vh;
     display: flex;

@@ -6,6 +6,7 @@ import {
   Heading,
   VStack,
   HStack,
+  Flex,
   Text,
   useDisclosure,
   useColorModeValue,
@@ -88,24 +89,24 @@ const Analytics = () => {
       <Box ml={{ base: 0, md: "250px" }}>
         <Header onToggleSidebar={onOpen} />
         <Box p={0}>
-          <Container maxW="full" p={6}>
+          <Container maxW="full" px={{ base: 3, md: 6 }} py={6}>
             <VStack align="stretch" spacing={6}>
-              <HStack justify="space-between">
+              <Flex direction={{ base: "column", sm: "row" }} justify="space-between" align={{ base: "stretch", sm: "center" }} gap={4}>
                 <Box>
-                  <Heading size="2xl" mb={2}>
+                  <Heading size={{ base: "xl", md: "2xl" }} mb={2}>
                     Analytics
                   </Heading>
-                  <Text color={useColorModeValue("gray.600", "gray.400")}>
+                  <Text color={useColorModeValue("gray.600", "gray.400")} fontSize={{ base: "sm", md: "md" }}>
                     Track your performance and patient insights.
                   </Text>
                 </Box>
-                <Select maxW="200px" defaultValue="week">
+                <Select maxW={{ base: "100%", sm: "200px" }} size={{ base: "sm", md: "md" }} defaultValue="week">
                   <option value="week">This Week</option>
                   <option value="month">This Month</option>
                   <option value="quarter">This Quarter</option>
                   <option value="year">This Year</option>
                 </Select>
-              </HStack>
+              </Flex>
 
               {/* Key Metrics */}
               <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>

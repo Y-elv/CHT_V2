@@ -319,18 +319,8 @@ const Consultation = () => {
   };
 
   const showModal = () => {
-    const screenWidth = window.innerWidth / window.devicePixelRatio;
-
-    console.log(`Screen width: ${screenWidth}px`);
-
-    if (screenWidth <= 600) {
-      console.log("Small device detected, navigating to /book");
-      navigate("/book");
-      document.body.style.overflow = "hidden";
-    } else {
-      console.log("Larger device detected, opening modal");
-      setIsModalOpen(true);
-    }
+    // Open same modal on all screen sizes so user can choose doctor, district, and continue to book
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
@@ -723,16 +713,16 @@ const Consultation = () => {
                 content: {
                   color: "black",
                   background:
-                    "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,247,238,0.98) 40%, rgba(238,240,255,0.98) 100%)",
+                    "linear-gradient(135deg, #fff 0%, #fff9f5 50%, #ffedd5 100%)",
                   position: "relative",
-                  borderRadius: "24px",
+                  borderRadius: window.innerWidth <= 600 ? 0 : "24px",
                   border: "none",
                   boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
                   padding: 0,
                   margin: "auto",
-                  width: "90%",
-                  maxWidth: "600px",
-                  height: "auto",
+                  width: window.innerWidth <= 600 ? "100%" : "90%",
+                  maxWidth: window.innerWidth <= 600 ? "100%" : "600px",
+                  height: window.innerWidth <= 600 ? "100vh" : "auto",
                   maxHeight: "90vh",
                   overflow: "hidden",
                   inset: "auto",
@@ -1226,7 +1216,7 @@ const Consultation = () => {
                 },
                 content: {
                   color: "black",
-                  backgroundColor: "#B8C2D7",
+                  background: "linear-gradient(135deg, #fff 0%, #fff5eb 50%, #ffedd5 100%)",
                   height: "85vh",
                   width: "80vw",
                   display: "flex",

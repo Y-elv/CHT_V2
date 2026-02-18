@@ -139,7 +139,6 @@ const DoctorDashboard = () => {
       });
       
       setUniquePatientsCount(uniquePatientEmails.size);
-      setTotalPatients(uniquePatientEmails.size);
     } catch (error) {
       if (handleAuthError(error, "doctor dashboard appointments")) {
         return; // Auth error handled globally

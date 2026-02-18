@@ -46,7 +46,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Messages = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user } = useAuth();
+  const { user } = useAuthStore(); // ✅ Use cookie-based auth store
   const toast = useToast();
   const messagesEndRef = useRef(null);
 
