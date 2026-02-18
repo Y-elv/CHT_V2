@@ -49,13 +49,13 @@ const Messages = () => {
   const { user } = useAuth();
   const toast = useToast();
   const messagesEndRef = useRef(null);
-  
+
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const cardBg = useColorModeValue("white", "gray.800");
   const chatBg = useColorModeValue("gray.50", "gray.900");
   const messageBg = useColorModeValue("blue.50", "gray.700");
   const ownMessageBg = useColorModeValue("blue.500", "blue.600");
-  
+
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -65,14 +65,34 @@ const Messages = () => {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Deduplicate conversations by user email (one chat per user)
+  const deduplicateByEmail = (list) => {
+    if (!Array.isArray(list) || list.length === 0) return list;
+    const byKey = new Map();
+    list.forEach((conv) => {
+      const email = (conv.email || "").toLowerCase().trim();
+      const key = email || conv._id || conv.id || "";
+      if (!key) return;
+      const existing = byKey.get(key);
+      const convUpdated = new Date(conv.updatedAt || 0).getTime();
+      const existingUpdated = existing
+        ? new Date(existing.updatedAt || 0).getTime()
+        : 0;
+      if (!existing || convUpdated >= existingUpdated) {
+        byKey.set(key, conv);
+      }
+    });
+    return Array.from(byKey.values());
+  };
+
   // Fetch conversations
   const fetchConversations = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/v2/message/conversations');
-      setConversations(response.data);
+      const response = await axios.get("/api/v2/message/conversations");
+      const list = response.data || [];
+      setConversations(deduplicateByEmail(list));
     } catch (error) {
-      console.error('Error fetching conversations:', error);
       toast({
         title: "Error loading conversations",
         description: "Unable to load your conversations. Please try again.",
@@ -93,7 +113,6 @@ const Messages = () => {
       setMessages(response.data);
       scrollToBottom();
     } catch (error) {
-      console.error('Error fetching messages:', error);
       toast({
         title: "Error loading messages",
         description: "Unable to load conversation. Please try again.",
@@ -109,21 +128,21 @@ const Messages = () => {
   // Send a new message
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation) return;
-    
+
     try {
       setSendingMessage(true);
       const messageData = {
         recipientId: selectedConversation._id,
         content: newMessage.trim(),
       };
-      
-      const response = await axios.post('/api/v2/message/direct', messageData);
-      
+
+      const response = await axios.post("/api/v2/message/direct", messageData);
+
       // Add the new message to the messages list
-      setMessages(prev => [...prev, response.data]);
+      setMessages((prev) => [...prev, response.data]);
       setNewMessage("");
       scrollToBottom();
-      
+
       toast({
         title: "Message sent",
         status: "success",
@@ -131,7 +150,6 @@ const Messages = () => {
         isClosable: true,
       });
     } catch (error) {
-      console.error('Error sending message:', error);
       toast({
         title: "Error sending message",
         description: "Unable to send message. Please try again.",
@@ -169,23 +187,28 @@ const Messages = () => {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
-    
+
     if (diffMins < 1) return "Just now";
     if (diffMins < 60) return `${diffMins} min ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    
+    if (diffHours < 24)
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+
     return date.toLocaleDateString();
   };
 
   // Filter conversations based on search
-  const filteredConversations = conversations.filter(conv => 
-    conv.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    conv.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredConversations = conversations.filter(
+    (conv) =>
+      conv.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      conv.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Count unread messages
-  const unreadCount = conversations.reduce((acc, conv) => acc + (conv.unreadCount || 0), 0);
+  const unreadCount = conversations.reduce(
+    (acc, conv) => acc + (conv.unreadCount || 0),
+    0,
+  );
 
   useEffect(() => {
     fetchConversations();
@@ -201,41 +224,64 @@ const Messages = () => {
       <Box ml={{ base: 0, md: "250px" }}>
         <Header onToggleSidebar={onOpen} />
         <Box p={0}>
-          <Container maxW="full" p={6}>
+          <Container maxW="full" px={{ base: 3, md: 6 }} py={6}>
             <VStack align="stretch" spacing={6}>
-              <HStack justify="space-between">
+              <Flex
+                direction={{ base: "column", sm: "row" }}
+                justify="space-between"
+                align={{ base: "stretch", sm: "center" }}
+                gap={4}
+              >
                 <Box>
-                  <Heading size="2xl" mb={2}>
+                  <Heading size={{ base: "xl", md: "2xl" }} mb={2}>
                     Messages
                   </Heading>
-                  <Text color={useColorModeValue("gray.600", "gray.400")}>
+                  <Text
+                    color={useColorModeValue("gray.600", "gray.400")}
+                    fontSize={{ base: "sm", md: "md" }}
+                  >
                     Patient communications and inquiries.
                   </Text>
                 </Box>
                 {unreadCount > 0 && (
-                  <Badge colorScheme="red" fontSize="lg" px={3} py={1} borderRadius="full">
+                  <Badge
+                    colorScheme="red"
+                    fontSize={{ base: "sm", md: "lg" }}
+                    px={3}
+                    py={1}
+                    borderRadius="full"
+                    alignSelf={{ base: "flex-start", sm: "center" }}
+                  >
                     {unreadCount} Unread
                   </Badge>
                 )}
-              </HStack>
+              </Flex>
 
               {!selectedConversation ? (
                 <>
-                  <HStack>
-                    <InputGroup maxW="400px">
+                  <Flex
+                    direction={{ base: "column", sm: "row" }}
+                    gap={3}
+                    flexWrap="wrap"
+                  >
+                    <InputGroup maxW={{ base: "100%", sm: "400px" }}>
                       <InputLeftElement pointerEvents="none">
                         <RiSearchLine color="gray.300" />
                       </InputLeftElement>
-                      <Input 
-                        placeholder="Search conversations..." 
+                      <Input
+                        placeholder="Search conversations..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
                     </InputGroup>
-                    <Button colorScheme="blue" leftIcon={<RiMessage3Line />}>
+                    <Button
+                      colorScheme="blue"
+                      leftIcon={<RiMessage3Line />}
+                      size={{ base: "sm", md: "md" }}
+                    >
                       New Message
                     </Button>
-                  </HStack>
+                  </Flex>
 
                   {loading ? (
                     <Flex justify="center" py={12}>
@@ -249,7 +295,9 @@ const Messages = () => {
                       <VStack spacing={4}>
                         <RiMessage3Line size={48} color="gray.400" />
                         <Text color="gray.500" fontSize="lg">
-                          {searchQuery ? "No conversations found" : "No conversations yet"}
+                          {searchQuery
+                            ? "No conversations found"
+                            : "No conversations yet"}
                         </Text>
                       </VStack>
                     </Flex>
@@ -261,12 +309,14 @@ const Messages = () => {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          <Card 
-                            bg={cardBg} 
-                            borderRadius="xl" 
+                          <Card
+                            bg={cardBg}
+                            borderRadius="xl"
                             shadow="sm"
                             cursor="pointer"
-                            onClick={() => handleSelectConversation(conversation)}
+                            onClick={() =>
+                              handleSelectConversation(conversation)
+                            }
                             _hover={{ shadow: "md", borderColor: "blue.200" }}
                             borderWidth="1px"
                             borderColor="transparent"
@@ -274,10 +324,10 @@ const Messages = () => {
                             <CardHeader>
                               <HStack justify="space-between">
                                 <HStack>
-                                  <Avatar 
-                                    src={conversation.pic} 
-                                    name={conversation.name} 
-                                    size="md" 
+                                  <Avatar
+                                    src={conversation.pic}
+                                    name={conversation.name}
+                                    size="md"
                                   />
                                   <VStack align="start" spacing={1} flex={1}>
                                     <HStack>
@@ -293,16 +343,17 @@ const Messages = () => {
                                     </Text>
                                     <HStack>
                                       <Text fontSize="xs" color="gray.500">
-                                        <RiTimeLine /> {formatTime(conversation.updatedAt)}
+                                        <RiTimeLine />{" "}
+                                        {formatTime(conversation.updatedAt)}
                                       </Text>
                                     </HStack>
                                   </VStack>
                                 </HStack>
                                 {conversation.unreadCount > 0 && (
-                                  <Badge 
-                                    colorScheme="red" 
-                                    borderRadius="full" 
-                                    px={2} 
+                                  <Badge
+                                    colorScheme="red"
+                                    borderRadius="full"
+                                    px={2}
                                     py={1}
                                     fontSize="xs"
                                   >
@@ -313,13 +364,22 @@ const Messages = () => {
                             </CardHeader>
                             <CardBody pt={0}>
                               <VStack align="stretch" spacing={3}>
-                                <Text 
-                                  fontSize="sm" 
-                                  color={conversation.unreadCount > 0 ? "inherit" : "gray.600"}
+                                <Text
+                                  fontSize="sm"
+                                  color={
+                                    conversation.unreadCount > 0
+                                      ? "inherit"
+                                      : "gray.600"
+                                  }
                                   noOfLines={2}
-                                  fontWeight={conversation.unreadCount > 0 ? "semibold" : "normal"}
+                                  fontWeight={
+                                    conversation.unreadCount > 0
+                                      ? "semibold"
+                                      : "normal"
+                                  }
                                 >
-                                  {conversation.lastMessage?.content || "No messages yet"}
+                                  {conversation.lastMessage?.content ||
+                                    "No messages yet"}
                                 </Text>
                                 <Divider />
                                 <HStack justify="space-between">
@@ -365,10 +425,10 @@ const Messages = () => {
                             onClick={handleBackToList}
                             mr={2}
                           />
-                          <Avatar 
-                            src={selectedConversation.pic} 
-                            name={selectedConversation.name} 
-                            size="md" 
+                          <Avatar
+                            src={selectedConversation.pic}
+                            name={selectedConversation.name}
+                            size="md"
                           />
                           <VStack align="start" spacing={1}>
                             <Text fontWeight="semibold" fontSize="md">
@@ -384,25 +444,30 @@ const Messages = () => {
                         </Badge>
                       </HStack>
                     </CardHeader>
-                    
-                    <CardBody p={0} h="450px" display="flex" flexDirection="column">
+
+                    <CardBody
+                      p={0}
+                      h="450px"
+                      display="flex"
+                      flexDirection="column"
+                    >
                       {/* Messages Area */}
-                      <Flex 
-                        flex={1} 
-                        flexDirection="column" 
-                        p={4} 
+                      <Flex
+                        flex={1}
+                        flexDirection="column"
+                        p={4}
                         overflowY="auto"
                         bg={chatBg}
                         css={{
-                          '&::-webkit-scrollbar': {
-                            width: '6px',
+                          "&::-webkit-scrollbar": {
+                            width: "6px",
                           },
-                          '&::-webkit-scrollbar-track': {
-                            background: 'transparent',
+                          "&::-webkit-scrollbar-track": {
+                            background: "transparent",
                           },
-                          '&::-webkit-scrollbar-thumb': {
-                            background: useColorModeValue('#cbd5e0', '#4a5568'),
-                            borderRadius: '3px',
+                          "&::-webkit-scrollbar-thumb": {
+                            background: useColorModeValue("#cbd5e0", "#4a5568"),
+                            borderRadius: "3px",
                           },
                         }}
                       >
@@ -412,12 +477,16 @@ const Messages = () => {
                           </Flex>
                         ) : messages.length === 0 ? (
                           <Flex justify="center" py={8}>
-                            <Text color="gray.500">No messages yet. Start the conversation!</Text>
+                            <Text color="gray.500">
+                              No messages yet. Start the conversation!
+                            </Text>
                           </Flex>
                         ) : (
                           <VStack spacing={3} align="stretch">
                             {messages.map((message, index) => {
-                              const isOwn = message.sender._id === user?.id || message.sender._id === user?._id;
+                              const isOwn =
+                                message.sender._id === user?.id ||
+                                message.sender._id === user?._id;
                               return (
                                 <motion.div
                                   key={message._id}
@@ -425,22 +494,22 @@ const Messages = () => {
                                   animate={{ opacity: 1, y: 0 }}
                                   transition={{ delay: index * 0.1 }}
                                 >
-                                  <Flex 
+                                  <Flex
                                     justify={isOwn ? "flex-end" : "flex-start"}
                                     align="flex-end"
                                     gap={2}
                                   >
                                     {!isOwn && (
-                                      <Avatar 
-                                        src={message.sender.pic} 
-                                        name={message.sender.name} 
-                                        size="xs" 
+                                      <Avatar
+                                        src={message.sender.pic}
+                                        name={message.sender.name}
+                                        size="xs"
                                         mb={1}
                                       />
                                     )}
-                                    <VStack 
-                                      align={isOwn ? "end" : "start"} 
-                                      spacing={1} 
+                                    <VStack
+                                      align={isOwn ? "end" : "start"}
+                                      spacing={1}
                                       maxW="70%"
                                     >
                                       <Box
@@ -449,16 +518,34 @@ const Messages = () => {
                                         px={4}
                                         py={2}
                                         borderRadius="lg"
-                                        borderTopLeftRadius={!isOwn ? "0" : "lg"}
-                                        borderTopRightRadius={isOwn ? "0" : "lg"}
+                                        borderTopLeftRadius={
+                                          !isOwn ? "0" : "lg"
+                                        }
+                                        borderTopRightRadius={
+                                          isOwn ? "0" : "lg"
+                                        }
                                         shadow="sm"
                                       >
-                                        <Text fontSize="sm">{message.content}</Text>
+                                        <Text fontSize="sm">
+                                          {message.content}
+                                        </Text>
                                       </Box>
-                                      <HStack spacing={2} fontSize="xs" color="gray.500">
-                                        <Text>{formatTime(message.createdAt)}</Text>
+                                      <HStack
+                                        spacing={2}
+                                        fontSize="xs"
+                                        color="gray.500"
+                                      >
+                                        <Text>
+                                          {formatTime(message.createdAt)}
+                                        </Text>
                                         {isOwn && (
-                                          <RiCheckDoubleLine color={message.readBy?.length > 0 ? "blue.500" : "gray.400"} />
+                                          <RiCheckDoubleLine
+                                            color={
+                                              message.readBy?.length > 0
+                                                ? "blue.500"
+                                                : "gray.400"
+                                            }
+                                          />
                                         )}
                                       </HStack>
                                     </VStack>
@@ -470,7 +557,7 @@ const Messages = () => {
                           </VStack>
                         )}
                       </Flex>
-                      
+
                       {/* Message Input */}
                       <Divider />
                       <Flex p={4} gap={3}>
@@ -479,7 +566,7 @@ const Messages = () => {
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
                           onKeyPress={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
+                            if (e.key === "Enter" && !e.shiftKey) {
                               e.preventDefault();
                               sendMessage();
                             }
