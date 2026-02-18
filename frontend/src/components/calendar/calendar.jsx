@@ -152,16 +152,6 @@ const CalendarInput = ({
     const formattedSelectedDays = formatSelectedDays();
     const formattedTime = formatTimeTo12Hour(selectedTime);
 
-    console.log("📅 [Calendar] Booking submission started:");
-    console.log("   Selected dates:", formattedSelectedDays);
-    console.log("   Selected time (24h):", selectedTime);
-    console.log("   Selected time (12h):", formattedTime);
-    console.log("   Doctor ID:", doctorId);
-    console.log("   Doctor:", professionalName);
-    console.log("   Appointment Type:", appointmentType);
-    console.log("   Reason:", reason);
-    console.log("   Notes:", notes);
-
     const requestBody = {
       doctorId: doctorId,
       date: formattedSelectedDays[0],
@@ -172,10 +162,6 @@ const CalendarInput = ({
     };
 
     try {
-      console.log("📤 [Calendar] Sending booking request...");
-      console.log("   Request body:", requestBody);
-
-      // Cookie-based auth: axios sends credentials automatically
       const response = await axios.post(
         "https://chtv2-bn.onrender.com/api/appointment/book",
         requestBody,
@@ -185,11 +171,6 @@ const CalendarInput = ({
           },
         }
       );
-
-      console.log("✅ [Calendar] Booking successful!");
-      console.log("   Response status:", response.status);
-      console.log("   Response data:", response.data);
-
       if (response.status >= 200 && response.status < 300) {
         setSelectedDays([]);
         setSelectedTime("");
@@ -210,23 +191,9 @@ const CalendarInput = ({
           position: "bottom",
         });
       } else {
-        console.error(
-          "❌ [Calendar] Unexpected response status:",
-          response.status
-        );
         throw new Error("Booking failed. Please try again.");
       }
     } catch (error) {
-      console.error("❌ [Calendar] Booking error:");
-      console.error("   Error type:", error.constructor.name);
-      console.error("   Error message:", error.message);
-      console.error("   Error code:", error.code);
-
-      if (error.response) {
-        console.error("   HTTP Status:", error.response.status);
-        console.error("   Response data:", error.response.data);
-      }
-
       toast({
         title: "Booking Failed",
         description:
@@ -240,7 +207,6 @@ const CalendarInput = ({
       });
     } finally {
       setIsSubmitting(false);
-      console.log("🏁 [Calendar] Booking process finished");
     }
   };
 

@@ -73,7 +73,6 @@ const Appointments = () => {
         setAppointments([]);
       }
     } catch (error) {
-      console.error("Error fetching appointments:", error);
       toast({
         title: "Error",
         description: error.response?.data?.message || "Failed to fetch appointments",
@@ -129,8 +128,6 @@ const Appointments = () => {
         }
       }
     } catch (error) {
-      console.error("Error initiating chat:", error);
-      
       // If getting chat fails, try to create a new chat
       try {
         const messageResponse = await axios.post('/api/v2/message/direct', {
@@ -143,7 +140,6 @@ const Appointments = () => {
           navigate(`/chatpages?chat=${chatId}&doctor=${doctorId}`);
         }
       } catch (createError) {
-        console.error("Error creating chat:", createError);
         toast({
           title: "Chat Error",
           description: "Unable to start chat. Please try again later.",

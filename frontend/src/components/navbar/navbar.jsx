@@ -41,21 +41,7 @@ const Navbar = ({ active }) => {
   
   // Use authUser if available, otherwise fall back to chatUser
   const user = authUser || chatUser;
-  
-  // Debug logging
-  useEffect(() => {
-    console.log("🔍 Navbar: User state check");
-    console.log("   - authUser:", authUser);
-    console.log("   - chatUser:", chatUser);
-    console.log("   - Final user:", user);
-    if (user) {
-      console.log("   - User.name:", user.name);
-      console.log("   - User.email:", user.email);
-      console.log("   - User.pic:", user.pic);
-      console.log("   - User.role:", user.role);
-    }
-  }, [authUser, chatUser, user]);
-  
+
   const logoutHandler = () => {
     if (authLogout) authLogout();
     if (chatLogoutHandler) chatLogoutHandler();
@@ -89,14 +75,6 @@ const Navbar = ({ active }) => {
           return;
         }
         
-        // ============================================
-        // EXPOSE FULL AXIOS ERROR
-        // ============================================
-        console.error("🟥 RAW AXIOS ERROR:", error);
-        console.error("🟥 AXIOS RESPONSE:", error.response);
-        console.error("🟥 AXIOS STATUS:", error.response?.status);
-        console.error("🟥 AXIOS DATA:", error.response?.data);
-        console.error("Failed to fetch notifications:", error);
       });
     }
   }, [user, shouldShowNotifications]); // Only fetch when user is available and not on home page
@@ -134,16 +112,7 @@ const Navbar = ({ active }) => {
     if (isUnread && notificationId) {
       try {
         await markAsRead(notificationId);
-      } catch (error) {
-        // ============================================
-        // EXPOSE FULL AXIOS ERROR
-        // ============================================
-        console.error("🟥 RAW AXIOS ERROR:", error);
-        console.error("🟥 AXIOS RESPONSE:", error.response);
-        console.error("🟥 AXIOS STATUS:", error.response?.status);
-        console.error("🟥 AXIOS DATA:", error.response?.data);
-        console.error("Failed to mark notification as read:", error);
-      }
+      } catch (_error) {}
     }
 
     // Navigate if link is provided
@@ -434,16 +403,7 @@ const Navbar = ({ active }) => {
                           onClick={async () => {
                             try {
                               await refresh();
-                            } catch (error) {
-                              // ============================================
-                              // EXPOSE FULL AXIOS ERROR
-                              // ============================================
-                              console.error("🟥 RAW AXIOS ERROR:", error);
-                              console.error("🟥 AXIOS RESPONSE:", error.response);
-                              console.error("🟥 AXIOS STATUS:", error.response?.status);
-                              console.error("🟥 AXIOS DATA:", error.response?.data);
-                              console.error("Failed to refresh notifications:", error);
-                            }
+                            } catch (_error) {}
                           }}
                           className="block w-full text-center text-sm font-medium text-[#2B2F92] dark:text-[#F7941D] hover:text-[#F7941D] dark:hover:text-[#FFA84D] transition-colors duration-200"
                         >

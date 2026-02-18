@@ -109,9 +109,6 @@ const ForgotPassword = () => {
         newPassword,
         confirmPassword,
       });
-
-      console.log("Data received from password reset endpoint:", data);
-
       toast({
         description: "Password reset successful!",
         status: "success",
@@ -123,8 +120,6 @@ const ForgotPassword = () => {
       setLoading(false);
       history("/login");
     } catch (error) {
-      console.error("Error during password reset:", error);
-
       const errorMessage = error.response?.data?.message || "An error occurred";
 
       toast({

@@ -53,24 +53,10 @@ const Dashboard: React.FC = () => {
 
   // Fetch initial data
   useEffect(() => {
-    // ============================================
-    // [AUTH][RENDER] AdminDashboard Mount
-    // ============================================
-    console.log("[AUTH][RENDER] AdminDashboard component mounted");
-    console.log("[AUTH][RENDER] Timestamp:", new Date().toISOString());
-    console.log("[AUTH][RENDER] Current URL:", window.location.href);
-    
-    // Cookie-based auth - no localStorage checks needed
-    console.log("[AUTH][RENDER] Using cookie-based authentication");
-    
     fetchDashboardStats();
     fetchConsultations();
     fetchDoctors();
     fetchRecentActivity();
-
-    return () => {
-      console.log("[AUTH][RENDER] AdminDashboard component unmounting");
-    };
   }, [
     fetchDashboardStats,
     fetchConsultations,

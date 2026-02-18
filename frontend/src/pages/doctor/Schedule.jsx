@@ -84,7 +84,6 @@ const Schedule = () => {
 
   // Fetch appointments for logged-in doctor (cookie-based auth)
   const fetchAppointments = async () => {
-    console.log("🔄 [Schedule] Fetching appointments...");
     setLoading(true);
     try {
       // Cookie-based auth - axios instance already configured with withCredentials: true
@@ -97,9 +96,6 @@ const Schedule = () => {
           },
         }
       );
-
-      console.log("✅ [Schedule] Appointments fetched:", response.data);
-      
       if (response.data && response.data.appointments) {
         setAppointments(response.data.appointments);
       } else if (Array.isArray(response.data)) {
@@ -117,7 +113,6 @@ const Schedule = () => {
         position: "top-right",
       });
     } catch (error) {
-      console.error("❌ [Schedule] Error fetching appointments:", error);
       toast({
         title: "Error Loading Appointments",
         description:
@@ -242,19 +237,12 @@ const Schedule = () => {
 
     setProcessing(true);
     try {
-      console.log("📤 [Schedule] Approving appointment:", selectedAppointment._id);
-      console.log("   Call Link:", callLink);
-
-      // Cookie-based auth - axios instance already configured
       const response = await axios.post(
         `/api/appointment/approve/${selectedAppointment._id}`,
         {
           callLink: callLink.trim(),
         }
       );
-
-      console.log("✅ [Schedule] Appointment approved:", response.data);
-
       toast({
         title: "Appointment Approved",
         description: "The appointment has been approved successfully.",
@@ -269,7 +257,6 @@ const Schedule = () => {
       setSelectedAppointment(null);
       fetchAppointments(); // Refresh appointments
     } catch (error) {
-      console.error("❌ [Schedule] Error approving appointment:", error);
       toast({
         title: "Approval Failed",
         description:
@@ -308,19 +295,12 @@ const Schedule = () => {
 
     setProcessing(true);
     try {
-      console.log("📤 [Schedule] Cancelling appointment:", selectedAppointment._id);
-      console.log("   Reason:", cancellationReason);
-
-      // Cookie-based auth - axios instance already configured
       const response = await axios.post(
         `/api/appointment/cancel/${selectedAppointment._id}`,
         {
           cancellationReason: cancellationReason.trim(),
         }
       );
-
-      console.log("✅ [Schedule] Appointment cancelled:", response.data);
-
       toast({
         title: "Appointment Cancelled",
         description: "The appointment has been cancelled successfully.",
@@ -335,7 +315,6 @@ const Schedule = () => {
       setSelectedAppointment(null);
       fetchAppointments(); // Refresh appointments
     } catch (error) {
-      console.error("❌ [Schedule] Error cancelling appointment:", error);
       toast({
         title: "Cancellation Failed",
         description:

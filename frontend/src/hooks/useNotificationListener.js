@@ -33,9 +33,7 @@ export const useNotificationListener = () => {
     const token = localStorage.getItem("token");
     if (token) {
       // Fetch notifications and unread count
-      refresh().catch((error) => {
-        console.error("Failed to fetch notifications on mount:", error);
-      });
+      refresh().catch(() => {});
     }
   }, [refresh]); // Only run once on mount
 
@@ -77,9 +75,7 @@ export const useNotificationListener = () => {
       // Check if token exists using SINGLE source
       const token = localStorage.getItem("token");
       if (token) {
-        fetchUnreadCount().catch((error) => {
-          console.error("Failed to poll unread count:", error);
-        });
+        fetchUnreadCount().catch(() => {});
       }
     }, 30000); // Poll every 30 seconds
 

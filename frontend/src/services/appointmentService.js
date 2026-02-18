@@ -26,7 +26,6 @@ export const getUserAppointments = async (page = 1, limit = 20, status = '') => 
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error("Error fetching user appointments:", error);
     throw error;
   }
 };

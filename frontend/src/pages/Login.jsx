@@ -101,7 +101,6 @@ const Login = () => {
         };
         
         const redirectPath = getRoleRedirectPath();
-        console.log("🎯 [LOGIN] Redirecting to:", redirectPath, "for role:", result.user?.role);
         navigate(redirectPath);
       }, 1000);
       

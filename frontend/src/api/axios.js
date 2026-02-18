@@ -19,7 +19,6 @@ function validateUrl(url) {
     );
 
     if (!isTrusted) {
-      console.error(`Blocked request to untrusted domain: ${hostname}`);
       throw new Error("Request blocked: untrusted domain");
     }
 
@@ -39,7 +38,6 @@ function validateUrl(url) {
 
     return true;
   } catch (error) {
-    console.error("URL validation failed:", error);
     throw error;
   }
 }
@@ -63,13 +61,6 @@ axiosInstance.interceptors.request.use(
         const rawUrl = config.url;
         const trimmedUrl = rawUrl.trim();
         
-        if (trimmedUrl !== rawUrl) {
-          console.warn("[AXIOS] Trimmed whitespace from request url", {
-            before: JSON.stringify(rawUrl),
-            after: JSON.stringify(trimmedUrl),
-          });
-        }
-        
         config.url = trimmedUrl;
       }
 
@@ -87,36 +78,20 @@ axiosInstance.interceptors.request.use(
         typeof config.url === "string" &&
         config.url.startsWith("http://")
       ) {
-        console.warn("Blocked insecure HTTP request in production");
         throw new Error("Insecure HTTP requests are not allowed in production");
       }
-
-      console.log("[AXIOS] Request:", {
-        method: config.method?.toUpperCase(),
-        url: config.baseURL ? `${config.baseURL}${config.url}` : config.url,
-        withCredentials: config.withCredentials,
-      });
-
     } catch (e) {
-      console.error("[AXIOS] Error preparing request:", e);
+      return Promise.reject(e);
     }
 
     return config;
   },
-  (error) => {
-    console.error("Request interceptor error:", error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Response interceptor - handle auth errors
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log("[AXIOS] Response:", {
-      status: response.status,
-      url: response.config?.url,
-    });
-    
     // Don't expose sensitive headers
     if (response.headers) {
       delete response.headers["authorization"];
@@ -126,15 +101,7 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log("[AXIOS] Error:", {
-      status: error.response?.status,
-      url: error.response?.config?.url,
-    });
-
-    // Handle 401 Unauthorized - session expired
     if (error.response?.status === 401) {
-      console.log("[AXIOS] 401 Unauthorized - session expired");
-      
       // Create enhanced error for proper handling
       const authError = new Error("Session expired. Please login again.");
       authError.status = 401;
