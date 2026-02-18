@@ -34,6 +34,7 @@ const MyPatients = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const cardBg = useColorModeValue("white", "gray.800");
+  const subtitleColor = useColorModeValue("gray.600", "gray.400");
 
   const patients = [
     {
@@ -119,16 +120,16 @@ const MyPatients = () => {
                 <Heading size={{ base: "xl", md: "2xl" }} mb={2}>
                   My Patients
                 </Heading>
-                <Text color={useColorModeValue("gray.600", "gray.400")} fontSize={{ base: "sm", md: "md" }}>
+                <Text color={subtitleColor} fontSize={{ base: "sm", md: "md" }}>
                   Manage your patient records and appointments.
                 </Text>
               </Box>
 
               <Flex direction={{ base: "column", sm: "row" }} gap={3} flexWrap="wrap">
                 <InputGroup maxW={{ base: "100%", sm: "400px" }}>
-                  <InputLeftElement pointerEvents="none">
-                    <RiSearchLine color="gray.300" />
-                  </InputLeftElement>
+<InputLeftElement pointerEvents="none">
+                  <Box as={RiSearchLine} color="gray.400" boxSize={5} />
+                </InputLeftElement>
                   <Input placeholder="Search patients..." />
                 </InputGroup>
                 <Button colorScheme="blue" leftIcon={<RiUserHeartLine />} size={{ base: "sm", md: "md" }}>
