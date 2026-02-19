@@ -529,15 +529,30 @@ const LandingPage = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <Link
-                to="/doctor/register"
-                className="inline-block px-8 py-4 bg-gradient-to-r from-[#2B2F92] to-[#1e2266] hover:from-[#1e2266] hover:to-[#2B2F92] text-white font-semibold rounded-full text-lg shadow-lg shadow-[#2B2F92]/30 hover:shadow-xl hover:shadow-[#2B2F92]/40 transition-all duration-300"
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Join as Doctor
-              </Link>
+                <Link
+                  to="/doctor/register"
+                  className="inline-block px-8 py-4 bg-gradient-to-r from-[#2B2F92] to-[#1e2266] hover:from-[#1e2266] hover:to-[#2B2F92] text-white font-semibold rounded-full text-lg shadow-lg shadow-[#2B2F92]/30 hover:shadow-xl hover:shadow-[#2B2F92]/40 transition-all duration-300"
+                >
+                  Join as Doctor
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  to="/signup"
+                  className="inline-block px-8 py-4 bg-gradient-to-r from-[#F7941D] to-[#FFA84D] hover:from-[#FFA84D] hover:to-[#F7941D] text-white font-semibold rounded-full text-lg shadow-lg shadow-[#F7941D]/30 hover:shadow-xl hover:shadow-[#F7941D]/40 transition-all duration-300"
+                >
+                  Sign up as Patient
+                </Link>
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>

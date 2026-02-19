@@ -346,7 +346,7 @@ const DoctorRegister = () => {
             rotateY,
             transformStyle: "preserve-3d",
           }}
-          className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-10 border border-white/20 dark:border-slate-700/50 max-h-[90vh] overflow-y-auto"
+          className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-10 border border-white/20 dark:border-slate-700/50"
         >
           {/* Subtle glow effect */}
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-50 blur-xl -z-10" />

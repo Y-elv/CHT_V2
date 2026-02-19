@@ -110,18 +110,18 @@ const Footer = () => {
           <p className="newsletter-p text-xs mb-1">
             Get weekly updates and resources to support your wellbeing.
           </p>
-          <InputGroup className="mb-2">
+          <InputGroup className="mb-2 newsletter-group">
             <FormControl
               type="email"
               placeholder="Your email address"
               aria-label="Newsletter email"
               aria-describedby="button-addon2"
-              className="text-xs"
+              className="text-xs newsletter-input"
             />
             <Button
               variant="outline-secondary"
               id="button-addon2"
-              className="text-xs"
+              className="text-xs newsletter-button"
             >
               Subscribe
             </Button>
