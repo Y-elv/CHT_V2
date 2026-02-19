@@ -44,6 +44,31 @@
     box-shadow: 0 12px 30px rgba(15, 23, 42, 0.6);
 }
 
+.newsletter-group {
+    background-color: rgba(15, 23, 42, 0.6);
+    border-radius: 9999px;
+    padding: 1px 1px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.newsletter-input {
+    border: none !important;
+    background-color: transparent !important;
+    color: #f9fafb !important;
+    padding-left: 10px !important;
+    font-size: 0.8rem !important;
+}
+
+.newsletter-input::placeholder {
+    color: rgba(148, 163, 184, 0.8) !important;
+}
+
+.newsletter-input:focus {
+    box-shadow: none !important;
+}
+
 #button-addon2 {
     background-color: #F7941D;
     border-color: #F7941D;
@@ -54,6 +79,13 @@
     background-color: #FFA84D;
     border-color: #FFA84D;
     color: #111827;
+}
+
+.newsletter-button {
+    border-radius: 9999px !important;
+    padding-inline: 16px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em;
 }
 
 .newsletter-p {

@@ -18,6 +18,7 @@ import QuickAssist from "./components/QuickAssist/QuickAssist";
 const LandingPage = React.lazy(() => import("./pages/landingPage/landingPage"));
 const Login = React.lazy(() => import("./pages/Login"));
 const Signup = React.lazy(() => import("./components/Authentication/signup"));
+const DoctorRegister = React.lazy(() => import("./components/Authentication/doctorRegister"));
 const ForgotPassword = React.lazy(() => import("./pages/ForgotPassword/ForgotPassword"));
 const AuthVerification = React.lazy(() => import("./pages/AuthVerification/AuthVerification"));
 const DoctorDashboard = React.lazy(() => import("./pages/DoctorDashboard"));
@@ -104,12 +105,20 @@ function App() {
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/doctor/register" element={<DoctorRegister />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth-verification" element={<AuthVerification />} />
 
           {/* Public Information Pages */}
           <Route path="/news" element={<News />} />
-          <Route path="/menu" element={<Menu />} />
+          <Route
+            path="/menu"
+            element={
+              <ProtectedRoute>
+                <Menu />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/our-team" element={<OurTeamPage />} />
           <Route path="/hospital" element={<Hospital />} />
           <Route path="/pharmacy" element={<Pharmacy />} />
