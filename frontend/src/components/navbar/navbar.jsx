@@ -37,7 +37,7 @@ const Navbar = ({ active }) => {
   const { user: chatUser = null, chats = [], logoutHandler: chatLogoutHandler } = chatContext || {};
   
   // Get AuthStore for immediate user state updates
-  const { user: authUser } = useAuthStore();
+  const { user: authUser, logout: authLogout } = useAuthStore();
   
   // Use authUser if available, otherwise fall back to chatUser
   const user = authUser || chatUser;
