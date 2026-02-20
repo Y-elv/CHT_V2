@@ -55,6 +55,10 @@ const AdminConsultations = React.lazy(() => import("./pages/admin/AdminConsultat
 const AdminFAQ = React.lazy(() => import("./pages/admin/AdminFAQ"));
 const AdminNotifications = React.lazy(() => import("./pages/admin/AdminNotifications"));
 const AdminLayout = React.lazy(() => import("./pages/admin/AdminLayout"));
+const AdminContent = React.lazy(() => import("./pages/admin/AdminContent"));
+const AdminAnalytics = React.lazy(() => import("./pages/admin/AdminAnalytics"));
+const AdminSettings = React.lazy(() => import("./pages/admin/AdminSettings"));
+const AdminMessages = React.lazy(() => import("./pages/admin/AdminMessages"));
 
 // Extend Chakra theme
 const theme = extendTheme({
@@ -288,8 +292,12 @@ function App() {
             <Route path="users" element={<AdminUsers />} />
             <Route path="consultations" element={<AdminConsultations />} />
             <Route path="doctors" element={<AdminDoctors />} />
-            <Route path="faq" element={<AdminFAQ />} />
+            <Route path="messages" element={<AdminMessages />} />
             <Route path="notifications" element={<AdminNotifications />} />
+            <Route path="faq" element={<AdminFAQ />} />
+            <Route path="content" element={<AdminContent />} />
+            <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="settings" element={<AdminSettings />} />
           </Route>
 
           {/* Fallback */}

@@ -27,6 +27,31 @@ const CalendarInput = ({
   const [showNextButton, setShowNextButton] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Predefined time slots (24h format) for better cross-browser support
+  const timeOptions = [
+    "08:00",
+    "08:30",
+    "09:00",
+    "09:30",
+    "10:00",
+    "10:30",
+    "11:00",
+    "11:30",
+    "12:00",
+    "12:30",
+    "13:00",
+    "13:30",
+    "14:00",
+    "14:30",
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
+    "17:30",
+    "18:00",
+  ];
+
   const handleTimeChange = (event) => {
     setSelectedTime(event.target.value);
     // Show Next button when both date and time are selected
@@ -384,8 +409,7 @@ const CalendarInput = ({
             >
               Select Time:
             </label>
-            <input
-              type="time"
+            <select
               value={selectedTime}
               onChange={handleTimeChange}
               required
@@ -394,13 +418,14 @@ const CalendarInput = ({
                 padding: "12px 16px",
                 borderRadius: "12px",
                 border: "2px solid #e2e8f0",
-                fontSize: "18px",
-                fontWeight: 600,
+                fontSize: "16px",
+                fontWeight: 500,
                 backgroundColor: "#fff",
                 color: "#1e293b",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
                 outline: "none",
+                appearance: "none",
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = "#F7941D";
@@ -410,7 +435,14 @@ const CalendarInput = ({
                 e.target.style.borderColor = "#e2e8f0";
                 e.target.style.boxShadow = "none";
               }}
-            />
+            >
+              <option value="">Select a time</option>
+              {timeOptions.map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
           </motion.div>
 
           {/* Appointment Type */}
