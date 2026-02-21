@@ -18,8 +18,6 @@ import ProfileModal from "./miscellaneous/profileModal.jsx";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal.jsx";
 import io from "socket.io-client";
 
-const ENDPOINT = "https://chtv2-bn.onrender.com";
-
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
@@ -32,7 +30,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const toast = useToast();
 
   useEffect(() => {
-    socket = io(ENDPOINT);
+    socket = io("");
     socket.emit("setup", user);
     socket.on("connection", () => setSocketConnected(true));
   }, []);
@@ -49,7 +47,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       setLoading(true);
 
       const { data } = await axios.get(
-        `https://chtv2-bn.onrender.com/api/v2/message/getmessage/${selectedChat._id}`,
+        `/v2/message/getmessage/${selectedChat._id}`,
         {
           headers: {
             authorization: `${user.token}`,
@@ -106,7 +104,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         };
         setNewMessages("");
         const { data } = await axios.post(
-          " https://chtv2-bn.onrender.com/api/v2/message/message",
+          "/v2/message/message",
           {
             content: newMessage,
             chatId: selectedChat._id,

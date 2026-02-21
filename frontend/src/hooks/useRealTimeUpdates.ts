@@ -18,7 +18,7 @@ export const useRealTimeUpdates = () => {
 
   useEffect(() => {
     // Initialize Socket.io connection
-    const socket: Socket = io("https://chtv2-bn.onrender.com", {
+    const socket: Socket = io("", {
       transports: ["websocket", "polling"],
     });
 

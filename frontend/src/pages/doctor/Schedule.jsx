@@ -88,7 +88,7 @@ const Schedule = () => {
     try {
       // Cookie-based auth - axios instance already configured with withCredentials: true
       const response = await axios.get(
-        "/api/appointment/doctor",
+        "/appointment/doctor",
         {
           params: {
             page: 1,
@@ -238,7 +238,7 @@ const Schedule = () => {
     setProcessing(true);
     try {
       const response = await axios.post(
-        `/api/appointment/approve/${selectedAppointment._id}`,
+        `/appointment/approve/${selectedAppointment._id}`,
         {
           callLink: callLink.trim(),
         }
@@ -296,7 +296,7 @@ const Schedule = () => {
     setProcessing(true);
     try {
       const response = await axios.post(
-        `/api/appointment/cancel/${selectedAppointment._id}`,
+        `/appointment/cancel/${selectedAppointment._id}`,
         {
           cancellationReason: cancellationReason.trim(),
         }

@@ -124,7 +124,7 @@ const Login = () => {
       ? `${window.location.origin}/auth-verification`
       : "https://funhealth.netlify.app/auth-verification";
     
-    const googleAuthUrl = `https://chtv2-bn.onrender.com/auth/google?redirect_url=${encodeURIComponent(redirectUrl)}`;
+    const googleAuthUrl = `/auth/google?redirect_url=${encodeURIComponent(redirectUrl)}`;
     
     window.location.href = googleAuthUrl;
   };

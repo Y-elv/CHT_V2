@@ -12,7 +12,7 @@ export const useAuthStore = create(
     login: async (credentials) => {
       try {
         set({ loading: true });
-        const response = await axios.post("/api/auth/login", credentials);
+        const response = await axios.post("/auth/login", credentials);
         const { user } = response.data;
 
         if (user) {
@@ -52,7 +52,7 @@ export const useAuthStore = create(
       try {
         const fetchProfile = async () => {
           try {
-            const response = await axios.get("/api/auth/profile");
+            const response = await axios.get("/auth/profile");
             if (response.data) {
               const user = response.data;
               set({ user, isAuthenticated: true, loading: false });
@@ -82,7 +82,7 @@ export const useAuthStore = create(
     logout: async () => {
       try {
         set({ loading: true });
-        await axios.post("/api/auth/logout");
+        await axios.post("/auth/logout");
         set({ user: null, isAuthenticated: false, loading: false });
         return { success: true };
       } catch (error) {

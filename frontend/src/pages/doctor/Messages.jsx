@@ -89,7 +89,7 @@ const Messages = () => {
   const fetchConversations = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/api/v2/message/conversations");
+      const response = await axios.get("/v2/message/conversations");
       const list = response.data || [];
       setConversations(deduplicateByEmail(list));
     } catch (error) {
@@ -109,7 +109,7 @@ const Messages = () => {
   const fetchMessages = async (patientId) => {
     try {
       setMessagesLoading(true);
-      const response = await axios.get(`/api/v2/message/direct/${patientId}`);
+      const response = await axios.get(`/v2/message/direct/${patientId}`);
       setMessages(response.data);
       scrollToBottom();
     } catch (error) {
@@ -136,7 +136,7 @@ const Messages = () => {
         content: newMessage.trim(),
       };
 
-      const response = await axios.post("/api/v2/message/direct", messageData);
+      const response = await axios.post("/v2/message/direct", messageData);
 
       // Add the new message to the messages list
       setMessages((prev) => [...prev, response.data]);

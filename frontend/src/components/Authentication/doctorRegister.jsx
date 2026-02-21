@@ -219,7 +219,7 @@ const DoctorRegister = () => {
         consultationFee: parseFloat(consultationFee),
       };
       const { data } = await axios.post(
-        "https://chtv2-bn.onrender.com/api/doctor/register",
+        "/doctor/register",
         registrationData,
         config
       );

@@ -195,9 +195,9 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const [usersRes, consultationsRes, faqRes] = await Promise.all([
-        axios.get("/api/admin/users?page=1&limit=1"),
-        axios.get("/api/admin/consultations?page=1&limit=1"),
-        axios.get("/api/admin/faq?page=1&limit=1"),
+        axios.get("/admin/users?page=1&limit=1"),
+        axios.get("/admin/consultations?page=1&limit=1"),
+        axios.get("/admin/faq?page=1&limit=1"),
       ]);
 
       const totalUsers = usersRes.data?.total ?? 0;
@@ -235,7 +235,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await axios.get(
-        `/api/admin/consultations?page=${page}&limit=${limit}`
+        `/admin/consultations?page=${page}&limit=${limit}`
       );
       const list: ApiConsultation[] = res.data?.consultations ?? [];
       const total = res.data?.total ?? 0;
@@ -272,7 +272,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await axios.get(
-        `/api/admin/all-doctors?page=${page}&limit=${limit}`
+        `/admin/all-doctors?page=${page}&limit=${limit}`
       );
       const list: ApiDoctor[] = res.data?.doctors ?? [];
       const total = res.data?.total ?? 0;
@@ -295,7 +295,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await axios.get(
-        `/api/admin/users?page=${page}&limit=${limit}`
+        `/admin/users?page=${page}&limit=${limit}`
       );
       const list: ApiUser[] = res.data?.users ?? [];
       const total = res.data?.total ?? 0;
@@ -317,7 +317,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
   blockUser: async (userId: string) => {
     try {
-      await axios.post(`/api/admin/users/${userId}/block`);
+      await axios.post(`/admin/users/${userId}/block`);
       const users = get().users.map((u) =>
         u._id === userId ? { ...u, status: "blocked" } : u
       );
@@ -329,7 +329,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
   unblockUser: async (userId: string) => {
     try {
-      await axios.post(`/api/admin/users/${userId}/unblock`);
+      await axios.post(`/admin/users/${userId}/unblock`);
       const users = get().users.map((u) =>
         u._id === userId ? { ...u, status: "active" } : u
       );
@@ -343,7 +343,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await axios.get(
-        `/api/admin/faq?page=${page}&limit=${limit}`
+        `/admin/faq?page=${page}&limit=${limit}`
       );
       const list: ApiFaq[] = res.data?.faqs ?? [];
       const total = res.data?.total ?? 0;
@@ -365,7 +365,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
   createFaq: async (payload) => {
     try {
-      const res = await axios.post("/api/admin/faq", payload);
+      const res = await axios.post("/admin/faq", payload);
       const faq = res.data?.faq ?? null;
       if (faq) {
         const total = get().faqsTotal + 1;
@@ -384,7 +384,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
   updateFaq: async (id, payload) => {
     try {
-      const res = await axios.put(`/api/admin/faq/${id}`, payload);
+      const res = await axios.put(`/admin/faq/${id}`, payload);
       const updated = res.data?.faq;
       if (updated) {
         set((s) => ({
@@ -398,7 +398,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
   deleteFaq: async (id: string) => {
     try {
-      await axios.delete(`/api/admin/faq/${id}`);
+      await axios.delete(`/admin/faq/${id}`);
       set((s) => ({
         faqs: s.faqs.filter((f) => f._id !== id),
         faqsTotal: Math.max(0, s.faqsTotal - 1),

@@ -139,7 +139,7 @@ const LandingPage = () => {
 
     try {
       const response = await axios.post(
-        " https://chtv2-bn.onrender.com/api/v2/user/getInTouch",
+        "/v2/user/getInTouch",
         formData
       );
 

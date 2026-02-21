@@ -109,7 +109,7 @@ const Appointments = () => {
     
     try {
       // First, try to get existing chat messages
-      const chatResponse = await axios.get(`/api/v2/message/direct/${doctorId}`);
+      const chatResponse = await axios.get(`/v2/message/direct/${doctorId}`);
       
       if (chatResponse.data && chatResponse.data.length > 0) {
         // Chat exists, navigate to chat pages
@@ -117,7 +117,7 @@ const Appointments = () => {
         navigate(`/chatpages?chat=${chatId}&doctor=${doctorId}`);
       } else {
         // No existing chat, create a new one
-        const messageResponse = await axios.post('/api/v2/message/direct', {
+        const messageResponse = await axios.post('/v2/message/direct', {
           recipientId: doctorId,
           content: `Hello Dr. ${doctorName}, I'd like to discuss my appointment with you.`
         });
@@ -130,7 +130,7 @@ const Appointments = () => {
     } catch (error) {
       // If getting chat fails, try to create a new chat
       try {
-        const messageResponse = await axios.post('/api/v2/message/direct', {
+        const messageResponse = await axios.post('/v2/message/direct', {
           recipientId: doctorId,
           content: `Hello Dr. ${doctorName}, I'd like to discuss my appointment with you.`
         });
