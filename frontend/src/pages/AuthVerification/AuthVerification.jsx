@@ -63,24 +63,53 @@ const AuthVerification = () => {
   };
 
   useEffect(() => {
+    // Check both hash (Google OAuth) and search params (backend redirect)
     const hash = window.location.hash;
+    const params = new URLSearchParams(window.location.search);
+    
+    let token = null;
+    let userData = null;
+    
+    // Try to get token from hash (Google OAuth)
     if (hash && hash.includes("token=")) {
-      const token = hash.split("token=")[1]?.split("&")[0];
-      if (token) {
-        try {
-          localStorage.setItem("fh_auth_token", token);
-        } catch (_) {}
-        // Clean hash from URL without triggering re-render
-        window.history.replaceState(null, "", window.location.pathname + window.location.search);
-      }
+      token = hash.split("token=")[1]?.split("&")[0];
+    }
+    
+    // Try to get token from search params (backend redirect)
+    if (!token) {
+      token = params.get("token");
+    }
+    
+    // Try to get user data from search params
+    const userParam = params.get("user");
+    if (userParam) {
+      try {
+        userData = JSON.parse(decodeURIComponent(userParam));
+      } catch (_) {}
+    }
+    
+    // Save token if found
+    if (token) {
+      try {
+        localStorage.setItem("fh_auth_token", token);
+        console.log("Token saved to localStorage:", token);
+      } catch (_) {}
+    }
+    
+    // Set user data if provided
+    if (userData) {
+      setProfile(userData);
+      console.log("User data set:", userData);
+    }
+    
+    // Clean URL hash but keep search params if they exist
+    if (hash && hash.includes("token=")) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
     }
   }, []);
 
   useEffect(() => {
     if (processingStartedRef.current) {
-      if (isAuthenticated && user) {
-        navigate(getRoleRedirectPath(user));
-      }
       return;
     }
     processingStartedRef.current = true;
@@ -102,37 +131,56 @@ const AuthVerification = () => {
           return;
         }
 
+        // If we already have authenticated user, redirect to dashboard
         if (isAuthenticated && user) {
           setStatus("success");
-          setMessage(`Welcome back, ${user.name}!`);
-          const redirectPath = getRoleRedirectPath();
+          const redirectPath = getRoleRedirectPath(user);
           setTimeout(() => navigate(redirectPath), 2000);
           return;
         }
 
-        setStatus("processing");
-        setMessage("Verifying your session...");
+        // Check for token in both hash and search params
+        const hash = window.location.hash;
+        const params = new URLSearchParams(window.location.search);
+        const hashToken = hash && hash.includes("token=") ? hash.split("token=")[1]?.split("&")[0] : null;
+        const searchToken = params.get("token");
+        const token = hashToken || searchToken;
+        
+        console.log("Token detection:", { hashToken, searchToken, finalToken: token });
+        
+        if (token) {
+          setStatus("processing");
+          setMessage("Verifying your session...");
 
-        try {
-          const { data: userData } = await axios.get("/auth/profile");
+          try {
+            const { data: userData } = await axios.get("/auth/profile");
 
-          setStatus("success");
-          setMessage(`Welcome back, ${userData.name}!`);
-          setProfile(userData);
-          const redirectPath = getRoleRedirectPath(userData);
-          setTimeout(() => navigate(redirectPath), 2000);
-        } catch (authError) {
+            setStatus("success");
+            setMessage(`Welcome back, ${userData.name}!`);
+            setProfile(userData);
+            const redirectPath = getRoleRedirectPath(userData);
+            setTimeout(() => navigate(redirectPath), 2000);
+          } catch (authError) {
+            console.error("Profile fetch error:", authError);
+            setStatus("error");
+            const apiMessage = authError.response?.data?.message || "";
+            const isNoToken = /no authentication token|not authorized|unauthorized/i.test(apiMessage);
+            setMessage(
+              isNoToken
+                ? "Sign-in could not be completed. This often happens with Google login on localhost. Try logging in with email and password, or use the deployed site for Google sign-in."
+                : apiMessage || "Authentication failed. Please try logging in again."
+            );
+            setTimeout(() => navigate("/login"), 5000);
+          }
+        } else {
+          // No token found, redirect to login
+          console.log("No token found in URL");
           setStatus("error");
-          const apiMessage = authError.response?.data?.message || "";
-          const isNoToken = /no authentication token|not authorized|unauthorized/i.test(apiMessage);
-          setMessage(
-            isNoToken
-              ? "Sign-in could not be completed. This often happens with Google login on localhost. Try logging in with email and password, or use the deployed site for Google sign-in."
-              : apiMessage || "Authentication failed. Please try logging in again."
-          );
-          setTimeout(() => navigate("/login"), 5000);
+          setMessage("No authentication token found. Please try logging in again.");
+          setTimeout(() => navigate("/login"), 3000);
         }
       } catch (error) {
+        console.error("Auth verification error:", error);
         setStatus("error");
         setMessage("An error occurred during authentication. Please try again.");
 
@@ -151,7 +199,7 @@ const AuthVerification = () => {
       }
     };
 
-    // Run immediately; no setTimeout so React Strict Mode cleanup can't cancel the only run
+    // Run immediately
     processAuthCallback();
   }, [searchParams, isAuthenticated, user]);
 

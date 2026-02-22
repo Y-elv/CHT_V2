@@ -124,7 +124,12 @@ const Login = () => {
       ? `${window.location.origin}/auth-verification`
       : "https://funhealth.netlify.app/auth-verification";
     
-    const googleAuthUrl = `/auth/google?redirect_url=${encodeURIComponent(redirectUrl)}`;
+    // Use absolute backend URL for Google OAuth
+    const backendUrl = isDevelopment
+      ? "https://chtv2-bn.onrender.com"
+      : "https://chtv2-bn.onrender.com";
+    
+    const googleAuthUrl = `${backendUrl}/auth/google?redirect_url=${encodeURIComponent(redirectUrl)}`;
     
     window.location.href = googleAuthUrl;
   };
