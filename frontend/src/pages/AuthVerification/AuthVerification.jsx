@@ -63,6 +63,20 @@ const AuthVerification = () => {
   };
 
   useEffect(() => {
+    const hash = window.location.hash;
+    if (hash && hash.includes("token=")) {
+      const token = hash.split("token=")[1]?.split("&")[0];
+      if (token) {
+        try {
+          localStorage.setItem("fh_auth_token", token);
+        } catch (_) {}
+        // Clean hash from URL without triggering re-render
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (processingStartedRef.current) {
       if (isAuthenticated && user) {
         navigate(getRoleRedirectPath(user));

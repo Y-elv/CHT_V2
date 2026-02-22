@@ -52,18 +52,21 @@ export const handleAuthError = (error, context = "application") => {
  * Clear authentication state and redirect to login
  */
 const clearAuthAndRedirect = () => {
+  // Remove token from localStorage
+  try { localStorage.removeItem("fh_auth_token"); } catch (_) {}
+
   try {
     const { useAuthStore } = require("../store/authStore");
     const authStore = useAuthStore.getState();
     authStore.logout();
-  } catch (_err) {}
+  } catch (_) {}
+
   try {
     const { useNotificationStore } = require("../zustandStore/notificationStore");
     const notificationStore = useNotificationStore.getState();
     notificationStore.clearNotifications?.();
-  } catch (_err) {}
-  
-  // Redirect to login page
+  } catch (_) {}
+
   setTimeout(() => {
     window.location.href = "/login";
   }, 1000);

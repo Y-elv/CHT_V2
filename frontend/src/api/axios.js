@@ -39,35 +39,37 @@ function validateUrl(url) {
 const api = axios.create({
   baseURL,
   timeout: 30000,
-  withCredentials: true,
+  withCredentials: false,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Auto attach token if needed (cookies are sent automatically via withCredentials)
+// Auto attach token from localStorage as Bearer header
 api.interceptors.request.use(
   (config) => {
-    // Optional: parse document.cookie or localStorage for token and set config.headers.Authorization
     try {
-      if (typeof config.url === "string") {
-        config.url = config.url.trim();
-      }
-      const isAbsoluteURL = typeof config.url === "string" && /^https?:\/\//i.test(config.url);
+      if (typeof config.url === "string") config.url = config.url.trim();
+      const isAbsoluteURL = /^https?:\/\//i.test(config.url || "");
       if (isAbsoluteURL) {
         validateUrl(config.url);
         config.baseURL = undefined;
       }
-      if (
-        process.env.NODE_ENV === "production" &&
-        typeof config.url === "string" &&
-        config.url.startsWith("http://")
-      ) {
-        throw new Error("Insecure HTTP requests are not allowed in production");
-      }
     } catch (e) {
       return Promise.reject(e);
     }
+
+    // Attach token from localStorage as Bearer header
+    try {
+      const token = localStorage.getItem("fh_auth_token");
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
+    } catch (_) {
+      // localStorage not available (private mode) — continue without token
+    }
+
     return config;
   },
   (error) => Promise.reject(error)

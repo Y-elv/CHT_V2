@@ -393,7 +393,7 @@ const DoctorRegister = () => {
                     placeholder="Full Name"
                     onChange={(e) => setName(e.target.value)}
                     value={name}
-                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                   />
                 </InputGroup>
               </FormControl>
@@ -414,7 +414,7 @@ const DoctorRegister = () => {
                     placeholder="Email Address"
                     onChange={(e) => setEmail(e.target.value)}
                     value={email}
-                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                   />
                 </InputGroup>
               </FormControl>
@@ -435,7 +435,7 @@ const DoctorRegister = () => {
                     placeholder="Password"
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
-                    className="pl-12 pr-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                    className="pl-12 pr-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                   />
                   <InputRightElement width="4.5rem" className="pr-3">
                     <Button h="1.75rem" size="sm" onClick={handleClick} className="bg-transparent hover:bg-transparent">
@@ -460,7 +460,7 @@ const DoctorRegister = () => {
                     placeholder="Specialty (e.g., Cardiology, Pediatrics)"
                     onChange={(e) => setSpecialty(e.target.value)}
                     value={specialty}
-                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                   />
                 </InputGroup>
               </FormControl>
@@ -480,7 +480,7 @@ const DoctorRegister = () => {
                     placeholder="Professional Bio"
                     onChange={(e) => setBio(e.target.value)}
                     value={bio}
-                    className="pl-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                    className="pl-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                     rows={3}
                   />
                 </InputGroup>
@@ -501,7 +501,7 @@ const DoctorRegister = () => {
                     placeholder="Certificate URL"
                     onChange={(e) => setCertificateUrl(e.target.value)}
                     value={certificateUrl}
-                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                   />
                 </InputGroup>
               </FormControl>
@@ -521,7 +521,7 @@ const DoctorRegister = () => {
                     placeholder="License Number"
                     onChange={(e) => setLicenseNumber(e.target.value)}
                     value={licenseNumber}
-                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                    className="pl-12 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                   />
                 </InputGroup>
               </FormControl>
@@ -541,7 +541,7 @@ const DoctorRegister = () => {
                     <NumberInputField
                       placeholder="Years of Experience"
                       onChange={(e) => setYearsOfExperience(e.target.value)}
-                      className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                      className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                     />
                   </NumberInput>
                 </InputGroup>
@@ -562,7 +562,7 @@ const DoctorRegister = () => {
                     placeholder="Hospital/Clinic Name"
                     onChange={(e) => setHospital(e.target.value)}
                     value={hospital}
-                    className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                    className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                   />
                 </InputGroup>
               </FormControl>
@@ -582,7 +582,7 @@ const DoctorRegister = () => {
                     <NumberInputField
                       placeholder="Consultation Fee"
                       onChange={(e) => setConsultationFee(e.target.value)}
-                      className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
+                      className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300"
                     />
                   </NumberInput>
                 </InputGroup>
@@ -626,7 +626,7 @@ const DoctorRegister = () => {
                     type="file"
                     accept="image/jpeg,image/png"
                     onChange={handleImageSelect}
-                    className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-700/50 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300"
+                    className="pl-14 h-12 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300"
                   />
                 </InputGroup>
                 
