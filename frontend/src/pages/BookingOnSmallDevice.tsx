@@ -43,7 +43,7 @@ const BookingOnSmallDevice = () => {
   const fetchDoctors = async () => {
     setLoadingDoctors(true);
     try {
-      const apiUrl = "https://chtv2-bn.onrender.com/api/admin/all-doctors";
+      const apiUrl = "/admin/all-doctors";
       const params = {
         page: 1,
         limit: 100,

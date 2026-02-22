@@ -81,7 +81,7 @@ const DoctorDashboard = () => {
   // Fetch profile completion percentage
   const fetchProfileCompletion = async () => {
     try {
-      const response = await axios.get('/api/v2/user/profile-completion');
+      const response = await axios.get('/v2/user/profile-completion');
       const completionData = response.data;
       
       setProfileCompletion(completionData.completionPercentage || 0);
@@ -96,7 +96,7 @@ const DoctorDashboard = () => {
   // Fetch conversations for unread messages count
   const fetchConversations = async () => {
     try {
-      const response = await axios.get('/api/v2/message/conversations');
+      const response = await axios.get('/v2/message/conversations');
       const conversations = response.data || [];
       
       // Count total unread messages from all conversations
@@ -116,7 +116,7 @@ const DoctorDashboard = () => {
   const fetchAppointments = async () => {
     try {
       setAppointmentsLoading(true);
-      const response = await axios.get('/api/appointment/doctor?page=1&limit=20');
+      const response = await axios.get('/appointment/doctor?page=1&limit=20');
       
       const appointmentsData = response.data.appointments || [];
       setAppointments(appointmentsData);

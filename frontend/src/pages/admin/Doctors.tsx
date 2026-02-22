@@ -72,8 +72,8 @@ const DoctorsPage: React.FC = () => {
     setLoading(true);
     try {
       const [allRes, pendingRes] = await Promise.all([
-        axios.get("/api/admin/all-doctors?page=1&limit=20"),
-        axios.get("/api/admin/pending-doctors?page=1&limit=20"),
+        axios.get("/admin/all-doctors?page=1&limit=20"),
+        axios.get("/admin/pending-doctors?page=1&limit=20"),
       ]);
 
       const rawAll = allRes.data;
@@ -144,7 +144,7 @@ const DoctorsPage: React.FC = () => {
   const handleApprove = async (doctorId: string) => {
     setApprovingId(doctorId);
     try {
-      await axios.post(`/api/admin/approve-doctor/${doctorId}`);
+      await axios.post(`/admin/approve-doctor/${doctorId}`);
       toast({
         description: "Doctor approved successfully",
         status: "success",
@@ -185,7 +185,7 @@ const DoctorsPage: React.FC = () => {
     setRejectingId(doctorToReject);
     try {
       await axios.post(
-        `/api/admin/reject-doctor/${doctorToReject}`,
+        `/admin/reject-doctor/${doctorToReject}`,
         { reason: rejectReason || "Invalid license number" }
       );
       toast({

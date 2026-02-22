@@ -135,7 +135,7 @@ const OTP = () => {
         },
       };
       const { data } = await axios.post(
-        "https://chtv2-bn.onrender.com/api/v2/user/verify-otp",
+        "/v2/user/verify-otp",
         {
           email,
           otp: otpCode,
@@ -181,7 +181,7 @@ const OTP = () => {
         },
       };
       await axios.post(
-        "https://chtv2-bn.onrender.com/api/v2/user/resend-otp",
+        "/v2/user/resend-otp",
         { email },
         config
       );

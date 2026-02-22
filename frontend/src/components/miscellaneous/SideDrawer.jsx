@@ -70,8 +70,7 @@ const SideDrawer = () => {
       };
 
       const { data } = await axios.get(
-        `https://chtv2-bn.onrender.com/api/v2/user/getUsers?search=${search}`,
-
+        `/v2/user/getUsers?search=${search}`,
         config
       );
 
@@ -123,7 +122,7 @@ const SideDrawer = () => {
       };
 
       const { data } = await axios.post(
-        " https://chtv2-bn.onrender.com/api/v2/chat/acsess",
+        "/v2/chat/acsess",
         { userId },
         config
       );

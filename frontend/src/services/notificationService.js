@@ -8,7 +8,7 @@
 import axios from "../api/axios";
 
 // Use relative URLs since axios instance has baseURL configured
-const BASE_URL = "/api/v1/notification";
+const BASE_URL = "/v1/notification";
 
 /**
  * Get paginated notifications

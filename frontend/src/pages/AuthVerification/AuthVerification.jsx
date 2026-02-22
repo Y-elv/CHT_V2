@@ -5,6 +5,7 @@ import {
   Spinner,
   Text,
   VStack,
+  Button,
   useColorModeValue,
   Image,
 } from "@chakra-ui/react";
@@ -99,8 +100,7 @@ const AuthVerification = () => {
         setMessage("Verifying your session...");
 
         try {
-          // ✅ Use axios instance instead of fetch
-          const { data: userData } = await axios.get("/api/auth/profile");
+          const { data: userData } = await axios.get("/auth/profile");
 
           setStatus("success");
           setMessage(`Welcome back, ${userData.name}!`);
@@ -109,8 +109,14 @@ const AuthVerification = () => {
           setTimeout(() => navigate(redirectPath), 2000);
         } catch (authError) {
           setStatus("error");
-          setMessage(authError.response?.data?.message || "Authentication failed. Please try logging in again.");
-          setTimeout(() => navigate("/login"), 3000);
+          const apiMessage = authError.response?.data?.message || "";
+          const isNoToken = /no authentication token|not authorized|unauthorized/i.test(apiMessage);
+          setMessage(
+            isNoToken
+              ? "Sign-in could not be completed. This often happens with Google login on localhost. Try logging in with email and password, or use the deployed site for Google sign-in."
+              : apiMessage || "Authentication failed. Please try logging in again."
+          );
+          setTimeout(() => navigate("/login"), 5000);
         }
       } catch (error) {
         setStatus("error");
@@ -131,9 +137,9 @@ const AuthVerification = () => {
       }
     };
 
-    const timer = setTimeout(processAuthCallback, 1000);
-    return () => clearTimeout(timer);
-  }, [searchParams, navigate, toast, isAuthenticated, user, setProfile]);
+    // Run immediately; no setTimeout so React Strict Mode cleanup can't cancel the only run
+    processAuthCallback();
+  }, [searchParams, isAuthenticated, user]);
 
   const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.6, staggerChildren: 0.1 } } };
   const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } };
@@ -192,8 +198,16 @@ const AuthVerification = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </motion.div>
-                <Text fontSize="lg" fontWeight="semibold" color="red.600" textAlign="center">{message}</Text>
-                <Text fontSize="sm" color="gray.500" textAlign="center">Redirecting to login page...</Text>
+                <Text fontSize="md" fontWeight="semibold" color="red.600" textAlign="center">{message}</Text>
+                <Text fontSize="sm" color="gray.500" textAlign="center">Redirecting to login in a few seconds...</Text>
+                <Button
+                  colorScheme="blue"
+                  size="md"
+                  onClick={() => navigate("/login")}
+                  mt={2}
+                >
+                  Back to Login
+                </Button>
               </>
             )}
           </VStack>

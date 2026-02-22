@@ -16,7 +16,7 @@ const MyChats = ({ fetchAgain }) => {
     if (!user) return;
     try {
       const { data } = await axios.get(
-        "https://chtv2-bn.onrender.com/api/v2/chat/fetch"
+        "/v2/chat/fetch"
       );
       setChats(data || []);
     } catch (error) {

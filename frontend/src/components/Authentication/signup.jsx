@@ -89,7 +89,7 @@ const Signup = () => {
     }
     try {
       // Use the new cookie-based axios instance
-      const { data } = await axios.post("/api/v2/user/register", {
+      const { data } = await axios.post("/v2/user/register", {
         name,
         email,
         password,

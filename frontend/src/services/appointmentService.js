@@ -8,7 +8,7 @@
 import axios from "../api/axios";
 
 // Use relative URL since axios instance has baseURL configured
-const BASE_URL = "/api/appointment";
+const BASE_URL = "/appointment";
 
 /**
  * Get user appointments (for patients)

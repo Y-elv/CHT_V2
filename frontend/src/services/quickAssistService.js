@@ -8,7 +8,7 @@
 import axios from "../api/axios";
 
 // Use relative URL since axios instance has baseURL configured
-const BASE_URL = "/api/ask";
+const BASE_URL = "/ask";
 
 /**
  * Ask a question to the Quick Assist API

@@ -75,7 +75,7 @@ const Profile = () => {
       );
 
       const cloudinaryData = await cloudinaryResponse.json();
-      const updateApiResponse = await axios.patch("/api/v2/user/updateProfile", {
+      const updateApiResponse = await axios.patch("/v2/user/updateProfile", {
         pic: cloudinaryData.url
       });
       await setPic(cloudinaryData.url.toString());

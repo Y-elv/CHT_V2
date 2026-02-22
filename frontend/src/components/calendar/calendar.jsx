@@ -188,7 +188,7 @@ const CalendarInput = ({
 
     try {
       const response = await axios.post(
-        "https://chtv2-bn.onrender.com/api/appointment/book",
+        "/appointment/book",
         requestBody,
         {
           headers: {

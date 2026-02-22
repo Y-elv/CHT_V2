@@ -104,7 +104,7 @@ const ForgotPassword = () => {
 
     try {
       // Use the new cookie-based axios instance
-      const { data } = await axios.post("/api/v2/user/reset", {
+      const { data } = await axios.post("/v2/user/reset", {
         email,
         newPassword,
         confirmPassword,
